@@ -36,7 +36,7 @@ uv run ruff format .   # format
 
 ## Tuning
 
-- Game values (ball speed, paddle size, bricks, lives, colours): [src/config.py](src/config.py)
+- Game values (ball speed, paddle size, bricks, colours): [src/config.py](src/config.py)
 - Robot skill (reaction delay, speed, aim error, miss chance): top of [src/robot_agent.py](src/robot_agent.py)
 
 ## Layout

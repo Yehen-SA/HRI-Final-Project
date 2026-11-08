@@ -43,18 +43,19 @@ See [decisions/0002-shared-paddle-row.md](decisions/0002-shared-paddle-row.md).
 Each player has their own ball in their own colour: blue for the human, orange for the
 robot (`COLOR_HUMAN`, `COLOR_ROBOT`). By default a paddle only bounces its own ball and the
 other ball passes through it. Set `PADDLES_HIT_ANY_BALL = True` in `config.py` to let either
-paddle bounce either ball. Lives are shared: dropping either ball costs the team one.
+paddle bounce either ball.
 See [decisions/0004-two-colour-coded-balls.md](decisions/0004-two-colour-coded-balls.md).
 
 ## Where to tune what
 
-- **Game feel and difficulty** (ball speed, paddle size, bricks, lives, whether paddles can
+- **Game feel and difficulty** (ball speed, paddle size, bricks, whether paddles can
   hit each other's ball): `config.py`.
 - **Robot skill** (reaction delay, speed, aim error, miss chance, prediction): the top of
   `robot_agent.py`.
 
 ## Still to design
 
-- Whether brick points are counted per player (by ball owner) as well as for the team.
+- Game rules: lives, scoring, and what happens when a ball is lost. Deferred on purpose;
+  see [deferred.md](deferred.md).
 - Study conditions (how a condition changes the robot or the HUD).
 - Logging per round for analysis.

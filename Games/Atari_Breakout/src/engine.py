@@ -2,7 +2,6 @@
 
 from typing import Any
 
-import config
 from entities import Ball, Brick, Paddle
 
 
@@ -14,8 +13,6 @@ class Game:
         self.human_ball: Ball
         self.robot_ball: Ball
         self.bricks: list[Brick] = []
-        self.score = 0
-        self.lives = config.START_LIVES
         self.tick = 0
         self.message = ""
         raise NotImplementedError

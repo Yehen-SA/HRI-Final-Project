@@ -8,7 +8,7 @@ Positions and sizes are in pixels; speeds are in pixels per frame.
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 FPS = 60
-HUD_HEIGHT = 40  # score and lives bar along the top
+HUD_HEIGHT = 40  # info bar along the top
 WINDOW_TITLE = "HRI Breakout: Human + Robot"
 
 # --- Paddles ---
@@ -40,9 +40,8 @@ BRICK_HEIGHT = 20
 BRICK_TOP = HUD_HEIGHT + 40  # y of the top brick row
 BRICK_WIDTH = (SCREEN_WIDTH - (BRICK_COLS + 1) * BRICK_GAP) // BRICK_COLS
 
-# --- Rules ---
-START_LIVES = 3  # shared by the team; dropping either ball costs one
-POINTS_PER_BRICK = 10
+# Game rules (lives, scoring, what happens when a ball is lost) are deferred.
+# See docs/deferred.md.
 
 # --- Colours (RGB) ---
 COLOR_BG = (20, 22, 30)

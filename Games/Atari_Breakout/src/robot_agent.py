@@ -28,7 +28,7 @@ def get_robot_action(observation: dict[str, Any]) -> str:
       - paddles_hit_any_ball: whether the robot's paddle can also bounce the human's ball
       - robot_paddle: {"x", "y", "width"}
       - human_paddle: {"x", "y", "width"}
-      - bricks_left, score, lives
+      - bricks_left
 
     Returns one of actions.ACTIONS: "LEFT", "RIGHT" or "STAY".
     """

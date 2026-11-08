@@ -12,7 +12,7 @@ unclear whose job it is to catch it, and who to credit or blame for a save or a 
 Each player has their own ball in their own colour: blue for the human, orange for the robot
 (the same colours as their paddles). By default a paddle only bounces its own ball. Whether
 a paddle can also bounce the other player's ball is a setting (`PADDLES_HIT_ANY_BALL` in
-`config.py`). Lives are shared by the team.
+`config.py`).
 
 ## Consequences
 

@@ -1,0 +1,40 @@
+[project]
+name = "breakout"
+version = "0.1.0"
+description = "Atari Breakout game for the HRI user study."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pygame-ce",
+]
+
+[project.scripts]
+breakout = "breakout.__main__:main"
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "ruff",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/breakout"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--strict-markers"
+markers = [
+    "unit: fast, isolated tests of single modules",
+    "e2e: tests that run the game as a whole",
+]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]

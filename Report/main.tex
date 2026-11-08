@@ -52,40 +52,67 @@
 \clearpage
 
 % =====================================================================
+
+
 \section{Research Question and Hypotheses}
 \spec{Choice of Question and Hypothesis (15 pts)}
 
 \subsection{Initial ideas}
-\textit{Possible ideas:}
+\textit{Chosen direction:} shared vs split score, with the robot's performance varied:
 \begin{itemize}
-    \item Text box vs Robotic voice vs Human voice
-    \item Blame attribution (You're fault vs Our Fault, etc)
-    \item Human visible stats vs in game stats (e.g. im not sure it will work, vs 'only 30\% chance of success), can vary level of detail
-    \item Robot is aggressive/dominant and is able to push players to go to its destination (overcooked)
-    \item Shared score vs individual score for a collaborative task
-    \item Perception of human player vs robot player
-    \item
-    \item
-    \item
+    \item Score structure: shared score vs split (per-player) score
+    \item Robot performance: worse than, matching, or better than the participant
+    \item Blame dropped to keep the study simple (possible future work)
 \end{itemize}
 
 \textit{Possible games:}
 \begin{itemize}
-    \item Overcooked (Given)
-    \item Pico Park
-    \item Bomb defuse
-    \item Fireboy + Watergirl
-    \item
-    \item
+    \item Overcooked (Given): already built, strong teamwork; needs a working robot agent
+    \item Team quiz: player answers each question or passes it to the robot; simplest to build
+    \item Co-op Breakout: two paddles defend shared lives; bricks credited to the last paddle to hit the ball
+    \item Co-op memory pairs: turn-based card matching; weaker teamwork
+    \item Collecting game: both players collect items on a grid; risks feeling like a race
+\end{itemize}
+\textit{Game requirements} (rules out Pico Park, Fireboy + Watergirl, bomb defuse):
+\begin{itemize}
+    \item Playable solo by one participant alongside the robot
+    \item Tasks that can be delegated between player and robot
+    \item Score that can easily be shown as shared or split per player
+    \item Robot's performance can be controlled (worse / matching / better)
+    \item Player and robot depend on each other, so the game doesn't become a race
+\end{itemize}
+
+\textit{Initial thoughts on what to measure (dependent variables):}
+\begin{itemize}
+    \item Whether the participant sees the robot as a teammate, competitor or tool
+    \item Reward allocation: split bonus points between self and robot
+    \item Peer review of the robot as a team member
+    \item Participant's guess of how much the robot contributed (vs actual)
+    \item Likeability of the robot
+\end{itemize}
+
+\textit{Related work to look at:}
+\begin{itemize}
+    \item Human teams: cooperation vs competition (Deutsch 1949), equality vs equity in reward splitting (Deutsch 1975), social loafing (Karau \& Williams 1993)
+    \item Humans with computers and robots: ``Can computers be teammates?'' (Nass et al.\ 1996), in-group robots (Kuchenbrandt et al.\ 2013; Fraune et al.\ 2017)
+\end{itemize}
+
+\textit{Other ideas / open questions:}
+\begin{itemize}
+    \item Score between subjects, performance within subjects \fix{confirm with group}
+    \item Robot presented as a different robot each round (name and colour)
+    \item How to control the robot's performance, e.g.\ adapting to the participant's score
 \end{itemize}
 
 \subsection{Research question}
-\fix{One question that comparing our conditions can answer. Must be novel / underexplored.}
+Are people more likely to treat a robot partner as part of their team when the score is shared rather than split, and does this depend on how well the robot performs relative to them?
 
 \subsection{Hypotheses}
 \begin{itemize}
-    \item \textbf{H1:} \fix{\ldots}
-    \item \textbf{H2:} \fix{\ldots}
+    \item \textbf{H1:} A shared score makes participants see the robot more as a teammate.
+    \item \textbf{H2:} With a shared score, rewards are split equally; with a split score, they follow the robot's actual contribution.
+    \item \textbf{H3:} With a split score, a robot that outscores the participant is seen more as a competitor.
+    \item \textbf{H4:} With a shared score, participants underestimate the robot's contribution.
 \end{itemize}
 
 \clearpage

@@ -1,0 +1,19 @@
+# LaTeX build output (latexmk puts most of it in report-build/)
+report-build/
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.toc
+*.synctex.gz
+Report/main.pdf
+
+# Python
+.venv/
+__pycache__/
+
+# Windows download markers
+*:Zone.Identifier

@@ -1,0 +1,104 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[a4paper,margin=2cm]{geometry} % spec: max 6 pages, 2 cm margins, 12pt
+\usepackage{titling}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{float}
+\usepackage{xurl}        % lets long URLs break at any character
+\usepackage{hyperref}    % load last
+\hypersetup{
+  colorlinks=true,
+  urlcolor=blue!60!black,
+  linkcolor=black
+}
+
+\title{Human-Robot Interaction: Group Project}
+\author{Yehen Singankutta Arachchilage, Kee Meng Tan, Faira Li}
+\date{\today}
+
+% Red marker for text still to be written. Delete once resolved.
+\newcommand{\fix}[1]{\textcolor{red}{[#1]}}
+% Grey note showing which spec marking criterion a section covers. Delete before submitting.
+\newcommand{\spec}[1]{{\color{gray}\small\textit{Spec: #1}\par}\vspace{4pt}}
+
+% ---------------------------------------------------------------------
+% Draft spacing: roomy and easy to read while we work.
+% Tighten these when finalising to fit the 6-page limit.
+% ---------------------------------------------------------------------
+\usepackage{setspace}
+\onehalfspacing                              % final: \singlespacing
+\usepackage[skip=10pt plus 2pt]{parskip}     % gap between paragraphs, no indent
+\setlist{topsep=8pt, itemsep=6pt, parsep=0pt, beginpenalty=10000}
+\renewcommand{\arraystretch}{1.5}            % taller table rows (final: 1.1)
+
+% Sections: large title with a rule underneath, plenty of space around it
+\titleformat{\section}{\Large\bfseries}{\thesection}{1em}{}[\vspace{2pt}\titlerule]
+\titlespacing*{\section}{0pt}{2ex}{3ex}
+\titlespacing*{\subsection}{0pt}{5ex}{1.5ex}
+
+\begin{document}
+\setlength{\droptitle}{-2.5cm}
+
+\maketitle
+
+% Contents page for finding our way around while drafting. Remove when finalising.
+\tableofcontents
+\clearpage
+
+% =====================================================================
+\section{Research Question and Hypotheses}
+\spec{Choice of Question and Hypothesis (15 pts)}
+
+\subsection{Initial ideas}
+\textit{Possible ideas:}
+\begin{itemize}
+    \item Text box vs Robotic voice vs Human voice
+    \item Blame attribution (You're fault vs Our Fault, etc)
+    \item Human visible stats vs in game stats (e.g. im not sure it will work, vs 'only 30\% chance of success), can vary level of detail
+    \item Robot is aggressive/dominant and is able to push players to go to its destination (overcooked)
+    \item Shared score vs individual score for a collaborative task
+    \item Perception of human player vs robot player
+    \item
+    \item
+    \item
+\end{itemize}
+
+\textit{Possible games:}
+\begin{itemize}
+    \item Overcooked (Given)
+    \item Pico Park
+    \item Bomb defuse
+    \item Fireboy + Watergirl
+    \item
+    \item
+\end{itemize}
+
+\subsection{Research question}
+\fix{One question that comparing our conditions can answer. Must be novel / underexplored.}
+
+\subsection{Hypotheses}
+\begin{itemize}
+    \item \textbf{H1:} \fix{\ldots}
+    \item \textbf{H2:} \fix{\ldots}
+\end{itemize}
+
+\clearpage
+% =====================================================================
+\input{sections/design}
+\clearpage
+\input{sections/results}
+\clearpage
+\input{sections/conclusion}
+
+% =====================================================================
+\clearpage
+\appendix
+\input{sections/appendix}
+
+\end{document}

@@ -1,8 +1,9 @@
 # Architecture
 
 The layout follows the course's Overcooked template: one file of tuning values, one game
-engine, and a separate robot file. Gameplay is not implemented yet; the files hold the
-structure, tuning values and function signatures.
+engine, and a separate robot file. The basic game is playable (rules in
+[decisions/0005-basic-game-rules.md](decisions/0005-basic-game-rules.md)); study settings,
+logging and the web build come next ([plan.md](plan.md)).
 
 ## Modules (`src/`)
 
@@ -11,15 +12,16 @@ structure, tuning values and function signatures.
 | `config.py` | Every game tuning value: window, paddles, balls, bricks, rules, colours. |
 | `actions.py` | The actions a paddle can take (`LEFT`, `RIGHT`, `STAY`). Shared by both players. |
 | `entities.py` | `Paddle`, `Ball` and `Brick`. Paddles and balls have an `owner`. |
-| `human_controls.py` | Keyboard to action for the human. Nothing robot-related. |
-| `robot_agent.py` | The robot: its tuning values at the top, then `get_robot_action(observation)`. |
-| `engine.py` | `Game`: the loop, collisions, scoring, drawing, and building the robot's observation. |
-| `main.py` | Entry point (`uv run src/main.py`). |
+| `human_controls.py` | Keyboard to action for the human, plus the launch (Space) and quit (Esc) keys. Nothing robot-related. |
+| `robot_agent.py` | The robot: `get_robot_action(observation)`. For now it sweeps left and right. |
+| `engine.py` | `Game`: rules, collisions, scoring and the robot's observation, all runnable without a window (`update()`), plus drawing and the async window loop (`run()`). |
+| `main.py` | Entry point (`uv run src/main.py`; `--max-frames N` stops early, for tests). |
 
 ## Human and robot are kept apart
 
-The two players differ only in where their action comes from. Once an action exists, the
-engine moves both paddles with the same `_apply_action()`, so neither gets different rules.
+The two players differ in where their action comes from, and in paddle speed: the robot uses
+`ROBOT_PADDLE_SPEED`. Once an action exists, the engine moves both paddles with the same
+`_apply_action()`.
 
 ```
 keyboard    → human_controls.read_human_action ─┐
@@ -41,21 +43,19 @@ See [decisions/0002-shared-paddle-row.md](decisions/0002-shared-paddle-row.md).
 ## Two balls
 
 Each player has their own ball in their own colour: blue for the human, orange for the
-robot (`COLOR_HUMAN`, `COLOR_ROBOT`). By default a paddle only bounces its own ball and the
-other ball passes through it. Set `PADDLES_HIT_ANY_BALL = True` in `config.py` to let either
-paddle bounce either ball.
+robot (`COLOR_HUMAN`, `COLOR_ROBOT`). With `PADDLES_HIT_ANY_BALL = True` (the current
+setting) either paddle bounces either ball; set it to `False` so a paddle only bounces its own.
+Points for a brick go to whoever last hit the ball.
 See [decisions/0004-two-colour-coded-balls.md](decisions/0004-two-colour-coded-balls.md).
 
 ## Where to tune what
 
-- **Game feel and difficulty** (ball speed, paddle size, bricks, whether paddles can
-  hit each other's ball): `config.py`.
-- **Robot skill** (reaction delay, speed, aim error, miss chance, prediction): the top of
-  `robot_agent.py`.
+- **Game feel and rules** (ball speed, paddle sizes and speeds, bricks and their points,
+  round length, score mode, seed, whether paddles can hit each other's ball): `config.py`.
+- **Robot behaviour:** `robot_agent.py`.
 
-## Still to design
+## Still to build
 
-- Game rules: lives, scoring, and what happens when a ball is lost. Deferred on purpose;
-  see [deferred.md](deferred.md).
-- Study conditions (how a condition changes the robot or the HUD).
-- Logging per round for analysis.
+See [plan.md](plan.md): study settings and robot skill presets, the session (practice plus
+three rounds), event logging, and the web build. Rule ideas left out of the basic game are in
+[deferred.md](deferred.md).

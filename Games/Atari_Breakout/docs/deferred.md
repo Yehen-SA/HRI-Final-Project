@@ -1,11 +1,13 @@
 # Deferred game rules
 
-These rules are left out of the code on purpose until the study design settles what they
-should be. The engine has no lives, no scoring and no rule for a lost ball yet.
+The basic game's rules are now decided: see
+[decisions/0005-basic-game-rules.md](decisions/0005-basic-game-rules.md). This file keeps the
+ideas that were left out of the basic version, for the study phase
+(see [plan.md](plan.md)).
 
-## What happens when a ball is lost
+## Countdown after a lost ball
 
-Idea so far:
+Instead of waiting on the paddle for a launch:
 
 - A countdown appears on that player's side of the screen, in their colour (human on the
   left, robot on the right): "New ball from paddle in 5", 4, 3...
@@ -16,14 +18,13 @@ Idea so far:
 
 ## Lives
 
-Not decided. Options: shared team lives, lives per player, or no lives and a fixed-length
-round instead.
+The basic game has none (fixed-length rounds). Options if needed: shared team lives or lives
+per player.
 
-## Scoring
+## Ball speed-up
 
-Not decided. Options: one team score, a score per player (by whose ball broke the brick),
-or both.
+The basic game keeps ball speed constant. The original idea was +0.1 per paddle hit, capped.
 
-## End of a round
+## When all bricks are gone
 
-Not decided: when all bricks are gone, after a fixed time, or when lives run out.
+The basic game ends early. For fixed-length study rounds, the grid could refill instead.

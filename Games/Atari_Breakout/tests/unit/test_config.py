@@ -29,3 +29,16 @@ def test_players_have_different_colours() -> None:
 
 def test_balls_start_above_paddle_row() -> None:
     assert config.HUD_HEIGHT < config.PADDLE_Y - 2 * config.BALL_RADIUS
+
+
+def test_every_brick_row_has_points() -> None:
+    assert len(config.BRICK_ROW_POINTS) >= config.BRICK_ROWS
+
+
+def test_launch_angles_valid() -> None:
+    assert 0 < config.LAUNCH_ANGLE_MIN_DEG <= config.LAUNCH_ANGLE_MAX_DEG < 90
+    assert 0 < config.MAX_BOUNCE_ANGLE_DEG < 90
+
+
+def test_score_mode_valid() -> None:
+    assert config.SCORE_MODE in ("shared", "split")

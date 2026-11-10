@@ -3,11 +3,12 @@
 A Breakout game for the HRI final project user study. Written in Python with
 [pygame-ce](https://pyga.me/).
 
-Status: structure, tuning values and function signatures only. No gameplay yet.
+Status: basic game playable. Study settings, logging and the web version are next; see
+[docs/plan.md](docs/plan.md).
 
 A human and a robot each control a paddle on the same row (they can pass through each other)
 and each has their own ball, colour coded to match: blue for the human, orange for the robot.
-They play as a team.
+They play as a team. For now the robot just sweeps left and right.
 See [docs/architecture.md](docs/architecture.md).
 
 ## Setup
@@ -24,6 +25,9 @@ uv sync
 uv run src/main.py
 ```
 
+Controls: A/D or the arrow keys move, Space launches your ball (and plays again after game
+over), Esc quits. Rules: [docs/decisions/0005-basic-game-rules.md](docs/decisions/0005-basic-game-rules.md).
+
 ## Test
 
 ```sh
@@ -36,8 +40,9 @@ uv run ruff format .   # format
 
 ## Tuning
 
-- Game values (ball speed, paddle size, bricks, colours): [src/config.py](src/config.py)
-- Robot skill (reaction delay, speed, aim error, miss chance): top of [src/robot_agent.py](src/robot_agent.py)
+- Game values and rules (ball speed, paddles, bricks and points, round length, score mode,
+  colours): [src/config.py](src/config.py)
+- Robot behaviour: [src/robot_agent.py](src/robot_agent.py)
 
 ## Layout
 
@@ -47,9 +52,9 @@ uv run ruff format .   # format
 | `src/actions.py` | Paddle actions shared by human and robot |
 | `src/entities.py` | Paddle, ball and brick |
 | `src/human_controls.py` | Keyboard input for the human |
-| `src/robot_agent.py` | Robot tuning and behaviour |
+| `src/robot_agent.py` | Robot behaviour |
 | `src/engine.py` | Game loop |
 | `tests/unit/` | Unit tests for single modules |
 | `tests/e2e/` | End-to-end tests that run the whole game |
 | `assets/` | Images and sounds |
-| `docs/` | Architecture notes and decision records |
+| `docs/` | Build plan, architecture notes and decision records |

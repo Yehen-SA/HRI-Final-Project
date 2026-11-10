@@ -1,20 +1,16 @@
-"""Robot teammate. Tune the robot's skill with the values below.
+"""Robot teammate.
+
+Basic version: the robot ignores the balls and sweeps its paddle left and right across the
+whole screen, turning at each edge. Its speed is ROBOT_PADDLE_SPEED in config.py.
+Skill presets (poor / average / good) replace this in a later phase; see docs/plan.md.
 
 Each frame the engine calls get_robot_action() with an observation dict and moves the
-robot's paddle with the returned action, using the same movement rules as the human.
+robot's paddle with the returned action.
 """
 
 from typing import Any
 
-from actions import STAY
-
-# --- Robot tuning ---
-REACTION_DELAY_FRAMES = 6  # robot acts on what it saw this many frames ago
-SPEED_FACTOR = 1.0  # fraction of frames the robot is allowed to move (1.0 = full speed)
-AIM_ERROR_PX = 20  # random offset added to where the robot aims
-DEADZONE_PX = 8  # don't move if already this close to the target
-MISS_CHANCE = 0.0  # chance (0 to 1) the robot gives up on its ball
-PREDICT_LANDING = True  # True: aim where its ball will land; False: follow the ball's x
+from actions import LEFT, RIGHT
 
 
 def get_robot_action(observation: dict[str, Any]) -> str:
@@ -23,13 +19,17 @@ def get_robot_action(observation: dict[str, Any]) -> str:
     observation keys:
       - tick: frame number
       - screen_width, screen_height
-      - robot_ball: {"x", "y", "vx", "vy", "radius"}  (orange, the robot's own ball)
-      - human_ball: {"x", "y", "vx", "vy", "radius"}  (blue, the human's ball)
+      - robot_ball, human_ball: {"x", "y", "vx", "vy", "radius", "waiting"}
       - paddles_hit_any_ball: whether the robot's paddle can also bounce the human's ball
-      - robot_paddle: {"x", "y", "width"}
-      - human_paddle: {"x", "y", "width"}
+      - robot_paddle, human_paddle: {"x", "y", "width"}
+      - robot_last_action: the robot's action last frame
       - bricks_left
 
     Returns one of actions.ACTIONS: "LEFT", "RIGHT" or "STAY".
     """
-    return STAY
+    paddle = observation["robot_paddle"]
+    if paddle["x"] <= 0:
+        return RIGHT
+    if paddle["x"] + paddle["width"] >= observation["screen_width"]:
+        return LEFT
+    return LEFT if observation.get("robot_last_action") == LEFT else RIGHT

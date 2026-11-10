@@ -2,47 +2,57 @@
 \spec{Study Design (30 pts), Implementation (20 pts)}
 
 \subsection{Aim}
-\fix{\ldots}
+To find out whether showing a shared team score, rather than separate scores for each player, makes people treat a robot partner as a teammate, and how the robot's performance relative to the participant affects this. \fix{How we will achieve this (game set-up, how performance is controlled, measures) to be decided.}
 
 \subsection{Equipment and chosen robot}
-\fix{Platform (Overcooked / Reachy Mini / other), why it suits the question, and the hardware and software used.}
+We will use a custom co-operative Atari Breakout game. \fix{Language / library, hardware, how the robot's paddle is controlled.}
+The robot will be displayed clearly inside the game as a robot, and there will be no physical robot for this experiment. 
 
 \subsection{Task}
 \fix{What participants do, how long each round lasts, what the robot does.}
+\begin{reviewblock}
+The game has several levels that get progressively harder, for example by widening the playing area so that the participant has to rely on the robot to keep the balls in play. Before the condition rounds, participants play one practice round to get used to the robot and learn how it moves its paddle. One option is for the robot to cover only a fixed range of the screen, which the participant can set.
+\end{reviewblock}
 
 \subsection{Conditions}
 \textbf{Design:} $2 \times 3$ mixed \fix{confirm}
 \begin{itemize}
-    \item \textbf{Score (between subjects):} shared vs split
+    \item \textbf{Score structure (between subjects):} Shared (one team score) vs split (each player's score shown separately, plus the total)
     \item \textbf{Robot performance (within subjects):} worse / matching / better than the participant, order counterbalanced
 \end{itemize}
 
 \subsection{Variables and measures}
 \textbf{Independent variables:}
 \begin{itemize}
-    \item \textit{Score structure:} Shared (one team score) vs split (each player's score shown separately, plus the total)
+    \item \textit{Score display:} How the score of the robot and player is displayed on screen
     \item \textit{Robot performance:} Worse than, matching, or better than the participant \fix{how to control}
 \end{itemize}
 
 \noindent\textbf{Dependent variables (and how we measure them):}
+\begin{reviewblock}
 \begin{itemize}
-    \item \textit{Teammate perception:} Whether the robot is seen as a teammate, competitor or tool \fix{Likert items}
-    \item \textit{Reward allocation:} Bonus points given to the robot vs its actual share \fix{e.g.\ split 10 points}
-    \item \textit{Peer review:} Rating the robot as a team member \fix{e.g.\ adapted from CATME}
-    \item \textit{Perceived contribution:} Guess of the robot's share vs actual \fix{questionnaire + game log}
-    \item \textit{Likeability:} \fix{e.g.\ Godspeed likeability subscale}
-    \item \textit{Behaviour:} \fix{game log, e.g.\ helping the robot, taking over its tasks}
+    \item Teammate perception: whether the participant sees the robot as a teammate, competitor or tool, measured with Likert items
+    \item Reward allocation: how many of 10 bonus points the participant gives the robot, compared with the robot's actual share of the score
+    \item Peer review: the participant's rating of the robot as a team member, using a questionnaire adapted from CATME
+    \item Perceived contribution: the participant's estimate of the robot's share of the score, compared with its actual share from the game log
+    \item Likeability: the Godspeed likeability subscale
+    \item Behaviour: from the game log, for example how often the participant helps the robot or takes over its tasks
 \end{itemize}
+\end{reviewblock}
 
 \noindent\textbf{Controlled variables:}
 \begin{itemize}
     \item Robot behaviour apart from performance (same strategy and speech)
+    \item Robot anthropomorphism and other visual factors such as its size. 
     \item Same task sequence for every participant
     \item Game, levels and round length
 \end{itemize}
 
 \subsection{Participants and procedure}
-\textbf{Population:} Adults, about 20 participants \fix{recruitment}
+\begin{reviewblock}
+\textbf{Population:} Adults, about 20 participants (10 per score condition). \fix{How we recruit them.}
+Participants must be fluent in English and have no visual or hearing impairments, and no susceptibility to motion sickness. We aim for a balance of gender and age to reduce demographic confounds.
+\end{reviewblock}
 
 \noindent\textbf{Procedure:}
 \begin{enumerate}
@@ -53,9 +63,17 @@
 \end{enumerate}
 
 \subsection{Identification and minimisation of confounds}
+\begin{reviewblock}
 \begin{itemize}
-    \item \textbf{Confound}: Mitigation
+    \item Breakout skill / gaming experience: ask in the pre-study questionnaire; practice round; robot adapts its performance to the participant
+    \item Learning and order effects across rounds: practice round; counterbalance the order of robot performance (Latin square)
+    \item Robot paddle colour / name: counterbalance across performance levels
+    \item Robot paddle looks obviously scripted (perfect, instant movement): add a reaction delay and small errors so it looks natural
+    \item Random ball physics: same starting conditions and brick layout in every round
+    \item Guessing the hypothesis / being nice for the experimenter (e.g.\ when splitting points): neutral instructions, anonymous questionnaire
+    \item Fatigue or boredom: short rounds (about 3 min) and a short questionnaire
 \end{itemize}
+\end{reviewblock}
 
 \subsection{Implementation}
 \fix{What we built or changed in the game / robot to create the conditions and log the data. Full record of changes in Appendix~\ref{app:devlog}.}

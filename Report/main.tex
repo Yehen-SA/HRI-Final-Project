@@ -22,7 +22,19 @@
 \author{Yehen Singankutta Arachchilage, Kee Meng Tan, Faira Li}
 \date{\today}
 
-% Red marker for text still to be written. Delete once resolved.
+% ---------------------------------------------------------------------
+% Draft markers. Three levels:
+%   normal text          final.
+%   \review{...}         blue: drafted and could be submitted, but needs rework.
+%   \begin{reviewblock}  same as \review, for lists or several paragraphs.
+%   \fix{...}            red, in brackets: missing or a placeholder. Must go before submitting.
+% Set \showreviewfalse to see review text in black, as it would be submitted.
+% ---------------------------------------------------------------------
+\newif\ifshowreview
+\showreviewtrue
+\definecolor{reviewblue}{RGB}{0,80,200}
+\newcommand{\review}[1]{\ifshowreview\textcolor{reviewblue}{#1}\else#1\fi}
+\newenvironment{reviewblock}{\ifshowreview\color{reviewblue}\fi}{}
 \newcommand{\fix}[1]{\textcolor{red}{[#1]}}
 % Grey note showing which spec marking criterion a section covers. Delete before submitting.
 \newcommand{\spec}[1]{{\color{gray}\small\textit{Spec: #1}\par}\vspace{4pt}}
@@ -49,6 +61,9 @@
 
 % Contents page for finding our way around while drafting. Remove when finalising.
 \tableofcontents
+
+\vspace{1em}
+\noindent\textbf{Key:} normal text is final; \review{blue text is drafted but needs rework}; \fix{red text is missing}.
 \clearpage
 
 % =====================================================================
@@ -58,62 +73,44 @@
 \spec{Choice of Question and Hypothesis (15 pts)}
 
 \subsection{Initial ideas}
-\textit{Chosen direction:} shared vs split score, with the robot's performance varied:
+\begin{reviewblock}
+\textbf{Chosen direction:} shared vs split score, with the robot's performance varied:
 \begin{itemize}
     \item Score structure: shared score vs split (per-player) score
     \item Robot performance: worse than, matching, or better than the participant
-    \item Blame dropped to keep the study simple (possible future work)
+    \item Blame attribution was considered but left out to keep the study simple; it is possible future work
 \end{itemize}
 
-\textit{Possible games:}
-\begin{itemize}
-    \item Overcooked (Given): already built, strong teamwork; needs a working robot agent
-    \item Team quiz: player answers each question or passes it to the robot; simplest to build
-    \item Co-op Breakout: two paddles defend shared lives; bricks credited to the last paddle to hit the ball
-    \item Co-op memory pairs: turn-based card matching; weaker teamwork
-    \item Collecting game: both players collect items on a grid; risks feeling like a race
-\end{itemize}
-\textit{Game requirements} (rules out Pico Park, Fireboy + Watergirl, bomb defuse):
-\begin{itemize}
-    \item Playable solo by one participant alongside the robot
-    \item Tasks that can be delegated between player and robot
-    \item Score that can easily be shown as shared or split per player
-    \item Robot's performance can be controlled (worse / matching / better)
-    \item Player and robot depend on each other, so the game doesn't become a race
-\end{itemize}
+\textbf{Game:} co-operative Atari Breakout. The participant and robot each control a paddle and defend shared lives; each brick is credited to the last paddle to hit the ball.
 
-\textit{Initial thoughts on what to measure (dependent variables):}
+\textbf{Dependent variables considered:}
 \begin{itemize}
     \item Whether the participant sees the robot as a teammate, competitor or tool
-    \item Reward allocation: split bonus points between self and robot
+    \item Reward allocation: how the participant splits bonus points between themselves and the robot
     \item Peer review of the robot as a team member
-    \item Participant's guess of how much the robot contributed (vs actual)
+    \item The participant's estimate of how much the robot contributed, compared with its actual contribution
     \item Likeability of the robot
 \end{itemize}
 
-\textit{Related work to look at:}
+\textbf{Related work:}
 \begin{itemize}
     \item Human teams: cooperation vs competition (Deutsch 1949), equality vs equity in reward splitting (Deutsch 1975), social loafing (Karau \& Williams 1993)
     \item Humans with computers and robots: ``Can computers be teammates?'' (Nass et al.\ 1996), in-group robots (Kuchenbrandt et al.\ 2013; Fraune et al.\ 2017)
 \end{itemize}
 
-\textit{Other ideas / open questions:}
+\textbf{Other design options:}
 \begin{itemize}
-    \item Score between subjects, performance within subjects \fix{confirm with group}
-    \item Robot presented as a different robot each round (name and colour)
-    \item How to control the robot's performance, e.g.\ adapting to the participant's score
+    \item Score structure varied between subjects and robot performance within subjects \fix{confirm with group}
+    \item The robot presented as a different robot each round, with a new name and colour
+    \item The robot's performance controlled by adapting it to the participant's score
 \end{itemize}
+\end{reviewblock}
 
 \subsection{Research question}
 Are people more likely to treat a robot partner as part of their team when the score is shared rather than split, and does this depend on how well the robot performs relative to them?
 
 \subsection{Hypotheses}
-\begin{itemize}
-    \item \textbf{H1:} A shared score makes participants see the robot more as a teammate.
-    \item \textbf{H2:} With a shared score, rewards are split equally; with a split score, they follow the robot's actual contribution.
-    \item \textbf{H3:} With a split score, a robot that outscores the participant is seen more as a competitor.
-    \item \textbf{H4:} With a shared score, participants underestimate the robot's contribution.
-\end{itemize}
+We hypothesise that participants who see a shared score will treat the robot more as a teammate than participants who see a split score, and that a worse-performing robot will feel less like a teammate than a better-performing robot under both the shared and split scores.
 
 \clearpage
 % =====================================================================

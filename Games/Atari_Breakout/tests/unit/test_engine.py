@@ -4,7 +4,15 @@ import pytest
 
 import config
 from actions import LEFT, STAY
-from engine import HUMAN, ROBOT, Game, score_text
+from engine import HUMAN, ROBOT, score_text
+from engine import Game as _Game
+from robot_strategies import Strategy
+
+
+def Game(**kwargs) -> _Game:  # noqa: N802
+    """These tests use the predictable sweeping robot unless they say otherwise."""
+    kwargs.setdefault("robot_strategy", Strategy.SWEEP)
+    return _Game(**kwargs)
 
 
 def flying(game: Game, ball, x: float, y: float, vx: float, vy: float, hit_by: str) -> None:
@@ -123,7 +131,7 @@ def test_robot_ball_launches_after_delay() -> None:
 
 
 def test_robot_sweeps_full_width() -> None:
-    game = Game()
+    game = Game(robot_strategy=Strategy.SWEEP)
     park_robot_ball(game)
     xs = []
     for _ in range(config.SCREEN_WIDTH):  # long enough for a full crossing both ways

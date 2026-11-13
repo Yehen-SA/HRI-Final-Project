@@ -13,10 +13,11 @@ from typing import Any
 import pygame
 
 import config
-import robot_agent
-from actions import RIGHT, STAY
+from actions import STAY
 from entities import Ball, Brick, Paddle
 from human_controls import LAUNCH_KEY, QUIT_KEY, read_human_action
+from robot_agent import Robot
+from robot_strategies import Strategy
 
 HUMAN = "human"
 ROBOT = "robot"
@@ -32,13 +33,18 @@ def score_text(scores: dict[str, int], mode: str) -> str:
     raise ValueError(f"SCORE_MODE must be 'shared' or 'split', not {mode!r}")
 
 
+DEFAULT_STRATEGY = Strategy[config.ROBOT_STRATEGY] if config.ROBOT_STRATEGY else None
+
+
 class Game:
     def __init__(
         self,
         score_mode: str = config.SCORE_MODE,
         seed: int = config.SEED,
         round_seconds: float = config.ROUND_SECONDS,
+        robot_strategy: Strategy | None = DEFAULT_STRATEGY,
     ) -> None:
+        """`robot_strategy=None` plays without a robot (no robot paddle or ball)."""
         score_text({HUMAN: 0, ROBOT: 0}, score_mode)  # fail early on a bad mode
         self.score_mode = score_mode
         self.rng = random.Random(seed)
@@ -53,25 +59,32 @@ class Game:
             config.PADDLE_SPEED,
             config.SCREEN_WIDTH,
         )
-        self.robot = Paddle(
-            ROBOT,
-            config.ROBOT_START_X,
-            config.PADDLE_Y,
-            config.PADDLE_WIDTH,
-            config.PADDLE_HEIGHT,
-            config.ROBOT_PADDLE_SPEED,
-            config.SCREEN_WIDTH,
-        )
-        self.paddles = {HUMAN: self.human, ROBOT: self.robot}
-        self.human_ball = Ball(HUMAN, 0, 0, 0, 0, config.BALL_RADIUS)
-        self.robot_ball = Ball(ROBOT, 0, 0, 0, 0, config.BALL_RADIUS)
-        self.balls = [self.human_ball, self.robot_ball]
+        self.paddles = {HUMAN: self.human}
+        self.human_ball = Ball(HUMAN, 0, 0, 0, 0, config.BALL_RADIUS, id=0)
+        self.balls = [self.human_ball]
+
+        self.robot_agent: Robot | None = None
+        self.robot: Paddle | None = None
+        self.robot_ball: Ball | None = None
+        if robot_strategy is not None:
+            self.robot_agent = Robot(robot_strategy, seed=seed + 1)
+            self.robot = Paddle(
+                ROBOT,
+                config.ROBOT_START_X,
+                config.PADDLE_Y,
+                config.PADDLE_WIDTH,
+                config.PADDLE_HEIGHT,
+                config.ROBOT_PADDLE_SPEED,
+                config.SCREEN_WIDTH,
+            )
+            self.paddles[ROBOT] = self.robot
+            self.robot_ball = Ball(ROBOT, 0, 0, 0, 0, config.BALL_RADIUS, id=1)
+            self.balls.append(self.robot_ball)
         self.bricks = self._build_bricks()
 
         self.tick = 0
         self.scores = {HUMAN: 0, ROBOT: 0}
         self.drops = {HUMAN: 0, ROBOT: 0}
-        self.robot_last_action = RIGHT
         self.over = False
 
         for ball in self.balls:
@@ -126,17 +139,8 @@ class Game:
         ball.last_hit_by = ball.owner
 
     def _observation_for_robot(self) -> dict[str, Any]:
-        """Build the observation passed to robot_agent.get_robot_action()."""
-
-        def ball_info(b: Ball) -> dict[str, Any]:
-            return {
-                "x": b.x,
-                "y": b.y,
-                "vx": b.vx,
-                "vy": b.vy,
-                "radius": b.radius,
-                "waiting": b.waiting,
-            }
+        """Build the observation passed to Robot.get_action() (keys in robot_strategies.py)."""
+        assert self.robot is not None
 
         def paddle_info(p: Paddle) -> dict[str, Any]:
             return {"x": p.x, "y": p.y, "width": p.width}
@@ -145,12 +149,22 @@ class Game:
             "tick": self.tick,
             "screen_width": config.SCREEN_WIDTH,
             "screen_height": config.SCREEN_HEIGHT,
-            "robot_ball": ball_info(self.robot_ball),
-            "human_ball": ball_info(self.human_ball),
-            "paddles_hit_any_ball": config.PADDLES_HIT_ANY_BALL,
+            "paddle_y": config.PADDLE_Y,
             "robot_paddle": paddle_info(self.robot),
             "human_paddle": paddle_info(self.human),
-            "robot_last_action": self.robot_last_action,
+            "balls": [
+                {
+                    "id": b.id,
+                    "x": b.x,
+                    "y": b.y,
+                    "vx": b.vx,
+                    "vy": b.vy,
+                    "radius": b.radius,
+                    "owner": b.owner,
+                    "waiting": b.waiting,
+                }
+                for b in self.balls
+            ],
             "bricks_left": self.bricks_left,
         }
 
@@ -194,7 +208,7 @@ class Game:
             return
         touching = [
             p
-            for p in (self.human, self.robot)
+            for p in self.paddles.values()
             if self._can_bounce(p, ball) and ball.rect.colliderect(p.rect)
         ]
         if not touching:
@@ -230,9 +244,10 @@ class Game:
         if self.over:
             return
         self._apply_action(self.human, human_action)
-        robot_action = robot_agent.get_robot_action(self._observation_for_robot())
-        self._apply_action(self.robot, robot_action)
-        self.robot_last_action = robot_action
+        if self.robot_agent is not None and self.robot is not None:
+            self._apply_action(
+                self.robot, self.robot_agent.get_action(self._observation_for_robot())
+            )
         for ball in self.balls:
             self._update_ball(ball, launch_pressed)
         self.tick += 1
@@ -261,7 +276,7 @@ class Game:
             if brick.alive:
                 pygame.draw.rect(screen, brick.color, brick.rect)
         colours = {HUMAN: config.COLOR_HUMAN, ROBOT: config.COLOR_ROBOT}
-        for paddle in (self.robot, self.human):  # human drawn on top when they overlap
+        for paddle in reversed(self.paddles.values()):  # human drawn on top when they overlap
             pygame.draw.rect(screen, colours[paddle.owner], paddle.rect, border_radius=4)
         for ball in self.balls:
             pygame.draw.circle(

@@ -8,7 +8,8 @@ Status: basic game playable. Study settings, logging and the web version are nex
 
 A human and a robot each control a paddle on the same row (they can pass through each other)
 and each has their own ball, colour coded to match: blue for the human, orange for the robot.
-They play as a team. For now the robot just sweeps left and right.
+They play as a team. The robot has two strategies: `GOOD` (tries to play properly) and `BAD`
+(random movement).
 See [docs/architecture.md](docs/architecture.md).
 
 ## Setup
@@ -42,7 +43,8 @@ uv run ruff format .   # format
 
 - Game values and rules (ball speed, paddles, bricks and points, round length, score mode,
   colours): [src/config.py](src/config.py)
-- Robot behaviour: [src/robot_agent.py](src/robot_agent.py)
+- Robot behaviour: [src/robot_strategies.py](src/robot_strategies.py); compare strategies with
+  `uv run tools/simulate_robot.py`
 
 ## Layout
 
@@ -52,8 +54,10 @@ uv run ruff format .   # format
 | `src/actions.py` | Paddle actions shared by human and robot |
 | `src/entities.py` | Paddle, ball and brick |
 | `src/human_controls.py` | Keyboard input for the human |
-| `src/robot_agent.py` | Robot behaviour |
+| `src/robot_agent.py` | `Robot(strategy)` |
+| `src/robot_strategies.py` | Robot strategies (`GOOD`, `BAD`, `SWEEP`) |
 | `src/engine.py` | Game loop |
+| `tools/` | Helper scripts (robot simulation) |
 | `tests/unit/` | Unit tests for single modules |
 | `tests/e2e/` | End-to-end tests that run the whole game |
 | `assets/` | Images and sounds |

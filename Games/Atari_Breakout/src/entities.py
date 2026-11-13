@@ -45,6 +45,7 @@ class Ball:
     waiting: bool = True  # sitting on its owner's paddle, not yet launched
     last_hit_by: str = ""  # who gets the points for the next brick; set to owner on launch
     launch_tick: int = 0  # robot's ball only: the frame it launches by itself
+    id: int = 0  # stable number so the robot can tell balls apart
 
     @property
     def rect(self) -> pygame.Rect:

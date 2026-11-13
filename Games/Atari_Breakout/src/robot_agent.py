@@ -1,35 +1,30 @@
-"""Robot teammate.
+"""The robot teammate.
 
-Basic version: the robot ignores the balls and sweeps its paddle left and right across the
-whole screen, turning at each edge. Its speed is ROBOT_PADDLE_SPEED in config.py.
-Skill presets (poor / average / good) replace this in a later phase; see docs/plan.md.
+Create one with a strategy from robot_strategies.py:
 
-Each frame the engine calls get_robot_action() with an observation dict and moves the
-robot's paddle with the returned action.
+    robot = Robot(Strategy.GOOD)
+    action = robot.get_action(observation)
+
+Each frame the engine passes the observation (see robot_strategies.py for its keys) and moves
+the robot's paddle with the returned action, using the same movement code as the human.
 """
 
-from typing import Any
+import random
 
-from actions import LEFT, RIGHT
+import config
+from robot_strategies import STRATEGIES, Observation, Strategy
 
 
-def get_robot_action(observation: dict[str, Any]) -> str:
-    """Pick the robot's action for this frame.
+class Robot:
+    def __init__(self, strategy: Strategy, seed: int = config.SEED) -> None:
+        self.strategy = strategy
+        self.seed = seed
+        self.reset()
 
-    observation keys:
-      - tick: frame number
-      - screen_width, screen_height
-      - robot_ball, human_ball: {"x", "y", "vx", "vy", "radius", "waiting"}
-      - paddles_hit_any_ball: whether the robot's paddle can also bounce the human's ball
-      - robot_paddle, human_paddle: {"x", "y", "width"}
-      - robot_last_action: the robot's action last frame
-      - bricks_left
+    def reset(self) -> None:
+        """Start fresh (same seed, so the same game gives the same robot moves)."""
+        self._impl = STRATEGIES[self.strategy](random.Random(self.seed))
 
-    Returns one of actions.ACTIONS: "LEFT", "RIGHT" or "STAY".
-    """
-    paddle = observation["robot_paddle"]
-    if paddle["x"] <= 0:
-        return RIGHT
-    if paddle["x"] + paddle["width"] >= observation["screen_width"]:
-        return LEFT
-    return LEFT if observation.get("robot_last_action") == LEFT else RIGHT
+    def get_action(self, observation: Observation) -> str:
+        """Pick this frame's action: one of actions.ACTIONS."""
+        return self._impl.act(observation)

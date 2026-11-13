@@ -13,26 +13,28 @@ logging and the web build come next ([plan.md](plan.md)).
 | `actions.py` | The actions a paddle can take (`LEFT`, `RIGHT`, `STAY`). Shared by both players. |
 | `entities.py` | `Paddle`, `Ball` and `Brick`. Paddles and balls have an `owner`. |
 | `human_controls.py` | Keyboard to action for the human, plus the launch (Space) and quit (Esc) keys. Nothing robot-related. |
-| `robot_agent.py` | The robot: `get_robot_action(observation)`. For now it sweeps left and right. |
+| `robot_agent.py` | `Robot(strategy)`: the robot, created with a strategy, with `get_action(observation)`. |
+| `robot_strategies.py` | The `Strategy` enum (`GOOD`, `BAD`, `SWEEP`) and one class per strategy, tuning values at the top of each. |
 | `engine.py` | `Game`: rules, collisions, scoring and the robot's observation, all runnable without a window (`update()`), plus drawing and the async window loop (`run()`). |
 | `main.py` | Entry point (`uv run src/main.py`; `--max-frames N` stops early, for tests). |
 
 ## Human and robot are kept apart
 
-The two players differ in where their action comes from, and in paddle speed: the robot uses
-`ROBOT_PADDLE_SPEED`. Once an action exists, the engine moves both paddles with the same
+The two players differ only in where their action comes from (both paddles move at the same
+speed; `ROBOT_PADDLE_SPEED` can change that). Once an action exists, the engine moves both paddles with the same
 `_apply_action()`.
 
 ```
 keyboard    → human_controls.read_human_action ─┐
                                                  ├→ Game._apply_action(paddle, action)
-observation → robot_agent.get_robot_action ─────┘
+observation → Robot(strategy).get_action ────────┘
 ```
 
 - The robot only sees the observation dict the engine builds. It never reads pygame or the
   keyboard.
 - The human side never imports the robot.
-- Swapping in a different robot means replacing `get_robot_action()` and nothing else.
+- Swapping in a different robot means passing a different `Strategy`, or adding a strategy class
+  to `robot_strategies.py`. `Game(robot_strategy=None)` plays with no robot at all.
 
 ## Paddle layout
 
@@ -52,7 +54,8 @@ See [decisions/0004-two-colour-coded-balls.md](decisions/0004-two-colour-coded-b
 
 - **Game feel and rules** (ball speed, paddle sizes and speeds, bricks and their points,
   round length, score mode, seed, whether paddles can hit each other's ball): `config.py`.
-- **Robot behaviour:** `robot_agent.py`.
+- **Robot behaviour:** the strategy classes in `robot_strategies.py`; the free-play strategy is
+  `ROBOT_STRATEGY` in `config.py`. Compare strategies with `uv run tools/simulate_robot.py`.
 
 ## Still to build
 

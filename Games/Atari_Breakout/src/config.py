@@ -1,6 +1,6 @@
 """Game tuning values. Change numbers here; no other file should hard-code them.
 
-Robot skill is tuned separately, at the top of robot_agent.py.
+Robot behaviour is tuned separately, in robot_strategies.py.
 Positions and sizes are in pixels; speeds are in pixels per frame.
 """
 
@@ -17,7 +17,7 @@ WINDOW_TITLE = "HRI Breakout: Human + Robot"
 PADDLE_WIDTH = 100
 PADDLE_HEIGHT = 12
 PADDLE_SPEED = 7  # human paddle
-ROBOT_PADDLE_SPEED = 3.5  # robot paddle (it sweeps the full width, see robot_agent.py)
+ROBOT_PADDLE_SPEED = PADDLE_SPEED  # same as the human, so speed isn't a difference between robots
 PADDLE_Y = 560
 HUMAN_START_X = SCREEN_WIDTH // 4 - PADDLE_WIDTH // 2
 ROBOT_START_X = 3 * SCREEN_WIDTH // 4 - PADDLE_WIDTH // 2
@@ -53,7 +53,12 @@ BRICK_ROW_POINTS = [7, 7, 4, 4, 1, 1]  # points per brick, top row first (Atari 
 # paddle has hit it since launch). No lives: dropping a ball only costs time.
 ROUND_SECONDS = 180  # the game ends when time runs out or every brick is gone
 SCORE_MODE = "split"  # "shared": team score only; "split": each player's score plus total
-SEED = 1234  # seeds the launch angles, so a run can be repeated
+SEED = 1234  # seeds the launch angles and the robot, so a run can be repeated
+
+# --- Robot ---
+# Strategy for free play: "GOOD", "BAD" or "SWEEP" (see robot_strategies.py), or None for no
+# robot. The study session (later) picks the strategy per round itself.
+ROBOT_STRATEGY = "GOOD"
 
 # --- Colours (RGB) ---
 COLOR_BG = (20, 22, 30)

@@ -6,7 +6,7 @@ and drawing on top.
 
 Events: everything that happens in a round (brick broken, steal, ball lost...) goes through
 `Game._emit()`. Enabled rules from rules.py get a matching `on_<event>` call, and listeners
-(logging, robot persona) get `listener(event_name, data)`. The event names and their data
+(logging, robot persona) get `listener(game, event_name, data)`. The event names and their data
 are listed in `EVENTS`.
 """
 
@@ -14,6 +14,7 @@ import asyncio
 import math
 import random
 from collections.abc import Callable
+from pathlib import Path
 from typing import Any
 
 import pygame
@@ -46,7 +47,7 @@ EVENTS = {
     "round_end": ("reason",),
 }
 
-Listener = Callable[[str, dict[str, Any]], None]
+Listener = Callable[["Game", str, dict[str, Any]], None]
 
 
 def score_text(scores: dict[str, int], mode: str) -> str:
@@ -77,7 +78,7 @@ class Game:
 
         - `robot_strategy=None` plays without a robot (no robot paddle or ball).
         - `rules`: the optional rules to use; by default the enabled ones in rules.RULES.
-        - `listeners`: called with every event (see EVENTS), e.g. for logging.
+        - `listeners`: called as listener(game, event, data) for every event (see EVENTS).
         """
         if lost_ball_to not in ("random", HUMAN, ROBOT):
             raise ValueError("LOST_BALL_GOES_TO must be 'random', 'human' or 'robot'")
@@ -158,7 +159,7 @@ class Game:
         for rule in self.rules:
             getattr(rule, f"on_{event}")(self, **data)
         for listener in self.listeners:
-            listener(event, data)
+            listener(self, event, data)
 
     # --- API for rules (see rules.py) ---
 
@@ -453,39 +454,75 @@ class Game:
         )
 
 
-async def run(max_frames: int | None = None) -> None:
-    """Open the window and play until Esc or the window closes.
+async def run(max_frames: int | None = None, log_dir: Path | None = None) -> None:
+    """Free play: open the window and play until Esc or the window closes.
 
-    After game over, Space starts a new game. `max_frames` stops early (used by tests).
-    The loop is async so the same code can later run in the browser (pygbag).
+    After game over, Space starts a new game. Every game is written to a session log.
+    `max_frames` stops early (used by tests). The loop is async so the same code can run in
+    the browser (pygbag).
     """
+    from session_log import SessionLog  # imported here: session_log imports this module
+    from stats import RoundStats
+
     pygame.init()
     screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT))
     pygame.display.set_caption(config.WINDOW_TITLE)
     font = pygame.font.Font(None, 30)
     clock = pygame.time.Clock()
-    game = Game()
+
+    log = SessionLog.create("freeplay", log_dir)
+    log.write_participant(
+        {"mode": "free play", "score_mode": config.SCORE_MODE, "robot": config.ROBOT_STRATEGY}
+    )
+    log.write_settings()
+    games_played = 0
+
+    def new_game() -> tuple[Game, RoundStats]:
+        stats = RoundStats()
+        return Game(listeners=[stats]), stats
+
+    def save(game: Game, stats: RoundStats) -> None:
+        nonlocal games_played
+        games_played += 1
+        info = {"title": f"Game {games_played}", "robot": config.ROBOT_STRATEGY}
+        log.write_round(info | {"score_mode": game.score_mode}, stats)
+
+    game, stats = new_game()
+    saved = False
     frames = 0
+    status = "aborted"
     try:
         while max_frames is None or frames < max_frames:
             space_pressed = False
+            quit_now = False
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    return
+                    quit_now = True
                 if event.type == pygame.KEYDOWN:
                     if event.key == QUIT_KEY:
-                        return
+                        quit_now = True
                     if event.key == LAUNCH_KEY:
                         space_pressed = True
+            if quit_now:
+                break
             if game.over and space_pressed:
-                game = Game()
+                game, stats = new_game()
+                saved = False
                 space_pressed = False
             keys = pygame.key.get_pressed()
             game.update(read_human_action(keys.__getitem__), space_pressed)
+            if game.over and not saved:
+                save(game, stats)
+                saved = True
             game.draw(screen, font)
             pygame.display.flip()
             clock.tick(config.FPS)
             frames += 1
             await asyncio.sleep(0)
+        if not saved:
+            game.end("quit")
+            save(game, stats)
+        status = "complete"
     finally:
+        log.finish(status)
         pygame.quit()

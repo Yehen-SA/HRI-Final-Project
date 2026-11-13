@@ -30,6 +30,12 @@ uv run src/main.py
 Controls: A/D or the arrow keys move, Space launches a waiting ball (and plays again after game
 over), Esc quits. Rules: [docs/decisions/0005-basic-game-rules.md](docs/decisions/0005-basic-game-rules.md).
 
+## Logs
+
+Every run writes a Markdown log to `logs/` (a new file each time, never overwritten): the
+settings, the scores and behaviour stats per round, an event timeline, and a JSON block for
+analysis.
+
 ## Test
 
 ```sh
@@ -57,6 +63,8 @@ uv run ruff format .   # format
 | `src/actions.py` | Paddle actions shared by human and robot |
 | `src/entities.py` | Paddle, ball and brick |
 | `src/human_controls.py` | Keyboard input for the human |
+| `src/stats.py` | Per-round measures for the log |
+| `src/session_log.py` | Writes the Markdown log |
 | `src/rules.py` | Optional rules, switched on or off |
 | `src/robot_agent.py` | `Robot(strategy)` |
 | `src/robot_strategies.py` | Robot strategies (`GOOD`, `BAD`, `SWEEP`) |

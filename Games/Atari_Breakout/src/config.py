@@ -4,6 +4,8 @@ Robot behaviour is tuned separately, in robot_strategies.py.
 Positions and sizes are in pixels; speeds are in pixels per frame.
 """
 
+GAME_VERSION = "0.4.0"  # recorded in every log; bump when the game changes
+
 # --- Window ---
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -66,6 +68,10 @@ POWERUP_FALL_SPEED = 3
 # Strategy for free play: "GOOD", "BAD" or "SWEEP" (see robot_strategies.py), or None for no
 # robot. The study session (later) picks the strategy per round itself.
 ROBOT_STRATEGY = "GOOD"
+
+# --- Logging ---
+# Each run writes a new Markdown log to logs/ (see session_log.py).
+LOG_TIMELINE = True  # include every event (hits, steals, bricks...) with its time
 
 # --- Colours (RGB) ---
 COLOR_BG = (20, 22, 30)

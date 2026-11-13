@@ -21,3 +21,6 @@ dist/
 
 # Windows download markers
 *:Zone.Identifier
+
+# Game session logs (participant data)
+logs/

@@ -1,6 +1,6 @@
 # Build plan: Breakout study game
 
-Status: phase 1 (basic game) done. Round 2 steps 1–3 done; steps 4–7 to do.
+Status: phase 1 (basic game) done. Round 2 steps 1–4 done; steps 5–7 to do.
 
 ## Context
 
@@ -106,7 +106,7 @@ This plan replaces the earlier phase 2 draft (`study.toml`, Supabase).
 - Tests: each example rule, when enabled, changes scores or ball count as expected; disabled
   rules do nothing.
 
-## Step 4: Markdown session log
+## Step 4: Markdown session log (done, ADR 0009)
 
 - New `src/stats.py`: `RoundStats`, fed by engine events. Per player:
   - points: from bricks, and from rules (by reason)

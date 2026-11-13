@@ -44,7 +44,7 @@ def test_every_engine_event_has_a_rule_hook() -> None:
 def test_listeners_get_events_with_their_data() -> None:
     seen = []
     game = Game(
-        robot_strategy=Strategy.SWEEP, rules=[], listeners=[lambda e, d: seen.append((e, d))]
+        robot_strategy=Strategy.SWEEP, rules=[], listeners=[lambda g, e, d: seen.append((e, d))]
     )
     steal_by_robot(game)
     names = [e for e, _ in seen]
@@ -118,7 +118,7 @@ def test_brick_points_are_recorded_by_reason() -> None:
 def test_round_end_is_announced_once_with_a_reason() -> None:
     ends = []
     game = Game(
-        round_seconds=0.1, rules=[], listeners=[lambda e, d: e == "round_end" and ends.append(d)]
+        round_seconds=0.1, rules=[], listeners=[lambda g, e, d: e == "round_end" and ends.append(d)]
     )
     for _ in range(20):
         game.update()

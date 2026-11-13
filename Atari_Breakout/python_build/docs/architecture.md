@@ -23,6 +23,7 @@ logging and the web build come next ([plan.md](plan.md)).
 | `ui.py` | Fonts, wrapped text, buttons, overlays. |
 | `robot_persona/` | The robot as a character: `persona_config.py` (name, look, speech and voice settings), `sprites.py` (expressions; drawn in code or from PNGs), `lines.py` (what it says and when), `speech.py` (bubbles, voice), `persona.py` (`RobotPersona`, a game listener). |
 | `paths.py` | Locates `assets/`, including inside packaged builds. |
+| `web.py` | Browser-only helpers: downloads the log file. |
 | `stats.py` | `RoundStats`: a game listener that measures each round per player (scores, steals, drops, possession time...) and keeps an event timeline. |
 | `session_log.py` | `SessionLog`: writes one Markdown log per run to `logs/`, section by section, ending with a JSON block. |
 | `rules.py` | Optional rules (penalties, bonuses, power-ups): a `Rule` base class with one hook per game event, and the `RULES` list where each rule is switched on or off. |
@@ -105,6 +106,15 @@ written, so a crash keeps everything so far. The log holds the conditions, setti
 rules, robot tuning), survey answers, a stats table per round (`Measure | Human | Robot`), an
 event timeline, and a final JSON block with the same data.
 See [decisions/0009-markdown-session-log.md](decisions/0009-markdown-session-log.md).
+
+## Packaging
+
+`python_build/` is the only source. `../build_html.py` stages `src/` and `assets/` into the
+layout pygbag wants and builds `../html_build/`; `../build_exe.ps1` (run on Windows) builds
+`../exe_build/HRI_Breakout.exe` with PyInstaller. Browser rules the code follows: `main.py`
+imports pygame itself and ends in a plain `asyncio.run()`; the `statistics` module isn't used
+(it's missing in the browser); logs are downloaded at the end (`web.py`).
+See [decisions/0012-packaging.md](decisions/0012-packaging.md).
 
 ## Where to tune what
 

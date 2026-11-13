@@ -11,6 +11,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "piper-tts>=1.8.0",
+    "pygbag>=0.9.3",
     "pytest",
     "ruff",
     "soundfile>=0.14.0",

@@ -27,3 +27,10 @@ logs/
 
 # Piper voice model download (tools/generate_voice.py)
 .voice_cache/
+
+# Generated builds: keep only their READMEs (see Atari_Breakout/README.md)
+Atari_Breakout/html_build/*
+!Atari_Breakout/html_build/README.md
+Atari_Breakout/exe_build/*
+!Atari_Breakout/exe_build/README.md
+Atari_Breakout/.html_stage/

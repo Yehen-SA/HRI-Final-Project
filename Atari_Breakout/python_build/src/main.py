@@ -12,17 +12,21 @@ Runs the study session by default. Options:
 import argparse
 import asyncio
 import os
+import sys
 from pathlib import Path
 
 # Stop pygame printing its banner on import.
 os.environ.setdefault("PYGAME_HIDE_SUPPORT_PROMPT", "1")
+
+# The browser build (pygbag) only loads pygame if main.py imports it directly.
+import pygame  # noqa: E402, F401
 
 import config  # noqa: E402  (must come after the banner setting)
 import engine  # noqa: E402
 import session  # noqa: E402
 
 
-def main(argv: list[str] | None = None) -> int:
+async def main_async(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="HRI Breakout: human + robot")
     parser.add_argument("--free-play", action="store_true", help="play games without surveys")
     parser.add_argument("--pid", help="participant ID (skips the ID screen)")
@@ -33,21 +37,22 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     if args.free_play:
-        asyncio.run(engine.run(max_frames=args.max_frames, log_dir=args.log_dir))
-        return 0
+        await engine.run(max_frames=args.max_frames, log_dir=args.log_dir)
+        return
     seconds = args.round_seconds
-    asyncio.run(
-        session.run_session(
-            log_dir=args.log_dir,
-            autoplay=args.autoplay,
-            round_seconds=seconds or config.ROUND_SECONDS,
-            practice_seconds=seconds or config.PRACTICE_SECONDS,
-            participant_id=args.pid,
-            max_frames=args.max_frames,
-        )
+    await session.run_session(
+        log_dir=args.log_dir,
+        autoplay=args.autoplay,
+        round_seconds=seconds or config.ROUND_SECONDS,
+        practice_seconds=seconds or config.PRACTICE_SECONDS,
+        participant_id=args.pid,
+        max_frames=args.max_frames,
     )
-    return 0
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    if sys.platform == "emscripten":
+        # Browser (pygbag): a plain asyncio.run, no exit code; the page has no command line.
+        asyncio.run(main_async([]))
+    else:
+        asyncio.run(main_async())

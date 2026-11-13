@@ -5,11 +5,14 @@ from pathlib import Path
 
 
 def game_dir() -> Path:
-    """The folder holding src/ and assets/ (or the packaged equivalent)."""
+    """The folder holding assets/ (src/'s parent when run from source)."""
     bundle = getattr(sys, "_MEIPASS", None)  # set by PyInstaller
     if bundle:
         return Path(bundle)
-    return Path(__file__).resolve().parents[1]
+    here = Path(__file__).resolve().parent
+    if (here / "assets").is_dir():  # browser build: the modules sit next to assets/
+        return here
+    return here.parent
 
 
 def asset(*parts: str) -> Path:

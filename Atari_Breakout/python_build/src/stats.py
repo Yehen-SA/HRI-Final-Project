@@ -11,7 +11,6 @@ Every per-player number is kept for both "human" and "robot". To add a measure: 
 `__call__` (from an event, or every frame in `_every_frame`), then add a row to `ROWS`.
 """
 
-from statistics import mean, median
 from typing import Any
 
 import config
@@ -55,6 +54,17 @@ TIMELINE_EVENTS = {
     "powerup_missed",
     "round_end",
 }
+
+
+def mean(values: list[int]) -> float:
+    return sum(values) / len(values)
+
+
+def median(values: list[int]) -> float:
+    """(The statistics module isn't available in the browser build.)"""
+    ordered = sorted(values)
+    mid = len(ordered) // 2
+    return ordered[mid] if len(ordered) % 2 else (ordered[mid - 1] + ordered[mid]) / 2
 
 
 def _secs(frames: int) -> float:

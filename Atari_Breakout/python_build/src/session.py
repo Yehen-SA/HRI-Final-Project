@@ -21,6 +21,7 @@ import pygame
 import config
 import session_text as text
 import ui
+import web
 from actions import LEFT, RIGHT, STAY
 from assignment import conditions_for
 from engine import Game
@@ -98,13 +99,22 @@ class RoundScreen:
 class MessageScreen:
     """A page of text. Done on Enter or Space (or straight away in autoplay)."""
 
-    def __init__(self, message: str, autoplay: bool = False, closes_game: bool = False) -> None:
+    def __init__(
+        self,
+        message: str,
+        autoplay: bool = False,
+        closes_game: bool = False,
+        on_d: Any = None,
+    ) -> None:
         self.message = message
         self.done = autoplay
         self.closes_game = closes_game  # the end screen: Enter/Space quits
+        self.on_d = on_d  # called when D is pressed (re-download the log in the browser)
 
     def handle_event(self, event: pygame.event.Event) -> None:
-        if event.type == pygame.KEYDOWN and event.key in (
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_d and self.on_d:
+            self.on_d()
+        elif event.type == pygame.KEYDOWN and event.key in (
             pygame.K_RETURN,
             pygame.K_KP_ENTER,
             pygame.K_SPACE,
@@ -171,7 +181,7 @@ class Session:
         if pre.declined:
             self.status = "declined"
             log.finish("declined")
-            yield MessageScreen(text.DECLINED, self.autoplay, closes_game=True)
+            yield self.end_screen(text.DECLINED)
             return
         yield self.survey("How to play", text.INSTRUCTIONS, context)
 
@@ -212,10 +222,17 @@ class Session:
         log.write_answers("Stage 3: final questions", final.answers(), key="final")
         self.status = "complete"
         log.finish("complete")
-        end = text.END
+        yield self.end_screen(text.END)
+
+    def end_screen(self, message: str) -> "MessageScreen":
+        """The last screen: in the browser, explains the downloaded log (D downloads again)."""
+        assert self.log is not None
+        if web.IN_BROWSER:
+            message += "\n\n" + text.END_WEB_LOG.format(log_name=self.log.path.name)
+            return MessageScreen(message, self.autoplay, closes_game=True, on_d=self.log.download)
         if config.SHOW_LOG_PATH_AT_END:
-            end += "\n\n" + text.END_SEND_LOG.format(log_path=log.path)
-        yield MessageScreen(end, self.autoplay, closes_game=True)
+            message += "\n\n" + text.END_SEND_LOG.format(log_path=self.log.path)
+        return MessageScreen(message, self.autoplay, closes_game=True)
 
     def play_round(
         self,

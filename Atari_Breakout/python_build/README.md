@@ -13,6 +13,9 @@ goes to a random player. They play as a team. The robot has two strategies: `GOO
 (random movement).
 See [docs/architecture.md](docs/architecture.md).
 
+This folder is the source for all three versions (Python, browser, Windows .exe); see
+[../README.md](../README.md).
+
 ## Setup
 
 Needs [uv](https://docs.astral.sh/uv/). From this folder:
@@ -65,6 +68,14 @@ speech bubbles (with voice). Everything about it is in
 Every run writes a Markdown log to `logs/` (a new file each time, never overwritten): the
 settings, the scores and behaviour stats per round, an event timeline, and a JSON block for
 analysis.
+
+## Packaging for subjects
+
+- Browser: `uv run ../build_html.py` builds `../html_build/` (then host it; see its README).
+- Windows: run `../build_exe.ps1` on Windows to build `../exe_build/HRI_Breakout.exe`.
+
+Code that must behave differently when packaged: `paths.py` (where `assets/` is),
+`session_log.default_log_dir()` (where logs go), and `web.py` (the browser downloads the log).
 
 ## Test
 

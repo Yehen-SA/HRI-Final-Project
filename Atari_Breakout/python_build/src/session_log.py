@@ -26,6 +26,7 @@ from typing import Any, TextIO
 import config
 import robot_strategies
 import rules
+import web
 from stats import ROWS, RoundStats
 
 LOG_FORMAT_VERSION = 1
@@ -41,7 +42,13 @@ def platform_name() -> str:
 
 
 def default_log_dir() -> Path:
-    """`logs/` next to the exe when packaged, otherwise in the game folder."""
+    """`logs/` next to the exe when packaged, otherwise in the game folder.
+
+    In the browser it's a folder in the page's temporary file system; the finished log is
+    downloaded (see SessionLog.finish).
+    """
+    if sys.platform == "emscripten":
+        return Path.cwd() / "logs"
     if getattr(sys, "frozen", False):
         return Path(sys.executable).resolve().parent / "logs"
     return Path(__file__).resolve().parents[1] / "logs"
@@ -232,8 +239,15 @@ class SessionLog:
         self._write(text + "\n")
         return entry
 
+    def download(self) -> bool:
+        """In the browser, download the log file (does nothing on desktop)."""
+        return web.download_text(self.path.name, self.path.read_text(encoding="utf-8"))
+
     def finish(self, status: str = "complete") -> None:
-        """Close the log: "complete" or "aborted". Safe to call twice."""
+        """Close the log: "complete", "aborted" or "declined". Safe to call twice.
+
+        In the browser the finished log is downloaded straight away.
+        """
         if self.finished:
             return
         self.finished = True
@@ -244,3 +258,4 @@ class SessionLog:
             "## Data (JSON)\n\n```json\n" + json.dumps(self.data, indent=2, default=str) + "\n```\n"
         )
         self._file.close()
+        self.download()

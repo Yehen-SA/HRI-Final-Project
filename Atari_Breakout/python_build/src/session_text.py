@@ -59,6 +59,10 @@ PRACTICE_OVER = "Practice over. Press Space to continue."
 
 END = "That's the end of the study. Thank you for taking part!\n\nYou can close this window now."
 END_SEND_LOG = "Please send this file back to the researchers:\n\n{log_path}"
+END_WEB_LOG = (
+    "Your browser has downloaded your results file ({log_name}). Please send it back to the "
+    "researchers.\n\nIf it didn't download, press D to try again."
+)
 
 DECLINED = (
     "Thank you for your time. You chose not to take part, so the study ends here.\n\n"

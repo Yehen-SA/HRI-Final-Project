@@ -1,11 +1,11 @@
 # Build plan: Breakout study game
 
-Status: phase 1 (basic game) done. Round 2 steps 1–6 done; step 7 to do.
+Status: phase 1 (basic game) done. Round 2 steps 1–7 done.
 
 ## Context
 
 The basic co-op Breakout game (phase 1) is built and committed (`f120df9`) in
-`Games/Atari_Breakout/`: two colour-coded balls, a sweeping robot, row points 7/7/4/4/1/1, last
+`Games/Atari_Breakout/` (now `Atari_Breakout/python_build/`): two colour-coded balls, a sweeping robot, row points 7/7/4/4/1/1, last
 hitter scores, 180 s rounds, headless `Game.update()` with 31 tests. The team has now decided on
 seven improvements, to be built **in this order, one commit each**:
 
@@ -216,12 +216,12 @@ New package `src/robot_persona/`, the only place persona code lives:
 - Tests: every line's expression exists; `"auto"` falls back to procedural without images; the
   speech cooldown works; a missing voice file doesn't crash.
 
-## Step 7: restructure and packages
+## Step 7: restructure and packages (done, ADR 0012)
 
 - `git mv Games/Atari_Breakout Atari_Breakout/python_build`; remove `Games/`; update the root
   README and links.
 - **`python_build/`**: the source and the "run it with uv" version (`uv run src/main.py`).
-- **`build_html.sh`** (Atari_Breakout level):
+- **`build_html.py`** (Atari_Breakout level; a Python script rather than shell, so it never deletes):
   - stages `src/` and the assets into a temp folder
   - runs `pygbag --build`
   - copies the result to `Atari_Breakout/html_build/` with a subject README

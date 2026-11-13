@@ -14,6 +14,7 @@ logging and the web build come next ([plan.md](plan.md)).
 | `entities.py` | `Paddle`, `Ball` and `Brick`. Paddles and balls have an `owner`. |
 | `human_controls.py` | Keyboard to action for the human, plus the launch (Space) and quit (Esc) keys. Nothing robot-related. |
 | `robot_agent.py` | `Robot(strategy)`: the robot, created with a strategy, with `get_action(observation)`. |
+| `rules.py` | Optional rules (penalties, bonuses, power-ups): a `Rule` base class with one hook per game event, and the `RULES` list where each rule is switched on or off. |
 | `robot_strategies.py` | The `Strategy` enum (`GOOD`, `BAD`, `SWEEP`) and one class per strategy, tuning values at the top of each. |
 | `engine.py` | `Game`: rules, collisions, scoring and the robot's observation, all runnable without a window (`update()`), plus drawing and the async window loop (`run()`). |
 | `main.py` | Entry point (`uv run src/main.py`; `--max-frames N` stops early, for tests). |
@@ -51,10 +52,20 @@ drop for its owner and goes to a random player (`LOST_BALL_GOES_TO`), waiting on
 The engine keeps a plain `balls` list, so there can be any number of balls.
 See [decisions/0007-colour-follows-scorer.md](decisions/0007-colour-follows-scorer.md).
 
+## Game events
+
+Everything that happens in a round goes through `Game._emit()`: `round_start`, `tick`,
+`ball_launched`, `paddle_hit`, `steal`, `brick_broken`, `points`, `ball_lost`, `ball_given`,
+`powerup_spawned`, `powerup_caught`, `powerup_missed`, `round_end` (data for each in
+`engine.EVENTS`). Enabled rules get `on_<event>(game, ...)`; listeners passed to `Game(...)`
+get `listener(event, data)`. Logging and the robot persona hook in as listeners.
+See [decisions/0008-rules-framework.md](decisions/0008-rules-framework.md).
+
 ## Where to tune what
 
 - **Game feel and rules** (ball speed, paddle sizes and speeds, bricks and their points,
   round length, score mode, seed, whether paddles can hit each other's ball): `config.py`.
+- **Optional rules:** switch them on and off in the `RULES` list at the bottom of `rules.py`.
 - **Robot behaviour:** the strategy classes in `robot_strategies.py`; the free-play strategy is
   `ROBOT_STRATEGY` in `config.py`. Compare strategies with `uv run tools/simulate_robot.py`.
 

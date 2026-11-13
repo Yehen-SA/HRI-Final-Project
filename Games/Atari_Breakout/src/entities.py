@@ -64,3 +64,12 @@ class Brick:
     row: int  # 0 is the top row
     points: int
     alive: bool = True
+    col: int = 0
+
+
+@dataclass
+class PowerUp:
+    """A falling item dropped by a rule (rules.py). What it does is up to the rule."""
+
+    kind: str
+    rect: pygame.Rect

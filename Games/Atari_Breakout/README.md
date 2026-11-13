@@ -44,6 +44,8 @@ uv run ruff format .   # format
 
 - Game values and rules (ball speed, paddles, bricks and points, round length, score mode,
   colours): [src/config.py](src/config.py)
+- Optional rules (penalties, bonuses, power-ups): the `RULES` list in
+  [src/rules.py](src/rules.py)
 - Robot behaviour: [src/robot_strategies.py](src/robot_strategies.py); compare strategies with
   `uv run tools/simulate_robot.py`
 
@@ -55,6 +57,7 @@ uv run ruff format .   # format
 | `src/actions.py` | Paddle actions shared by human and robot |
 | `src/entities.py` | Paddle, ball and brick |
 | `src/human_controls.py` | Keyboard input for the human |
+| `src/rules.py` | Optional rules, switched on or off |
 | `src/robot_agent.py` | `Robot(strategy)` |
 | `src/robot_strategies.py` | Robot strategies (`GOOD`, `BAD`, `SWEEP`) |
 | `src/engine.py` | Game loop |

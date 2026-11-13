@@ -58,6 +58,10 @@ ROUND_SECONDS = 180  # the game ends when time runs out or every brick is gone
 SCORE_MODE = "split"  # "shared": team score only; "split": each player's score plus total
 SEED = 1234  # seeds the launch angles and the robot, so a run can be repeated
 
+# --- Power-ups (only used by optional rules in rules.py) ---
+POWERUP_SIZE = 18
+POWERUP_FALL_SPEED = 3
+
 # --- Robot ---
 # Strategy for free play: "GOOD", "BAD" or "SWEEP" (see robot_strategies.py), or None for no
 # robot. The study session (later) picks the strategy per round itself.
@@ -69,6 +73,7 @@ COLOR_HUD = (30, 34, 46)
 COLOR_TEXT = (240, 240, 245)
 COLOR_HUMAN = (66, 135, 245)  # human's paddle and ball
 COLOR_ROBOT = (245, 180, 66)  # robot's paddle and ball
+COLOR_POWERUP = (240, 240, 245)
 BRICK_ROW_COLORS = [  # top row first; reused from the top if there are more rows
     (220, 70, 70),
     (230, 130, 60),

@@ -1,6 +1,6 @@
 # Build plan: Breakout study game
 
-Status: phase 1 (basic game) done. Round 2 steps 1–2 done; steps 3–7 to do.
+Status: phase 1 (basic game) done. Round 2 steps 1–3 done; steps 4–7 to do.
 
 ## Context
 
@@ -85,7 +85,7 @@ This plan replaces the earlier phase 2 draft (`study.toml`, Supabase).
 - Update ADR 0005 and add ADR `0007-colour-follows-scorer.md`; update tests (credit, steal
   counting, random respawn with seed, double touch).
 
-## Step 3: `rules.py`
+## Step 3: `rules.py` (done, ADR 0008)
 
 - New `src/rules.py`:
   - A `Rule` base class with no-op hooks: `on_round_start`, `on_tick`,

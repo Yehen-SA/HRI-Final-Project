@@ -22,7 +22,7 @@ and a voice.
   keep it from talking too much; it says an idle line after 25 s of quiet.
 - Speech bubbles sit beside the robot in its strip, never over the play area.
 - Voice: `tools/generate_voice.py` makes one OGG per line with Piper (voice
-  `en_GB-alan-medium`). Files are named by a hash of the text, so only new or changed lines are
+  `en_GB-jenny_dioco-medium`, a female British voice). Files are named by a hash of the text, so only new or changed lines are
   generated. The game plays a line's file if it exists and stays silent otherwise.
 - The persona behaves the same for both strategies and both score modes. The GOOD robot still
   triggers more happy reactions, because it catches more.

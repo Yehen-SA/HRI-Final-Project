@@ -6,7 +6,8 @@ Two interchangeable sprite sources, picked by persona_config.SPRITE_SOURCE:
     Images are scaled to SPRITE_WIDTH x SPRITE_HEIGHT.
 
 With "auto", images are used as soon as there's one for every expression, so swapping the art
-in is just a matter of dropping the files in.
+in is just a matter of dropping the files in. Each robot looks in assets/robot/<name>/ first
+(e.g. assets/robot/nova/), then in assets/robot/.
 """
 
 import math
@@ -27,12 +28,20 @@ class Expression(Enum):
     EXCITED = "excited"
 
 
-def image_path(expression: Expression):
+def image_path(expression: Expression, name: str = ""):
+    """assets/robot/<name>/<expression>.png if it exists, else assets/robot/<expression>.png."""
+    own = paths.asset("robot", name.lower(), f"{expression.value}.png")
+    if name and own.exists():
+        return own
     return paths.asset("robot", f"{expression.value}.png")
 
 
 class ProceduralSprite:
     """A friendly robot drawn in code: antenna, screen face with eyes and mouth, small body."""
+
+    def __init__(self, identity: cfg.Identity = cfg.FREE_PLAY_IDENTITY) -> None:
+        self.body_colour = identity.body
+        self.trim_colour = identity.trim
 
     def draw(
         self, surface: pygame.Surface, rect: pygame.Rect, expression: Expression, blink: bool
@@ -45,10 +54,10 @@ class ProceduralSprite:
 
         # Antenna
         tip = (rect.centerx, rect.top + 2)
-        pygame.draw.line(surface, cfg.TRIM_COLOR, tip, (rect.centerx, head.top), 3)
+        pygame.draw.line(surface, self.trim_colour, tip, (rect.centerx, head.top), 3)
         pygame.draw.circle(surface, cfg.EYE_COLOR, tip, 4)
         # Body with a chest light
-        pygame.draw.rect(surface, cfg.TRIM_COLOR, body, border_radius=8)
+        pygame.draw.rect(surface, self.trim_colour, body, border_radius=8)
         light = (
             cfg.EYE_COLOR
             if expression in (Expression.HAPPY, Expression.EXCITED)
@@ -56,14 +65,14 @@ class ProceduralSprite:
         )
         pygame.draw.circle(surface, light, body.center, max(3, w // 14))
         # Head and face screen
-        pygame.draw.rect(surface, cfg.BODY_COLOR, head, border_radius=12)
+        pygame.draw.rect(surface, self.body_colour, head, border_radius=12)
         face = head.inflate(-round(w * 0.18), -round(head.height * 0.26))
         pygame.draw.rect(surface, cfg.FACE_COLOR, face, border_radius=8)
         # Ears
         for side in (-1, 1):
             ear = pygame.Rect(0, 0, 6, head.height // 3)
             ear.center = (head.centerx + side * (head.width // 2 + 2), head.centery)
-            pygame.draw.rect(surface, cfg.TRIM_COLOR, ear, border_radius=3)
+            pygame.draw.rect(surface, self.trim_colour, ear, border_radius=3)
 
         self._draw_face(surface, face, expression, blink)
 
@@ -120,10 +129,12 @@ class ProceduralSprite:
 class ImageSprite:
     """Draws assets/robot/<expression>.png, scaled to the sprite size."""
 
-    def __init__(self) -> None:
+    def __init__(self, identity: cfg.Identity = cfg.FREE_PLAY_IDENTITY) -> None:
         size = (cfg.SPRITE_WIDTH, cfg.SPRITE_HEIGHT)
         self.images = {
-            e: pygame.transform.smoothscale(pygame.image.load(str(image_path(e))), size)
+            e: pygame.transform.smoothscale(
+                pygame.image.load(str(image_path(e, identity.name))), size
+            )
             for e in Expression
         }
 
@@ -133,14 +144,16 @@ class ImageSprite:
         surface.blit(self.images[expression], rect)
 
 
-def images_available() -> bool:
-    return all(image_path(e).exists() for e in Expression)
+def images_available(name: str = "") -> bool:
+    return all(image_path(e, name).exists() for e in Expression)
 
 
-def make_sprite(source: str = cfg.SPRITE_SOURCE) -> ProceduralSprite | ImageSprite:
+def make_sprite(
+    source: str = cfg.SPRITE_SOURCE, identity: cfg.Identity = cfg.FREE_PLAY_IDENTITY
+) -> ProceduralSprite | ImageSprite:
     """Pick the sprite source: "auto", "procedural" or "images"."""
-    if source == "images" or (source == "auto" and images_available()):
-        return ImageSprite()
+    if source == "images" or (source == "auto" and images_available(identity.name)):
+        return ImageSprite(identity)
     if source not in ("auto", "procedural"):
         raise ValueError(f"SPRITE_SOURCE must be 'auto', 'procedural' or 'images', not {source!r}")
-    return ProceduralSprite()
+    return ProceduralSprite(identity)

@@ -35,10 +35,12 @@ class RobotPersona:
         on_say: SayCallback | None = None,
         seed: int = config.SEED,
         sprite: ProceduralSprite | ImageSprite | None = None,
+        identity: cfg.Identity = cfg.FREE_PLAY_IDENTITY,
     ) -> None:
+        self.identity = identity
         self.on_say = on_say
         self.rng = random.Random(seed + cfg.SEED_OFFSET)
-        self.sprite = sprite or make_sprite()
+        self.sprite = sprite or make_sprite(identity=identity)
         self.speech = Speech()
         self.frames = 0
         self.reaction: Expression | None = None
@@ -135,11 +137,11 @@ class RobotPersona:
         for side in (-1, 1):
             shoulder = (rect.centerx + side * (rect.width // 2 - 4), shoulder_y)
             hand = (paddle_rect.centerx + side * (paddle_rect.width // 2 - 12), paddle_rect.bottom)
-            pygame.draw.line(surface, cfg.TRIM_COLOR, shoulder, hand, 4)
-            pygame.draw.circle(surface, cfg.TRIM_COLOR, hand, 4)
+            pygame.draw.line(surface, self.identity.trim, shoulder, hand, 4)
+            pygame.draw.circle(surface, self.identity.trim, hand, 4)
         self.sprite.draw(surface, rect, self.expression, self.now < self.blink_until)
 
-        name = ui.font(20).render(cfg.NAME, True, (170, 175, 190))
+        name = ui.font(20).render(self.identity.name, True, (170, 175, 190))
         side_x = (
             rect.right + 8
             if rect.right + 8 + name.get_width() < surface.get_width()

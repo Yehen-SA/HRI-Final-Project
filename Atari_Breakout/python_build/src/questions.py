@@ -5,14 +5,16 @@ Every question has:
   - text:      what the participant reads. `{robot_name}` and other context keys are filled in.
   - required:  whether they must answer before moving on (default True)
   - show_if:   optional function of the session context; the question is skipped when it
-               returns False. Context keys: score_mode ("shared"/"split"), robot (strategy
-               name, post-round only), round_number, robot_name, participant_id.
+               returns False. Context keys: score_mode ("shared"/"split"), participant_id,
+               robot_1_name and robot_2_name (the two robots' names), and after a round:
+               round_number, robot_name, robot_colour, robot (strategy, e.g. "GOOD").
 
 Types:
   Info(id, text)                                    a page of text with a Continue button
   Consent(id, text)                                 "I agree" / "I do not agree"; declining
                                                     ends the session politely
-  MultipleChoice(id, text, options=[...])           pick one (or several: allow_multiple=True)
+  MultipleChoice(id, text, options=[...])           pick one (or several: allow_multiple=True);
+                                                    options can use {robot_1_name} etc. too
   Likert(id, text, scale=7, low_label, high_label)  a 1..scale rating
   Slider(id, text, min=0, max=100, step=1, unit)    a number on a slider
   TextAnswer(id, text, max_len=200)                 typed answer; numbers_only=True for numbers
@@ -78,6 +80,9 @@ class Consent(Question):
 class MultipleChoice(Question):
     options: list[str] = field(default_factory=list)
     allow_multiple: bool = False
+
+    def render_options(self, context: Context) -> list[str]:
+        return [option.format_map(_Blank(context)) for option in self.options]
 
 
 @dataclass(kw_only=True)

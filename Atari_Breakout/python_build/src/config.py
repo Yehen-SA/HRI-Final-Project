@@ -88,7 +88,7 @@ COLOR_BG = (20, 22, 30)
 COLOR_HUD = (30, 34, 46)
 COLOR_TEXT = (240, 240, 245)
 COLOR_HUMAN = (66, 135, 245)  # human's paddle and ball
-COLOR_ROBOT = (245, 180, 66)  # robot's paddle and ball
+COLOR_ROBOT = (245, 180, 66)  # default robot colour; each robot's own is in persona_config.py
 COLOR_POWERUP = (240, 240, 245)
 BRICK_ROW_COLORS = [  # top row first; reused from the top if there are more rows
     (220, 70, 70),

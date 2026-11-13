@@ -162,16 +162,20 @@ class Session:
             pid = str(id_screen.values.get("participant_id") or "").strip()
         conditions = conditions_for(pid)
         rounds = len(conditions.robot_order)
+        identities = [persona_config.identity_for_round(n) for n in range(1, rounds + 1)]
         context = {
             "participant_id": pid,
             "score_mode": conditions.score_mode,
-            "robot_name": persona_config.NAME,
+            # robot_1_name, robot_2_name: for questions that compare the robots
+            **{f"robot_{n}_name": ident.name for n, ident in enumerate(identities, start=1)},
             "rounds": rounds,
             "practice_seconds": round(self.practice_seconds),
             "round_minutes": max(1, math.ceil(self.round_seconds / 60)),
         }
         self.log = log = SessionLog.create(pid, self.log_dir)
-        log.write_participant(conditions.as_log())
+        log.write_participant(
+            conditions.as_log() | {"robot_names": [ident.name for ident in identities]}
+        )
         log.write_settings()
 
         # Stage 1: pre-game questions and instructions
@@ -194,24 +198,32 @@ class Session:
             text.PRACTICE_OVER,
         )
         for number, strategy in enumerate(conditions.robot_order, start=1):
-            round_context = context | {"round_number": number, "robot": strategy.name}
+            identity = identities[number - 1]
+            round_context = context | {
+                "round_number": number,
+                "robot": strategy.name,
+                "robot_name": identity.name,
+                "robot_colour": identity.colour_name,
+            }
             yield self.survey(f"Round {number}", text.ROUND_INTRO, round_context)
             yield from self.play_round(
                 {
-                    "title": f"Round {number}: robot {strategy.name}",
+                    "title": f"Round {number}: {identity.name} (robot {strategy.name})",
                     "round_kind": "main",
                     "round_number": number,
                     "robot": strategy.name,
+                    "robot_name": identity.name,
                 },
                 strategy,
                 self.round_seconds,
                 conditions.score_mode,
                 text.ROUND_OVER,
+                identity,
             )
             post = self.survey(f"After round {number}", POST_ROUND_QUESTIONS, round_context)
             yield post
             log.write_answers(
-                f"Round {number}: post-round questions ({strategy.name})",
+                f"Round {number}: post-round questions ({identity.name}, {strategy.name})",
                 post.answers(),
                 key=f"post_round_{number}",
             )
@@ -241,15 +253,18 @@ class Session:
         seconds: float,
         score_mode: str,
         over_message: str,
+        identity: persona_config.Identity | None = None,
     ) -> Generator[Screen, None, None]:
-        """Play a round, then write it to the log."""
+        """Play a round (with the robot `identity`, if there's a robot), then log it."""
         assert self.log is not None
         stats = RoundStats()
         listeners: list = [stats]
         persona = None
+        identity = identity or persona_config.FREE_PLAY_IDENTITY
         if strategy is not None:
             persona = RobotPersona(
-                on_say=lambda trigger, line: stats.note("robot_said", "robot", line)
+                on_say=lambda trigger, line: stats.note("robot_said", "robot", line),
+                identity=identity,
             )
             listeners.append(persona)
         game = Game(
@@ -258,6 +273,8 @@ class Session:
             round_seconds=seconds,
             robot_strategy=strategy,
             listeners=listeners,
+            robot_name=identity.name,
+            robot_colour=identity.body,
         )
         info = info | {"score_mode": score_mode, "seed": config.SEED}
         self._open_round = (game, stats, info)

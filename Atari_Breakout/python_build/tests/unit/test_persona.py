@@ -36,7 +36,7 @@ def test_every_line_has_a_voice_file() -> None:
 
 
 def test_auto_uses_procedural_without_a_full_set_of_images(monkeypatch) -> None:
-    monkeypatch.setattr(sprites, "images_available", lambda: False)
+    monkeypatch.setattr(sprites, "images_available", lambda name="": False)
     assert isinstance(sprites.make_sprite("auto"), sprites.ProceduralSprite)
 
 
@@ -44,7 +44,7 @@ def test_auto_switches_to_images_when_all_are_present(tmp_path, monkeypatch) -> 
     for e in Expression:
         surf = pygame.Surface((10, 10))
         pygame.image.save(surf, str(tmp_path / f"{e.value}.png"))
-    monkeypatch.setattr(sprites, "image_path", lambda e: tmp_path / f"{e.value}.png")
+    monkeypatch.setattr(sprites, "image_path", lambda e, name="": tmp_path / f"{e.value}.png")
     sprite = sprites.make_sprite("auto")
     assert isinstance(sprite, sprites.ImageSprite)
     sprite.draw(pygame.display.get_surface(), pygame.Rect(0, 0, 84, 100), Expression.HAPPY, False)
@@ -113,3 +113,27 @@ def test_persona_draws_under_the_robot_paddle() -> None:
     assert rect.centerx == game.robot.rect.centerx
     assert rect.top >= config.PLAY_BOTTOM and rect.bottom <= config.SCREEN_HEIGHT
     persona.draw(pygame.display.get_surface(), game.robot.rect)
+
+
+def test_two_robot_identities_with_different_names_and_colours() -> None:
+    first, second = cfg.identity_for_round(1), cfg.identity_for_round(2)
+    assert (first.name, second.name) == ("Nova", "Pip")
+    assert first.body != second.body
+    assert config.COLOR_HUMAN not in (first.body, second.body)
+
+
+def test_persona_uses_its_identity() -> None:
+    pip = cfg.identity_for_round(2)
+    persona = RobotPersona(identity=pip)
+    assert persona.identity.name == "Pip"
+    assert persona.sprite.body_colour == pip.body
+
+
+def test_per_robot_images_are_preferred(tmp_path, monkeypatch) -> None:
+    import paths
+
+    monkeypatch.setattr(paths, "game_dir", lambda: tmp_path)
+    (tmp_path / "assets" / "robot" / "pip").mkdir(parents=True)
+    (tmp_path / "assets" / "robot" / "pip" / "happy.png").write_bytes(b"")
+    assert sprites.image_path(Expression.HAPPY, "Pip").parent.name == "pip"
+    assert sprites.image_path(Expression.HAPPY, "Nova").parent.name == "robot"

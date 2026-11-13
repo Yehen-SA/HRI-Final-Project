@@ -58,3 +58,9 @@ def test_slider_snaps_to_steps_and_range() -> None:
     assert s.snap(3.4) == 3 and s.snap(-5) == 0 and s.snap(99) == 10
     assert isinstance(s.snap(3.4), int)
     assert Slider(id="t", text="?", min=0, max=1, step=0.25).snap(0.6) == 0.5
+
+
+def test_options_fill_in_robot_names() -> None:
+    q = MultipleChoice(id="m", text="?", options=["{robot_1_name}", "{robot_2_name}", "Neither"])
+    ctx = {"robot_1_name": "Nova", "robot_2_name": "Pip"}
+    assert q.render_options(ctx) == ["Nova", "Pip", "Neither"]

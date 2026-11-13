@@ -81,7 +81,8 @@ class SurveyScreen:
             self.next_after_consent()
             return
         if isinstance(q, MultipleChoice):
-            self.values[q.id] = [q.options[0]] if q.allow_multiple else q.options[0]
+            first = q.render_options(self.context)[0]
+            self.values[q.id] = [first] if q.allow_multiple else first
         elif isinstance(q, Likert):
             self.values[q.id] = (q.scale + 1) // 2
         elif isinstance(q, Slider):
@@ -143,11 +144,12 @@ class SurveyScreen:
     def _choose(self, i: int) -> None:
         q = self.question
         if isinstance(q, MultipleChoice) and 0 <= i < len(q.options):
-            option = q.options[i]
+            options = q.render_options(self.context)
+            option = options[i]
             if q.allow_multiple:
                 chosen = list(self.values.get(q.id) or [])
                 chosen.remove(option) if option in chosen else chosen.append(option)
-                self.values[q.id] = [o for o in q.options if o in chosen]
+                self.values[q.id] = [o for o in options if o in chosen]
             else:
                 self.values[q.id] = option
         elif isinstance(q, Likert) and 0 <= i < q.scale:
@@ -232,7 +234,8 @@ class SurveyScreen:
 
         if isinstance(q, MultipleChoice):
             chosen = value if isinstance(value, list) else [value]
-            for i, (rect, option) in enumerate(zip(self._option_rects(), q.options, strict=True)):
+            options = q.render_options(self.context)
+            for i, (rect, option) in enumerate(zip(self._option_rects(), options, strict=True)):
                 ui.draw_button(surface, rect, f"{i + 1}.  {option}", selected=option in chosen)
             if q.allow_multiple:
                 hint = "Choose all that apply."

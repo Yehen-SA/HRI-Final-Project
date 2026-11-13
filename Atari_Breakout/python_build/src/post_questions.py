@@ -110,9 +110,13 @@ FINAL_QUESTIONS: list[Question] = [
         text="Last few questions. These are about the whole session.",
     ),
     MultipleChoice(
-        id="preferred_round",
-        text="In which round did {robot_name} feel more like a teammate?",
-        options=["The first round", "The second round", "No difference"],
+        id="more_of_a_teammate",
+        text="Which robot felt more like a teammate?",
+        options=[
+            "{robot_1_name} (first round)",
+            "{robot_2_name} (second round)",
+            "No difference",
+        ],
     ),
     TextAnswer(
         id="preferred_why",
@@ -121,7 +125,7 @@ FINAL_QUESTIONS: list[Question] = [
     ),
     TextAnswer(
         id="comments",
-        text="Any other comments about the game or {robot_name}? (optional)",
+        text="Any other comments about the game or the robots? (optional)",
         required=False,
     ),
 ]

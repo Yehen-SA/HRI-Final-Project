@@ -1,17 +1,41 @@
-"""Robot persona settings. Change the robot's look and voice here."""
+"""Robot persona settings. Change the robots' names, looks and voice here."""
 
-import config
+from dataclasses import dataclass
 
-NAME = "Robo"  # shown on screen and used in the survey questions
+
+@dataclass(frozen=True)
+class Identity:
+    """Who a robot is: its name and colour. Its paddle, balls and body all use the colour."""
+
+    name: str
+    colour_name: str  # used in on-screen text, e.g. "Nova's paddle is orange"
+    body: tuple[int, int, int]  # paddle, balls and head
+    trim: tuple[int, int, int]  # arms, body, antenna (a darker shade)
+
+
+# The robots, by round: round 1's robot is the first, round 2's the second. Robot order is
+# counterbalanced (assignment.py), so each identity is the BAD robot for half the participants
+# and the GOOD robot for the other half: name and colour aren't tied to skill.
+# Only the name and colour differ; voice, expressions and lines are the same for both.
+IDENTITIES = [
+    Identity("Nova", "orange", body=(245, 180, 66), trim=(200, 140, 40)),
+    Identity("Pip", "pink", body=(232, 96, 186), trim=(180, 62, 142)),
+]
+FREE_PLAY_IDENTITY = IDENTITIES[0]
+
+
+def identity_for_round(round_number: int) -> Identity:
+    """Round 1 -> IDENTITIES[0], round 2 -> IDENTITIES[1], and so on (wrapping round)."""
+    return IDENTITIES[(round_number - 1) % len(IDENTITIES)]
+
 
 # --- Look ---
-# "auto": use PNG images from assets/robot/<expression>.png if there's one for every
-# expression, otherwise draw the robot in code. "procedural" or "images" forces one.
+# "auto": use PNG images if there's one for every expression, otherwise draw the robot in code.
+# Images go in assets/robot/<name>/<expression>.png (e.g. assets/robot/nova/happy.png), or
+# assets/robot/<expression>.png to share one set. "procedural" or "images" forces one.
 SPRITE_SOURCE = "auto"
 SPRITE_WIDTH = 84  # px; the head and body are drawn to fit this
 SPRITE_HEIGHT = 100
-BODY_COLOR = config.COLOR_ROBOT  # matches its paddle
-TRIM_COLOR = (200, 140, 40)
 FACE_COLOR = (30, 34, 46)  # the screen on its face
 EYE_COLOR = (120, 230, 255)
 BLINK_EVERY_S = (2.5, 5.0)  # random gap between blinks

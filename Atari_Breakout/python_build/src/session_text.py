@@ -1,6 +1,7 @@
 """Text shown between the stages of a session. Edit freely.
 
-These are lists of questions.Info pages (one page each). `{robot_name}`, `{round_number}`,
+These are lists of questions.Info pages (one page each). `{robot_name}`, `{robot_colour}`,
+`{round_number}`,
 `{rounds}`, `{practice_seconds}` and `{round_minutes}` are filled in.
 """
 
@@ -46,8 +47,8 @@ ROUND_INTRO = [
         id="round_intro",
         text=(
             "Round {round_number} of {rounds}\n\n"
-            "You will now play together with your robot teammate, {robot_name}. "
-            "{robot_name}'s paddle is orange.\n\n"
+            "You will now play together with a robot teammate called {robot_name}. "
+            "{robot_name}'s paddle is {robot_colour}.\n\n"
             "The round lasts {round_minutes} minutes."
         ),
         button="Start round",

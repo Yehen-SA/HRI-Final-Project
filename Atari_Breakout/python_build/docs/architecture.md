@@ -95,7 +95,9 @@ the robot's. `RobotPersona` draws the robot under its paddle with arms holding i
 paddle looks controlled by it. It listens to game events: each reaction shows an expression
 for a moment, and sometimes a line in a speech bubble beside the robot (never over the play
 area), with a voice file if one exists. It behaves the same for both strategies and score
-modes. Lines it says go into the log's timeline as `robot_said`.
+modes. Each round's robot has its own name and colour (`persona_config.IDENTITIES`: Nova
+then Pip), tied to the round, not the strategy; see
+[decisions/0013-robot-identities.md](decisions/0013-robot-identities.md). Lines it says go into the log's timeline as `robot_said`.
 See [decisions/0011-robot-persona.md](decisions/0011-robot-persona.md).
 
 ## Logging

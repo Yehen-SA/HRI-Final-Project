@@ -252,5 +252,6 @@ def test_score_text() -> None:
     scores = {HUMAN: 20, ROBOT: 14}
     assert score_text(scores, "shared") == "Team: 34"
     assert score_text(scores, "split") == "You: 20 · Robot: 14 · Total: 34"
+    assert score_text(scores, "split", "Pip") == "You: 20 · Pip: 14 · Total: 34"
     with pytest.raises(ValueError):
         score_text(scores, "other")

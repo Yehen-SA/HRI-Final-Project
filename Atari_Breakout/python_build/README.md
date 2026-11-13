@@ -56,12 +56,14 @@ The robot sits under its paddle, holding it up, and reacts to the game with its 
 speech bubbles (with voice). Everything about it is in
 [src/robot_persona/](src/robot_persona/):
 
-- Name, colours, size, speech and voice settings: `persona_config.py`
+- The two robots' names and colours (Nova, orange, in round 1; Pip, pink, in round 2), plus
+  size, speech and voice settings: `persona_config.py`
 - What it says and when: `lines.py`. After editing lines, regenerate the voice files with
   `uv run tools/generate_voice.py` (Piper, offline).
 - Its look: drawn in code (`sprites.py`). To use your own art, add one PNG per expression to
   `assets/robot/` (`neutral.png`, `happy.png`, `sad.png`, `surprised.png`, `focused.png`,
-  `excited.png`); they're used automatically once all six exist.
+  `excited.png`); they're used automatically once all six exist. Put them in
+  `assets/robot/nova/` or `assets/robot/pip/` to give each robot its own art.
 
 ## Logs
 

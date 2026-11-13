@@ -50,13 +50,13 @@ EVENTS = {
 Listener = Callable[["Game", str, dict[str, Any]], None]
 
 
-def score_text(scores: dict[str, int], mode: str) -> str:
+def score_text(scores: dict[str, int], mode: str, robot_name: str = "Robot") -> str:
     """HUD score line. "shared" shows only the team total; "split" shows both and the total."""
     total = scores[HUMAN] + scores[ROBOT]
     if mode == "shared":
         return f"Team: {total}"
     if mode == "split":
-        return f"You: {scores[HUMAN]} · Robot: {scores[ROBOT]} · Total: {total}"
+        return f"You: {scores[HUMAN]} · {robot_name}: {scores[ROBOT]} · Total: {total}"
     raise ValueError(f"SCORE_MODE must be 'shared' or 'split', not {mode!r}")
 
 
@@ -73,17 +73,22 @@ class Game:
         lost_ball_to: str = config.LOST_BALL_GOES_TO,
         rules: list[rules_module.Rule] | None = None,
         listeners: list[Listener] | None = None,
+        robot_name: str = "Robot",
+        robot_colour: tuple[int, int, int] = config.COLOR_ROBOT,
     ) -> None:
         """Set up a round.
 
         - `robot_strategy=None` plays without a robot (no robot paddle or ball).
         - `rules`: the optional rules to use; by default the enabled ones in rules.RULES.
         - `listeners`: called as listener(game, event, data) for every event (see EVENTS).
+        - `robot_name`, `robot_colour`: the robot's identity on screen (HUD, paddle, balls).
         """
         if lost_ball_to not in ("random", HUMAN, ROBOT):
             raise ValueError("LOST_BALL_GOES_TO must be 'random', 'human' or 'robot'")
         score_text({HUMAN: 0, ROBOT: 0}, score_mode)  # fail early on a bad mode
         self.score_mode = score_mode
+        self.robot_name = robot_name
+        self.robot_colour = robot_colour
         self.lost_ball_to = lost_ball_to
         self.rng = random.Random(seed)  # launch angles and lost-ball owners
         self.rules_rng = random.Random(
@@ -406,7 +411,7 @@ class Game:
         """The score line: per score mode, or just the human's score with no robot."""
         if self.robot is None:
             return f"Score: {self.scores[HUMAN]}"
-        return score_text(self.scores, self.score_mode)
+        return score_text(self.scores, self.score_mode, self.robot_name)
 
     def draw(
         self, screen: pygame.Surface, font: pygame.font.Font, end_overlay: bool = True
@@ -439,7 +444,7 @@ class Game:
         for brick in self.bricks:
             if brick.alive:
                 pygame.draw.rect(screen, brick.color, brick.rect)
-        colours = {HUMAN: config.COLOR_HUMAN, ROBOT: config.COLOR_ROBOT}
+        colours = {HUMAN: config.COLOR_HUMAN, ROBOT: self.robot_colour}
         for paddle in reversed(self.paddles.values()):  # human drawn on top when they overlap
             pygame.draw.rect(screen, colours[paddle.owner], paddle.rect, border_radius=4)
         for powerup in self.powerups:
@@ -480,6 +485,7 @@ async def run(max_frames: int | None = None, log_dir: Path | None = None) -> Non
     the browser (pygbag).
     """
     from robot_persona import RobotPersona  # imported here: these import this module
+    from robot_persona.persona_config import FREE_PLAY_IDENTITY as identity
     from session_log import SessionLog
     from stats import RoundStats
 
@@ -498,13 +504,22 @@ async def run(max_frames: int | None = None, log_dir: Path | None = None) -> Non
 
     def new_game() -> tuple[Game, RoundStats, RobotPersona]:
         stats = RoundStats()
-        persona = RobotPersona(on_say=lambda trigger, line: stats.note("robot_said", "robot", line))
-        return Game(listeners=[stats, persona]), stats, persona
+        persona = RobotPersona(
+            on_say=lambda trigger, line: stats.note("robot_said", "robot", line), identity=identity
+        )
+        game = Game(
+            listeners=[stats, persona], robot_name=identity.name, robot_colour=identity.body
+        )
+        return game, stats, persona
 
     def save(game: Game, stats: RoundStats) -> None:
         nonlocal games_played
         games_played += 1
-        info = {"title": f"Game {games_played}", "robot": config.ROBOT_STRATEGY}
+        info = {
+            "title": f"Game {games_played}",
+            "robot": config.ROBOT_STRATEGY,
+            "robot_name": identity.name,
+        }
         log.write_round(info | {"score_mode": game.score_mode}, stats)
 
     game, stats, persona = new_game()

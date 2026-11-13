@@ -1,6 +1,7 @@
 # 0005: Rules for the basic game
 
-Status: accepted
+Status: accepted; ball ownership and lost balls changed by
+[0007](0007-colour-follows-scorer.md)
 
 ## Context
 

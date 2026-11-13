@@ -82,8 +82,7 @@ def test_good_catches_far_more_than_bad() -> None:
     def drops(strategy: Strategy) -> int:
         total = 0
         for seed in range(3):
-            game = Game(seed=seed, round_seconds=60, robot_strategy=strategy)
-            game.human_ball.launch_tick = 10**9
+            game = Game(seed=seed, round_seconds=60, robot_strategy=strategy, lost_ball_to=ROBOT)
             while not game.over:
                 game.update()
             total += game.drops[ROBOT]
@@ -94,7 +93,7 @@ def test_good_catches_far_more_than_bad() -> None:
 
 def test_no_robot_means_no_robot_paddle_or_ball() -> None:
     game = Game(robot_strategy=None)
-    assert game.robot is None and game.robot_ball is None
+    assert game.robot is None
     assert len(game.balls) == 1
     for _ in range(120):
         game.update(launch_pressed=True)

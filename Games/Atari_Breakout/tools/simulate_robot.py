@@ -19,15 +19,15 @@ from robot_strategies import Strategy  # noqa: E402
 
 
 def simulate(strategy: Strategy, seed: int, seconds: float) -> dict[str, float]:
-    game = Game(seed=seed, round_seconds=seconds, robot_strategy=strategy)
-    game.human_ball.waiting = True
-    game.human_ball.launch_tick = 10**9  # human never launches
+    # The human never launches, and lost balls always go back to the robot, so only the
+    # robot's ball is ever in play.
+    game = Game(seed=seed, round_seconds=seconds, robot_strategy=strategy, lost_ball_to=ROBOT)
+    ball = next(b for b in game.balls if b.owner == ROBOT)
     catches = 0
     while not game.over:
-        before = (game.robot_ball.vy, game.robot_ball.y)
+        falling = ball.vy > 0
         game.update()
-        ball = game.robot_ball
-        if before[0] > 0 and ball.vy < 0 and ball.y > game.robot.y - 3 * ball.radius:
+        if falling and ball.vy < 0 and ball.y > game.robot.y - 3 * ball.radius:
             catches += 1
     minutes = game.tick / 60 / 60
     drops = game.drops[ROBOT]

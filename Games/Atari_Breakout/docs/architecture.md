@@ -42,13 +42,14 @@ Both paddles share one row (`PADDLE_Y`) and pass through each other: the engine 
 checks paddles against each other, only against the ball and the screen edges.
 See [decisions/0002-shared-paddle-row.md](decisions/0002-shared-paddle-row.md).
 
-## Two balls
+## Balls and ownership
 
-Each player has their own ball in their own colour: blue for the human, orange for the
-robot (`COLOR_HUMAN`, `COLOR_ROBOT`). With `PADDLES_HIT_ANY_BALL = True` (the current
-setting) either paddle bounces either ball; set it to `False` so a paddle only bounces its own.
-Points for a brick go to whoever last hit the ball.
-See [decisions/0004-two-colour-coded-balls.md](decisions/0004-two-colour-coded-balls.md).
+Each player starts with one ball, in their colour: blue for the human, orange for the robot
+(`COLOR_HUMAN`, `COLOR_ROBOT`). A ball's colour shows its owner, who scores its next brick.
+Hitting a ball in the other player's colour takes it over (a steal). A lost ball counts as a
+drop for its owner and goes to a random player (`LOST_BALL_GOES_TO`), waiting on their paddle.
+The engine keeps a plain `balls` list, so there can be any number of balls.
+See [decisions/0007-colour-follows-scorer.md](decisions/0007-colour-follows-scorer.md).
 
 ## Where to tune what
 

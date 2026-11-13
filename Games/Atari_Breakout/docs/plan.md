@@ -1,6 +1,6 @@
 # Build plan: Breakout study game
 
-Status: phase 1 (basic game) done. Round 2 step 1 (robot strategies) done; steps 2–7 to do.
+Status: phase 1 (basic game) done. Round 2 steps 1–2 done; steps 3–7 to do.
 
 ## Context
 
@@ -69,7 +69,7 @@ This plan replaces the earlier phase 2 draft (`study.toml`, Supabase).
 - Tests: GOOD catches far more than BAD over several seeds; same seed gives the same actions;
   the strategy can be swapped by enum.
 
-## Step 2: colour shows who scores; random respawn
+## Step 2: colour shows who scores; random respawn (done, ADR 0007)
 
 - `Ball.owner` becomes "who scores next" and the ball is drawn in that colour. It merges with
   `last_hit_by`.

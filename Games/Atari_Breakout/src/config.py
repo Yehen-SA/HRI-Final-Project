@@ -23,11 +23,11 @@ HUMAN_START_X = SCREEN_WIDTH // 4 - PADDLE_WIDTH // 2
 ROBOT_START_X = 3 * SCREEN_WIDTH // 4 - PADDLE_WIDTH // 2
 
 # --- Balls ---
-# Two balls, one per player, drawn in that player's colour (COLOR_HUMAN / COLOR_ROBOT).
-# Each starts just above its owner's paddle.
-# A ball waits on its owner's paddle at the start and after it's lost. The human launches
-# theirs with Space; the robot's launches by itself after ROBOT_RELAUNCH_DELAY_S.
-# Balls pass through each other.
+# Each player starts with one ball waiting on their paddle. A ball is drawn in the colour of
+# its owner (COLOR_HUMAN / COLOR_ROBOT): whoever last hit it, who scores its next brick.
+# Hitting a ball in the other player's colour takes it over (a steal).
+# The human launches waiting balls with Space; the robot's launch by themselves after
+# ROBOT_RELAUNCH_DELAY_S. Balls pass through each other.
 BALL_RADIUS = 7
 BALL_SPEED = 5.0  # constant: balls never speed up
 LAUNCH_ANGLE_MIN_DEG = 30  # launch angle from vertical, random in this range, either side
@@ -37,7 +37,10 @@ ROBOT_RELAUNCH_DELAY_S = 1.0
 # False: a paddle only bounces its own ball; the other player's ball passes through it.
 # True: either paddle can bounce either ball, so players can save each other's ball.
 # If both paddles touch a ball in the same frame, the owner's paddle counts as the hit.
+# Stealing needs this to be True.
 PADDLES_HIT_ANY_BALL = True
+# Who gets a ball after it's lost: "random" (50/50, from the seeded RNG), "human" or "robot".
+LOST_BALL_GOES_TO = "random"
 
 # --- Bricks ---
 BRICK_ROWS = 6
@@ -49,8 +52,8 @@ BRICK_WIDTH = (SCREEN_WIDTH - (BRICK_COLS + 1) * BRICK_GAP) // BRICK_COLS
 BRICK_ROW_POINTS = [7, 7, 4, 4, 1, 1]  # points per brick, top row first (Atari style)
 
 # --- Rules ---
-# A brick's points go to the player whose paddle last hit the ball (the ball's owner if no
-# paddle has hit it since launch). No lives: dropping a ball only costs time.
+# A brick's points go to the ball's owner (the player whose colour it's in). No lives:
+# dropping a ball only costs time.
 ROUND_SECONDS = 180  # the game ends when time runs out or every brick is gone
 SCORE_MODE = "split"  # "shared": team score only; "split": each player's score plus total
 SEED = 1234  # seeds the launch angles and the robot, so a run can be repeated

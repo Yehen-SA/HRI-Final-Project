@@ -43,8 +43,12 @@ class Game:
         seed: int = config.SEED,
         round_seconds: float = config.ROUND_SECONDS,
         robot_strategy: Strategy | None = DEFAULT_STRATEGY,
+        lost_ball_to: str = config.LOST_BALL_GOES_TO,
     ) -> None:
         """`robot_strategy=None` plays without a robot (no robot paddle or ball)."""
+        if lost_ball_to not in ("random", HUMAN, ROBOT):
+            raise ValueError("LOST_BALL_GOES_TO must be 'random', 'human' or 'robot'")
+        self.lost_ball_to = lost_ball_to
         score_text({HUMAN: 0, ROBOT: 0}, score_mode)  # fail early on a bad mode
         self.score_mode = score_mode
         self.rng = random.Random(seed)
@@ -60,12 +64,10 @@ class Game:
             config.SCREEN_WIDTH,
         )
         self.paddles = {HUMAN: self.human}
-        self.human_ball = Ball(HUMAN, 0, 0, 0, 0, config.BALL_RADIUS, id=0)
-        self.balls = [self.human_ball]
+        self.balls = [Ball(HUMAN, 0, 0, 0, 0, config.BALL_RADIUS, id=0)]
 
         self.robot_agent: Robot | None = None
         self.robot: Paddle | None = None
-        self.robot_ball: Ball | None = None
         if robot_strategy is not None:
             self.robot_agent = Robot(robot_strategy, seed=seed + 1)
             self.robot = Paddle(
@@ -78,17 +80,17 @@ class Game:
                 config.SCREEN_WIDTH,
             )
             self.paddles[ROBOT] = self.robot
-            self.robot_ball = Ball(ROBOT, 0, 0, 0, 0, config.BALL_RADIUS, id=1)
-            self.balls.append(self.robot_ball)
+            self.balls.append(Ball(ROBOT, 0, 0, 0, 0, config.BALL_RADIUS, id=1))
         self.bricks = self._build_bricks()
 
         self.tick = 0
         self.scores = {HUMAN: 0, ROBOT: 0}
         self.drops = {HUMAN: 0, ROBOT: 0}
+        self.steals = {HUMAN: 0, ROBOT: 0}  # times each player hit a ball in the other's colour
         self.over = False
 
         for ball in self.balls:
-            self._put_on_paddle(ball)
+            self._put_on_paddle(ball, ball.owner)
 
     # --- Setup ---
 
@@ -115,17 +117,33 @@ class Game:
     def seconds_left(self) -> int:
         return max(0, math.ceil((self.round_frames - self.tick) / config.FPS))
 
-    def _put_on_paddle(self, ball: Ball) -> None:
-        """Make a ball wait on its owner's paddle. The robot's launches after a delay."""
+    def waiting_balls(self, player: str) -> list[Ball]:
+        return [b for b in self.balls if b.waiting and b.owner == player]
+
+    def _put_on_paddle(self, ball: Ball, player: str) -> None:
+        """Give a ball to `player`: it waits on their paddle, in their colour.
+
+        The human launches it with Space; the robot's launches by itself after a delay.
+        """
+        ball.owner = player
         ball.waiting = True
         ball.vx = ball.vy = 0.0
         ball.launch_tick = self.tick + round(config.ROBOT_RELAUNCH_DELAY_S * config.FPS)
-        self._follow_paddle(ball)
+        self._follow_paddles()
 
-    def _follow_paddle(self, ball: Ball) -> None:
-        paddle = self.paddles[ball.owner]
-        ball.x = paddle.centre_x
-        ball.y = paddle.y - ball.radius - 1
+    def _follow_paddles(self) -> None:
+        """Keep waiting balls on their paddle, side by side if there's more than one."""
+        for player, paddle in self.paddles.items():
+            waiting = self.waiting_balls(player)
+            for i, ball in enumerate(waiting):
+                spacing = 2 * ball.radius + 4
+                ball.x = paddle.centre_x + (i - (len(waiting) - 1) / 2) * spacing
+                ball.y = paddle.y - ball.radius - 1
+
+    def _new_owner_for_lost_ball(self) -> str:
+        if self.lost_ball_to == "random":
+            return self.rng.choice(list(self.paddles))
+        return self.lost_ball_to if self.lost_ball_to in self.paddles else HUMAN
 
     def _launch(self, ball: Ball) -> None:
         """Send a waiting ball upwards at a random angle from vertical, either side."""
@@ -136,7 +154,6 @@ class Game:
         ball.vx = side * config.BALL_SPEED * math.sin(angle)
         ball.vy = -config.BALL_SPEED * math.cos(angle)
         ball.waiting = False
-        ball.last_hit_by = ball.owner
 
     def _observation_for_robot(self) -> dict[str, Any]:
         """Build the observation passed to Robot.get_action() (keys in robot_strategies.py)."""
@@ -188,13 +205,13 @@ class Game:
             ball.y, ball.vy = config.HUD_HEIGHT + r, abs(ball.vy)
 
     def _hit_brick(self, ball: Ball) -> None:
-        """Break at most one brick, credit it, and bounce off it along the shallower overlap."""
+        """Break at most one brick, credit the ball's owner, and bounce off the brick."""
         ball_rect = ball.rect
         for brick in self.bricks:
             if not brick.alive or not ball_rect.colliderect(brick.rect):
                 continue
             brick.alive = False
-            self.scores[ball.last_hit_by] += brick.points
+            self.scores[ball.owner] += brick.points
             clip = ball_rect.clip(brick.rect)
             if clip.width < clip.height:
                 ball.vx = -abs(ball.vx) if ball.x < brick.rect.centerx else abs(ball.vx)
@@ -203,7 +220,11 @@ class Game:
             return
 
     def _hit_paddle(self, ball: Ball) -> None:
-        """Bounce off a paddle at an angle set by where it hit. Owner wins a double touch."""
+        """Bounce off a paddle at an angle set by where it hit, and take ownership.
+
+        Hitting a ball in the other player's colour is a steal. If both paddles touch the ball
+        in the same frame, its current owner's paddle counts.
+        """
         if ball.vy <= 0:
             return
         touching = [
@@ -213,20 +234,21 @@ class Game:
         ]
         if not touching:
             return
-        paddle = self.paddles[ball.owner] if self.paddles[ball.owner] in touching else touching[0]
+        own = self.paddles.get(ball.owner)
+        paddle = own if own in touching else touching[0]
         offset = (ball.x - paddle.centre_x) / (paddle.width / 2)
         offset = max(-1.0, min(1.0, offset))
         angle = math.radians(offset * config.MAX_BOUNCE_ANGLE_DEG)
         ball.vx = config.BALL_SPEED * math.sin(angle)
         ball.vy = -config.BALL_SPEED * math.cos(angle)
         ball.y = paddle.y - ball.radius
-        ball.last_hit_by = paddle.owner
+        if paddle.owner != ball.owner:
+            self.steals[paddle.owner] += 1
+            ball.owner = paddle.owner
 
-    def _update_ball(self, ball: Ball, launch_pressed: bool) -> None:
+    def _update_ball(self, ball: Ball) -> None:
         if ball.waiting:
-            self._follow_paddle(ball)
-            ready = launch_pressed if ball.owner == HUMAN else self.tick >= ball.launch_tick
-            if ready:
+            if ball.owner == ROBOT and self.tick >= ball.launch_tick:
                 self._launch(ball)
             return
         ball.step()
@@ -235,12 +257,15 @@ class Game:
         self._hit_paddle(ball)
         if ball.y - ball.radius > config.SCREEN_HEIGHT:
             self.drops[ball.owner] += 1
-            self._put_on_paddle(ball)
+            self._put_on_paddle(ball, self._new_owner_for_lost_ball())
 
     # --- Frame ---
 
     def update(self, human_action: str = STAY, launch_pressed: bool = False) -> None:
-        """One frame: both paddles, then both balls, then the end check."""
+        """One frame: both paddles, then the balls, then the end check.
+
+        `launch_pressed` (Space this frame) launches one of the human's waiting balls.
+        """
         if self.over:
             return
         self._apply_action(self.human, human_action)
@@ -248,8 +273,11 @@ class Game:
             self._apply_action(
                 self.robot, self.robot_agent.get_action(self._observation_for_robot())
             )
+        self._follow_paddles()
+        if launch_pressed and (waiting := self.waiting_balls(HUMAN)):
+            self._launch(waiting[0])
         for ball in self.balls:
-            self._update_ball(ball, launch_pressed)
+            self._update_ball(ball)
         self.tick += 1
         if self.tick >= self.round_frames or self.bricks_left == 0:
             self.over = True
@@ -257,7 +285,7 @@ class Game:
     # --- Window ---
 
     def draw(self, screen: pygame.Surface, font: pygame.font.Font) -> None:
-        """Draw the HUD, bricks, both paddles and both balls, each in its owner's colour."""
+        """Draw the HUD, bricks, paddles and balls (each ball in its current owner's colour)."""
         screen.fill(config.COLOR_BG)
         pygame.draw.rect(screen, config.COLOR_HUD, (0, 0, config.SCREEN_WIDTH, config.HUD_HEIGHT))
         score = font.render(score_text(self.scores, self.score_mode), True, config.COLOR_TEXT)
@@ -283,7 +311,7 @@ class Game:
                 screen, colours[ball.owner], (round(ball.x), round(ball.y)), ball.radius
             )
 
-        if self.human_ball.waiting and not self.over:
+        if self.waiting_balls(HUMAN) and not self.over:
             self._centre_text(screen, font, "Press Space to launch your ball", 0.62)
         if self.over:
             shade = pygame.Surface((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), pygame.SRCALPHA)

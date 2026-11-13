@@ -7,8 +7,9 @@ Status: basic game playable. Study settings, logging and the web version are nex
 [docs/plan.md](docs/plan.md).
 
 A human and a robot each control a paddle on the same row (they can pass through each other)
-and each has their own ball, colour coded to match: blue for the human, orange for the robot.
-They play as a team. The robot has two strategies: `GOOD` (tries to play properly) and `BAD`
+and each starts with a ball in their colour: blue for the human, orange for the robot. A ball
+takes the colour of whoever last hit it, and that player scores its next brick. A lost ball
+goes to a random player. They play as a team. The robot has two strategies: `GOOD` (tries to play properly) and `BAD`
 (random movement).
 See [docs/architecture.md](docs/architecture.md).
 
@@ -26,7 +27,7 @@ uv sync
 uv run src/main.py
 ```
 
-Controls: A/D or the arrow keys move, Space launches your ball (and plays again after game
+Controls: A/D or the arrow keys move, Space launches a waiting ball (and plays again after game
 over), Esc quits. Rules: [docs/decisions/0005-basic-game-rules.md](docs/decisions/0005-basic-game-rules.md).
 
 ## Test

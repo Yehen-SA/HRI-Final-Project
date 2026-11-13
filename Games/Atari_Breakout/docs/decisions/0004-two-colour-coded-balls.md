@@ -1,6 +1,7 @@
 # 0004: Two balls, colour coded by player
 
-Status: accepted
+Status: accepted; colours now follow ownership, see
+[0007](0007-colour-follows-scorer.md)
 
 ## Context
 

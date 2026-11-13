@@ -36,15 +36,14 @@ class Paddle:
 
 @dataclass
 class Ball:
-    owner: str  # "human" or "robot"; sets its colour
+    owner: str  # "human" or "robot": who scores its next brick; also its colour
     x: float  # centre
     y: float
     vx: float
     vy: float
     radius: int
     waiting: bool = True  # sitting on its owner's paddle, not yet launched
-    last_hit_by: str = ""  # who gets the points for the next brick; set to owner on launch
-    launch_tick: int = 0  # robot's ball only: the frame it launches by itself
+    launch_tick: int = 0  # robot's waiting balls: the frame they launch by themselves
     id: int = 0  # stable number so the robot can tell balls apart
 
     @property

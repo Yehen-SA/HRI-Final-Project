@@ -25,19 +25,21 @@ def test_id_number_parsing() -> None:
     assert assignment.id_number("abc") == assignment.id_number("ABC")
 
 
-def test_table_and_override(monkeypatch) -> None:
-    monkeypatch.setitem(assignment.CONDITION_TABLE, "X1", ("split", [Strategy.GOOD, Strategy.BAD]))
+def test_manual_assignments_and_override(monkeypatch) -> None:
+    monkeypatch.setitem(
+        assignment.MANUAL_ASSIGNMENTS, "X1", ("split", [Strategy.GOOD, Strategy.BAD])
+    )
     c = assignment.conditions_for("X1")
-    assert (c.score_mode, c.robot_order, c.source) == (
+    assert (c.score_mode, c.robot_order, c.assigned_by) == (
         "split",
         [Strategy.GOOD, Strategy.BAD],
-        "table",
+        "manual",
     )
     monkeypatch.setattr(
         config, "CONDITION_OVERRIDE", {"score_mode": "shared", "robot_order": ["BAD", "GOOD"]}
     )
     c = assignment.conditions_for("X1")
-    assert (c.score_mode, c.source) == ("shared", "override")
+    assert (c.score_mode, c.assigned_by) == ("shared", "override")
     assert c.as_log() == {
         "score_mode": "shared",
         "robot_order": ["BAD", "GOOD"],

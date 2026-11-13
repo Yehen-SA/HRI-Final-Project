@@ -16,7 +16,7 @@ program that takes a participant from consent to the last question, with everyth
 - The robot design becomes within-subjects with two robots (BAD and GOOD); the order is
   counterbalanced.
 - Conditions come from the participant ID (`assignment.py`): consecutive IDs cycle through the
-  four combinations of score mode and robot order. `CONDITION_TABLE` and `CONDITION_OVERRIDE`
+  four combinations of score mode and robot order. `MANUAL_ASSIGNMENTS` and `CONDITION_OVERRIDE`
   allow manual assignment.
 - Questions are data: `pre_questions.py` and `post_questions.py` hold lists of question objects
   from `questions.py` (`Info`, `Consent`, `MultipleChoice`, `Likert`, `Slider`, `TextAnswer`),

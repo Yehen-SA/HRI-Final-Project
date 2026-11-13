@@ -28,7 +28,9 @@ BUBBLE_MAX_WIDTH = 230
 # --- Voice ---
 VOICE_ENABLED = True  # play assets/robot/voice/<file>.ogg for each line, if it exists
 VOICE_VOLUME = 0.8
-PIPER_VOICE = "en_GB-jenny_dioco-medium"  # Piper voice used by tools/generate_voice.py (female, British)
+PIPER_VOICE = (
+    "en_GB-jenny_dioco-medium"  # Piper voice used by tools/generate_voice.py (female, British)
+)
 PIPER_LENGTH_SCALE = 1.0  # >1 speaks slower
 
 SEED_OFFSET = 3  # persona randomness (which line, blinks) uses config.SEED + this

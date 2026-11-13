@@ -1,6 +1,6 @@
 # Build plan: Breakout study game
 
-Status: phase 1 (basic game) done. Round 2 steps 1–5 done; steps 6–7 to do.
+Status: phase 1 (basic game) done. Round 2 steps 1–6 done; step 7 to do.
 
 ## Context
 
@@ -186,7 +186,7 @@ This plan replaces the earlier phase 2 draft (`study.toml`, Supabase).
 - Tests: assignment covers all 4 cells evenly; `show_if` filtering; a scripted full session
   produces a complete log.
 
-## Step 6: robot persona module
+## Step 6: robot persona module (done, ADR 0011)
 
 New package `src/robot_persona/`, the only place persona code lives:
 

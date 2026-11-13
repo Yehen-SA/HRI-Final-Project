@@ -21,6 +21,8 @@ logging and the web build come next ([plan.md](plan.md)).
 | `session_text.py` | Instructions and messages between stages. |
 | `survey_screen.py` | Shows a list of questions one page at a time (mouse and keyboard). |
 | `ui.py` | Fonts, wrapped text, buttons, overlays. |
+| `robot_persona/` | The robot as a character: `persona_config.py` (name, look, speech and voice settings), `sprites.py` (expressions; drawn in code or from PNGs), `lines.py` (what it says and when), `speech.py` (bubbles, voice), `persona.py` (`RobotPersona`, a game listener). |
+| `paths.py` | Locates `assets/`, including inside packaged builds. |
 | `stats.py` | `RoundStats`: a game listener that measures each round per player (scores, steals, drops, possession time...) and keeps an event timeline. |
 | `session_log.py` | `SessionLog`: writes one Markdown log per run to `logs/`, section by section, ending with a JSON block. |
 | `rules.py` | Optional rules (penalties, bonuses, power-ups): a `Rule` base class with one hook per game event, and the `RULES` list where each rule is switched on or off. |
@@ -84,6 +86,16 @@ See [decisions/0008-rules-framework.md](decisions/0008-rules-framework.md).
 Every round starts from the same seed. Esc pauses; Esc again quits and the log is marked
 aborted (a round in progress is saved with end reason "quit").
 See [decisions/0010-in-game-surveys-and-session.md](decisions/0010-in-game-surveys-and-session.md).
+
+## Robot persona
+
+The window is 720 px tall: the play area ends at `PLAY_BOTTOM` (600), and the strip below is
+the robot's. `RobotPersona` draws the robot under its paddle with arms holding it up, so the
+paddle looks controlled by it. It listens to game events: each reaction shows an expression
+for a moment, and sometimes a line in a speech bubble beside the robot (never over the play
+area), with a voice file if one exists. It behaves the same for both strategies and score
+modes. Lines it says go into the log's timeline as `robot_said`.
+See [decisions/0011-robot-persona.md](decisions/0011-robot-persona.md).
 
 ## Logging
 

@@ -350,7 +350,7 @@ class Game:
         self._bounce_walls(ball)
         self._hit_brick(ball)
         self._hit_paddle(ball)
-        if ball.y - ball.radius > config.SCREEN_HEIGHT:
+        if ball.y - ball.radius > config.PLAY_BOTTOM:
             self._lose_ball(ball)
 
     def _update_powerup(self, powerup: PowerUp) -> None:
@@ -360,7 +360,7 @@ class Game:
                 self.powerups.remove(powerup)
                 self._emit("powerup_caught", paddle=paddle, powerup=powerup)
                 return
-        if powerup.rect.top > config.SCREEN_HEIGHT:
+        if powerup.rect.top > config.PLAY_BOTTOM:
             self.powerups.remove(powerup)
             self._emit("powerup_missed", powerup=powerup)
 
@@ -429,6 +429,13 @@ class Game:
             ),
         )
 
+        strip = (
+            0,
+            config.PLAY_BOTTOM,
+            config.SCREEN_WIDTH,
+            config.SCREEN_HEIGHT - config.PLAY_BOTTOM,
+        )
+        pygame.draw.rect(screen, config.COLOR_HUD, strip)
         for brick in self.bricks:
             if brick.alive:
                 pygame.draw.rect(screen, brick.color, brick.rect)
@@ -472,7 +479,8 @@ async def run(max_frames: int | None = None, log_dir: Path | None = None) -> Non
     `max_frames` stops early (used by tests). The loop is async so the same code can run in
     the browser (pygbag).
     """
-    from session_log import SessionLog  # imported here: session_log imports this module
+    from robot_persona import RobotPersona  # imported here: these import this module
+    from session_log import SessionLog
     from stats import RoundStats
 
     pygame.init()
@@ -488,9 +496,10 @@ async def run(max_frames: int | None = None, log_dir: Path | None = None) -> Non
     log.write_settings()
     games_played = 0
 
-    def new_game() -> tuple[Game, RoundStats]:
+    def new_game() -> tuple[Game, RoundStats, RobotPersona]:
         stats = RoundStats()
-        return Game(listeners=[stats]), stats
+        persona = RobotPersona(on_say=lambda trigger, line: stats.note("robot_said", "robot", line))
+        return Game(listeners=[stats, persona]), stats, persona
 
     def save(game: Game, stats: RoundStats) -> None:
         nonlocal games_played
@@ -498,7 +507,7 @@ async def run(max_frames: int | None = None, log_dir: Path | None = None) -> Non
         info = {"title": f"Game {games_played}", "robot": config.ROBOT_STRATEGY}
         log.write_round(info | {"score_mode": game.score_mode}, stats)
 
-    game, stats = new_game()
+    game, stats, persona = new_game()
     saved = False
     frames = 0
     status = "aborted"
@@ -517,7 +526,8 @@ async def run(max_frames: int | None = None, log_dir: Path | None = None) -> Non
             if quit_now:
                 break
             if game.over and space_pressed:
-                game, stats = new_game()
+                persona.stop()
+                game, stats, persona = new_game()
                 saved = False
                 space_pressed = False
             keys = pygame.key.get_pressed()
@@ -525,7 +535,10 @@ async def run(max_frames: int | None = None, log_dir: Path | None = None) -> Non
             if game.over and not saved:
                 save(game, stats)
                 saved = True
+            persona.update(game)
             game.draw(screen, font)
+            if game.robot is not None:
+                persona.draw(screen, game.robot.rect)
             pygame.display.flip()
             clock.tick(config.FPS)
             frames += 1

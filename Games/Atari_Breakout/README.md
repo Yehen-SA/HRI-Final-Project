@@ -47,6 +47,19 @@ Testing options: `--pid P07` skips the ID screen, `--autoplay` answers and plays
 - Instructions and messages between stages: [src/session_text.py](src/session_text.py)
 - The order of the stages: `Session.flow()` in [src/session.py](src/session.py)
 
+## The robot's persona
+
+The robot sits under its paddle, holding it up, and reacts to the game with its face and
+speech bubbles (with voice). Everything about it is in
+[src/robot_persona/](src/robot_persona/):
+
+- Name, colours, size, speech and voice settings: `persona_config.py`
+- What it says and when: `lines.py`. After editing lines, regenerate the voice files with
+  `uv run tools/generate_voice.py` (Piper, offline).
+- Its look: drawn in code (`sprites.py`). To use your own art, add one PNG per expression to
+  `assets/robot/` (`neutral.png`, `happy.png`, `sad.png`, `surprised.png`, `focused.png`,
+  `excited.png`); they're used automatically once all six exist.
+
 ## Logs
 
 Every run writes a Markdown log to `logs/` (a new file each time, never overwritten): the
@@ -88,11 +101,13 @@ uv run ruff format .   # format
 | `src/survey_screen.py`, `src/ui.py` | Survey pages and drawing helpers |
 | `src/stats.py` | Per-round measures for the log |
 | `src/session_log.py` | Writes the Markdown log |
+| `src/robot_persona/` | The robot as a character: look, expressions, speech, voice |
+| `src/paths.py` | Finds the assets folder (also when packaged) |
 | `src/rules.py` | Optional rules, switched on or off |
 | `src/robot_agent.py` | `Robot(strategy)` |
 | `src/robot_strategies.py` | Robot strategies (`GOOD`, `BAD`, `SWEEP`) |
 | `src/engine.py` | Game loop |
-| `tools/` | Helper scripts (robot simulation) |
+| `tools/` | Helper scripts (robot simulation, voice generation) |
 | `tests/unit/` | Unit tests for single modules |
 | `tests/e2e/` | End-to-end tests that run the whole game |
 | `assets/` | Images and sounds |

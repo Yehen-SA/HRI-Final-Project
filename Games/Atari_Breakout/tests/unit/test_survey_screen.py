@@ -13,10 +13,10 @@ CTX = {"score_mode": "shared", "robot_name": "Robo"}
 
 @pytest.fixture(autouse=True)
 def _pygame():
+    # Started once and left running: fonts are cached (ui.font) and break after pygame.quit().
     pygame.init()
-    pygame.display.set_mode((800, 600))
-    yield
-    pygame.quit()
+    if pygame.display.get_surface() is None:
+        pygame.display.set_mode((800, 600))
 
 
 def key(k: int, char: str = "") -> pygame.event.Event:

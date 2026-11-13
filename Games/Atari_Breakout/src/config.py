@@ -8,7 +8,8 @@ GAME_VERSION = "0.4.0"  # recorded in every log; bump when the game changes
 
 # --- Window ---
 SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+SCREEN_HEIGHT = 720
+PLAY_BOTTOM = 600  # balls are lost below this; the strip underneath is the robot's (persona)
 FPS = 60
 HUD_HEIGHT = 40  # info bar along the top
 WINDOW_TITLE = "HRI Breakout: Human + Robot"
@@ -68,7 +69,7 @@ POWERUP_FALL_SPEED = 3
 # Strategy for free play: "GOOD", "BAD" or "SWEEP" (see robot_strategies.py), or None for no
 # robot. The study session (later) picks the strategy per round itself.
 ROBOT_STRATEGY = "GOOD"
-ROBOT_NAME = "Robo"  # used in questions and on screen
+# The robot's name, look and speech are in robot_persona/persona_config.py.
 
 # --- Study session (see session.py) ---
 PRACTICE_SECONDS = 60  # practice round, played without the robot

@@ -10,8 +10,10 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "piper-tts>=1.8.0",
     "pytest",
     "ruff",
+    "soundfile>=0.14.0",
 ]
 
 # Not an installable package: the modules in src/ are run directly (uv run src/main.py).

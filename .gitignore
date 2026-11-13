@@ -24,3 +24,6 @@ dist/
 
 # Game session logs (participant data)
 logs/
+
+# Piper voice model download (tools/generate_voice.py)
+.voice_cache/

@@ -27,6 +27,7 @@ from engine import Game
 from human_controls import LAUNCH_KEY, QUIT_KEY, read_human_action
 from post_questions import FINAL_QUESTIONS, POST_ROUND_QUESTIONS
 from pre_questions import PRE_QUESTIONS
+from robot_persona import RobotPersona, persona_config
 from robot_strategies import Strategy
 from session_log import SessionLog
 from stats import RoundStats
@@ -53,10 +54,17 @@ def autoplay_action(game: Game) -> str:
 class RoundScreen:
     """Plays one round; when it ends, waits for Space before moving on."""
 
-    def __init__(self, game: Game, over_message: str, autoplay: bool = False) -> None:
+    def __init__(
+        self,
+        game: Game,
+        over_message: str,
+        autoplay: bool = False,
+        persona: RobotPersona | None = None,
+    ) -> None:
         self.game = game
         self.over_message = over_message
         self.autoplay = autoplay
+        self.persona = persona
         self.done = False
         self._space = False
         self._font = ui.font(30)
@@ -66,9 +74,13 @@ class RoundScreen:
             self._space = True
 
     def update(self, keys: Any) -> None:
+        if self.persona is not None:
+            self.persona.update(self.game)
         if self.game.over:
             if self._space or self.autoplay:
                 self.done = True
+                if self.persona is not None:
+                    self.persona.stop()
         elif self.autoplay:
             self.game.update(autoplay_action(self.game), launch_pressed=True)
         else:
@@ -77,6 +89,8 @@ class RoundScreen:
 
     def draw(self, surface: pygame.Surface) -> None:
         self.game.draw(surface, self._font, end_overlay=False)
+        if self.persona is not None and self.game.robot is not None:
+            self.persona.draw(surface, self.game.robot.rect)
         if self.game.over:
             ui.draw_overlay(surface, [self.over_message, "", self.game.hud_score_text()])
 
@@ -141,7 +155,7 @@ class Session:
         context = {
             "participant_id": pid,
             "score_mode": conditions.score_mode,
-            "robot_name": config.ROBOT_NAME,
+            "robot_name": persona_config.NAME,
             "rounds": rounds,
             "practice_seconds": round(self.practice_seconds),
             "round_minutes": max(1, math.ceil(self.round_seconds / 60)),
@@ -214,16 +228,23 @@ class Session:
         """Play a round, then write it to the log."""
         assert self.log is not None
         stats = RoundStats()
+        listeners: list = [stats]
+        persona = None
+        if strategy is not None:
+            persona = RobotPersona(
+                on_say=lambda trigger, line: stats.note("robot_said", "robot", line)
+            )
+            listeners.append(persona)
         game = Game(
             score_mode=score_mode,
             seed=config.SEED,  # same start every round
             round_seconds=seconds,
             robot_strategy=strategy,
-            listeners=[stats],
+            listeners=listeners,
         )
         info = info | {"score_mode": score_mode, "seed": config.SEED}
         self._open_round = (game, stats, info)
-        yield RoundScreen(game, over_message, self.autoplay)
+        yield RoundScreen(game, over_message, self.autoplay, persona)
         self._open_round = None
         self.log.write_round(info, stats)
 

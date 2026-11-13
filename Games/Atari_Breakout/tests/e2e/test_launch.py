@@ -6,10 +6,18 @@ from pathlib import Path
 MAIN = Path(__file__).parents[2] / "src" / "main.py"
 
 
-def test_game_runs_exits_cleanly_and_writes_a_log(tmp_path) -> None:
+def test_free_play_runs_exits_cleanly_and_writes_a_log(tmp_path) -> None:
     env = {**os.environ, "SDL_VIDEODRIVER": "dummy", "SDL_AUDIODRIVER": "dummy"}
     result = subprocess.run(
-        [sys.executable, str(MAIN), "--max-frames", "120", "--log-dir", str(tmp_path)],
+        [
+            sys.executable,
+            str(MAIN),
+            "--free-play",
+            "--max-frames",
+            "120",
+            "--log-dir",
+            str(tmp_path),
+        ],
         capture_output=True,
         timeout=60,
         env=env,

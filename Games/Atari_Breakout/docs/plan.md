@@ -1,6 +1,6 @@
 # Build plan: Breakout study game
 
-Status: phase 1 (basic game) done. Round 2 steps 1–4 done; steps 5–7 to do.
+Status: phase 1 (basic game) done. Round 2 steps 1–5 done; steps 6–7 to do.
 
 ## Context
 
@@ -136,7 +136,7 @@ This plan replaces the earlier phase 2 draft (`study.toml`, Supabase).
 - Tests: stats for a scripted round; the file is never overwritten; a partial log survives an
   abort.
 
-## Step 5: surveys and the three-stage session
+## Step 5: surveys and the three-stage session (done, ADR 0010)
 
 - New `src/questions.py`, the common interface. Dataclasses, all with
   `id, text, required=True, show_if=None`:

@@ -68,6 +68,15 @@ POWERUP_FALL_SPEED = 3
 # Strategy for free play: "GOOD", "BAD" or "SWEEP" (see robot_strategies.py), or None for no
 # robot. The study session (later) picks the strategy per round itself.
 ROBOT_STRATEGY = "GOOD"
+ROBOT_NAME = "Robo"  # used in questions and on screen
+
+# --- Study session (see session.py) ---
+PRACTICE_SECONDS = 60  # practice round, played without the robot
+# Conditions normally come from the participant ID (assignment.py). To force them on our own
+# devices, set e.g. {"score_mode": "shared", "robot_order": ["GOOD", "BAD"]}.
+CONDITION_OVERRIDE = None
+# Show the log file's location on the end screen (for subjects who send it back to us).
+SHOW_LOG_PATH_AT_END = True
 
 # --- Logging ---
 # Each run writes a new Markdown log to logs/ (see session_log.py).

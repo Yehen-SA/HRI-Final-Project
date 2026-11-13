@@ -14,6 +14,13 @@ logging and the web build come next ([plan.md](plan.md)).
 | `entities.py` | `Paddle`, `Ball` and `Brick`. Paddles and balls have an `owner`. |
 | `human_controls.py` | Keyboard to action for the human, plus the launch (Space) and quit (Esc) keys. Nothing robot-related. |
 | `robot_agent.py` | `Robot(strategy)`: the robot, created with a strategy, with `get_action(observation)`. |
+| `session.py` | The study session: `Session.flow()` lists the stages in order as a generator of screens; `run_session()` is the window loop with pause and quit. |
+| `assignment.py` | Participant ID → conditions (score mode, robot order), with an optional table and `CONDITION_OVERRIDE`. |
+| `questions.py` | Question types (`Info`, `Consent`, `MultipleChoice`, `Likert`, `Slider`, `TextAnswer`), with `show_if` for condition-specific questions. |
+| `pre_questions.py`, `post_questions.py` | The survey questions: stage 1, after each robot round, and stage 3. |
+| `session_text.py` | Instructions and messages between stages. |
+| `survey_screen.py` | Shows a list of questions one page at a time (mouse and keyboard). |
+| `ui.py` | Fonts, wrapped text, buttons, overlays. |
 | `stats.py` | `RoundStats`: a game listener that measures each round per player (scores, steals, drops, possession time...) and keeps an event timeline. |
 | `session_log.py` | `SessionLog`: writes one Markdown log per run to `logs/`, section by section, ending with a JSON block. |
 | `rules.py` | Optional rules (penalties, bonuses, power-ups): a `Rule` base class with one hook per game event, and the `RULES` list where each rule is switched on or off. |
@@ -62,6 +69,21 @@ Everything that happens in a round goes through `Game._emit()`: `round_start`, `
 `engine.EVENTS`). Enabled rules get `on_<event>(game, ...)`; listeners passed to `Game(...)`
 get `listener(event, data)`. Logging and the robot persona hook in as listeners.
 See [decisions/0008-rules-framework.md](decisions/0008-rules-framework.md).
+
+## Study session
+
+`main.py` runs the session by default (`--free-play` for plain games):
+
+1. Participant ID → conditions (`assignment.py`): P01 shared/BAD-first, P02 split/BAD-first,
+   P03 shared/GOOD-first, P04 split/GOOD-first, then repeating.
+2. Stage 1: `PRE_QUESTIONS` (consent first; declining ends the session), then instructions.
+3. Stage 2: practice round with no robot (`PRACTICE_SECONDS`), then for each robot in order: an
+   intro page, a round (`ROUND_SECONDS`), and `POST_ROUND_QUESTIONS`.
+4. Stage 3: `FINAL_QUESTIONS`, then the end screen (shows the log's location).
+
+Every round starts from the same seed. Esc pauses; Esc again quits and the log is marked
+aborted (a round in progress is saved with end reason "quit").
+See [decisions/0010-in-game-surveys-and-session.md](decisions/0010-in-game-surveys-and-session.md).
 
 ## Logging
 

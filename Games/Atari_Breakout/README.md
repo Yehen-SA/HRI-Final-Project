@@ -24,11 +24,28 @@ uv sync
 ## Run
 
 ```sh
-uv run src/main.py
+uv run src/main.py             # the study session: ID, surveys, practice, two robot rounds
+uv run src/main.py --free-play # just play (each game is still logged)
 ```
 
-Controls: A/D or the arrow keys move, Space launches a waiting ball (and plays again after game
-over), Esc quits. Rules: [docs/decisions/0005-basic-game-rules.md](docs/decisions/0005-basic-game-rules.md).
+The session asks for a participant ID, which decides the conditions (score mode and robot
+order, see [src/assignment.py](src/assignment.py)). Then: stage 1 questions, a practice round
+without the robot, a round with each robot followed by questions, stage 3 questions.
+
+Controls: A/D or the arrow keys move, Space launches a waiting ball. Esc pauses; Esc again
+quits (the log is kept, marked aborted).
+
+Testing options: `--pid P07` skips the ID screen, `--autoplay` answers and plays by itself,
+`--round-seconds 5` shortens every round.
+
+## Editing the surveys
+
+- Stage 1 questions: [src/pre_questions.py](src/pre_questions.py)
+- After each robot round, and stage 3: [src/post_questions.py](src/post_questions.py)
+- Question types (multiple choice, Likert, slider, text, info, consent):
+  [src/questions.py](src/questions.py)
+- Instructions and messages between stages: [src/session_text.py](src/session_text.py)
+- The order of the stages: `Session.flow()` in [src/session.py](src/session.py)
 
 ## Logs
 
@@ -63,6 +80,12 @@ uv run ruff format .   # format
 | `src/actions.py` | Paddle actions shared by human and robot |
 | `src/entities.py` | Paddle, ball and brick |
 | `src/human_controls.py` | Keyboard input for the human |
+| `src/session.py` | The study session: stages, rounds, pause/quit |
+| `src/assignment.py` | Participant ID → conditions |
+| `src/questions.py` | Question types for surveys |
+| `src/pre_questions.py`, `src/post_questions.py` | Survey questions |
+| `src/session_text.py` | Instructions and messages |
+| `src/survey_screen.py`, `src/ui.py` | Survey pages and drawing helpers |
 | `src/stats.py` | Per-round measures for the log |
 | `src/session_log.py` | Writes the Markdown log |
 | `src/rules.py` | Optional rules, switched on or off |

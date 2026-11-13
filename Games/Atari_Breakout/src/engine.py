@@ -402,11 +402,22 @@ class Game:
 
     # --- Window ---
 
-    def draw(self, screen: pygame.Surface, font: pygame.font.Font) -> None:
-        """Draw the HUD, bricks, paddles, power-ups and balls (each in its owner's colour)."""
+    def hud_score_text(self) -> str:
+        """The score line: per score mode, or just the human's score with no robot."""
+        if self.robot is None:
+            return f"Score: {self.scores[HUMAN]}"
+        return score_text(self.scores, self.score_mode)
+
+    def draw(
+        self, screen: pygame.Surface, font: pygame.font.Font, end_overlay: bool = True
+    ) -> None:
+        """Draw the HUD, bricks, paddles, power-ups and balls (each in its owner's colour).
+
+        `end_overlay=False` leaves out the free-play "Game over / play again" overlay.
+        """
         screen.fill(config.COLOR_BG)
         pygame.draw.rect(screen, config.COLOR_HUD, (0, 0, config.SCREEN_WIDTH, config.HUD_HEIGHT))
-        score = font.render(score_text(self.scores, self.score_mode), True, config.COLOR_TEXT)
+        score = font.render(self.hud_score_text(), True, config.COLOR_TEXT)
         screen.blit(score, (12, (config.HUD_HEIGHT - score.get_height()) // 2))
         mins, secs = divmod(self.seconds_left, 60)
         timer = font.render(f"{mins}:{secs:02d}", True, config.COLOR_TEXT)
@@ -435,12 +446,12 @@ class Game:
 
         if self.waiting_balls(HUMAN) and not self.over:
             self._centre_text(screen, font, "Press Space to launch your ball", 0.62)
-        if self.over:
+        if self.over and end_overlay:
             shade = pygame.Surface((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), pygame.SRCALPHA)
             shade.fill((0, 0, 0, 170))
             screen.blit(shade, (0, 0))
             self._centre_text(screen, font, "Game over", 0.40)
-            self._centre_text(screen, font, score_text(self.scores, self.score_mode), 0.48)
+            self._centre_text(screen, font, self.hud_score_text(), 0.48)
             self._centre_text(screen, font, "Space: play again    Esc: quit", 0.58)
 
     @staticmethod

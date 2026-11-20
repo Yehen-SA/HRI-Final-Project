@@ -52,6 +52,9 @@ class Rule:
     def on_round_start(self, game) -> None:
         """A round has been set up."""
 
+    def on_play_started(self, game) -> None:
+        """The human launched their first ball: play and the timer begin."""
+
     def on_tick(self, game) -> None:
         """Called once per frame (60 times a second), after everything has moved."""
 
@@ -62,7 +65,13 @@ class Rule:
         """A paddle bounced a ball. `ball.owner` is already the paddle's owner."""
 
     def on_steal(self, game, paddle, ball, from_player) -> None:
-        """A paddle hit a ball in the other player's colour and took it over."""
+        """Both paddles were under the ball and the non-owner took it over."""
+
+    def on_rescue(self, game, paddle, ball, from_player, prompted) -> None:
+        """The non-owner hit a ball its owner couldn't reach. `prompted`: the robot asked."""
+
+    def on_help_request(self, game, ball) -> None:
+        """The robot let one of its balls go on purpose and asked the human for help."""
 
     def on_brick_broken(self, game, ball, brick) -> None:
         """A ball broke a brick; its points have already gone to `ball.owner`."""

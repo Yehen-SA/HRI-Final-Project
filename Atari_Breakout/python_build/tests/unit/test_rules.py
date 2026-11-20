@@ -26,7 +26,7 @@ def lose(game: Game, owner: str) -> None:
 
 
 def steal_by_robot(game: Game) -> None:
-    game.human.x = 0
+    game.human.x = game.robot.x  # paddles overlap: a steal, not a rescue
     ball = game.balls[0]
     flying(ball, game.robot.centre_x, game.robot.y - ball.radius - 1, 0, 3, HUMAN)
     game.update()

@@ -1,21 +1,23 @@
 """Stage 1: questions before the game.
 
-Edit freely: add, remove or reorder entries. Question types and options are explained at the
-top of questions.py. Every `id` must be unique; it's the column name in the log.
-
-DRAFT wording, based on the report's notes. Check it against the final questionnaire.
+Matches the pre-experiment questionnaire in the report's appendix. Edit freely: add, remove or
+reorder entries. Question types are explained at the top of questions.py. Every `id` must be
+unique; it's the column name in the log.
 """
 
-from questions import Consent, Info, MultipleChoice, Question, Slider, TextAnswer
+from questions import Consent, Info, MultipleChoice, Question, TextAnswer
 
 PRE_QUESTIONS: list[Question] = [
     Info(
         id="welcome",
         text=(
             "Welcome, and thank you for taking part.\n\n"
-            "In this study you will play a short game of Breakout together with a robot "
-            "teammate, and answer a few questions before and after each round. "
-            "It takes about 15 minutes."
+            # Cover story (the report's confounds section): the stated purpose doesn't reveal
+            # the hypothesis. The real aim is explained in the debrief at the end.
+            "In this study we are looking at how people learn to play a new two-player version "
+            "of a classic arcade game alongside a computer-controlled player. You will answer a "
+            "few questions, play a short practice round, then two rounds with a robot partner, "
+            "with a few questions after each. It takes about 10 minutes."
         ),
     ),
     Consent(
@@ -27,30 +29,20 @@ PRE_QUESTIONS: list[Question] = [
             "Do you agree to take part?"
         ),
     ),
-    Slider(id="age", text="How old are you?", min=18, max=80, step=1, unit="years", start=25),
+    TextAnswer(id="age", text="What is your age?", max_len=3, numbers_only=True),
     MultipleChoice(
         id="gender",
         text="What is your gender?",
-        options=["Female", "Male", "Non-binary", "Other", "Prefer not to say"],
+        options=["Male", "Female", "Other", "Prefer not to say"],
+    ),
+    MultipleChoice(
+        id="interacted_with_robot",
+        text="Have you ever interacted with a robot before?",
+        options=["Yes", "No"],
     ),
     MultipleChoice(
         id="played_breakout",
-        text="Have you played Atari Breakout (or a similar brick-breaking game) before?",
-        options=["Never", "Once or twice", "A few times", "Many times"],
-    ),
-    MultipleChoice(
-        id="gaming_frequency",
-        text="How often do you play video games?",
-        options=["Never", "Less than once a month", "A few times a month", "Weekly", "Daily"],
-    ),
-    MultipleChoice(
-        id="robot_study_before",
-        text="Have you taken part in a study with a robot before?",
-        options=["No", "Yes", "Not sure"],
-    ),
-    TextAnswer(
-        id="robot_experience",
-        text="Briefly, what experience do you have with robots or AI? (optional)",
-        required=False,
+        text="Have you ever played Atari Breakout (the brick-breaking game)?",
+        options=["Yes", "No"],
     ),
 ]

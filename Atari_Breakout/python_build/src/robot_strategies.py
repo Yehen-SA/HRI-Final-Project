@@ -10,10 +10,13 @@ To add one: write a class with the same two methods, add a name to `Strategy` an
 `STRATEGIES`.
 
 The observation is built by the engine (Game._observation_for_robot):
-  - tick, screen_width, screen_height, paddle_y
+  - tick, screen_width, screen_height, paddle_y, human_paddle_speed
   - robot_paddle, human_paddle: {"x", "y", "width"} (x is the left edge)
-  - balls: list of {"id", "x", "y", "vx", "vy", "radius", "owner", "waiting"}
+  - balls: list of {"id", "x", "y", "vx", "vy", "radius", "owner", "waiting", "help_requested"}
   - bricks_left
+
+Balls the robot has asked for help with (help_requested) are handled by Robot itself, which
+moves out of their way whatever the strategy (robot_agent.py).
 """
 
 import random
@@ -82,12 +85,14 @@ class BadStrategy:
 
 
 class GoodStrategy:
-    """Tries to play properly, like a reasonable human player.
+    """Tries to play properly, like a reasonable human teammate.
 
-    Goes for whichever falling ball will reach the paddle row soonest (any colour), aiming at
-    where it will land after wall bounces. It reacts to what it saw a few frames ago and aims
-    with a small error, and now and then misjudges a ball badly, so it isn't perfect. With no
-    ball falling it drifts back towards its home position.
+    Goes for whichever falling ball will reach the paddle row soonest, aiming at where it will
+    land after wall bounces. It leaves the human's balls alone when the human could still reach
+    them (so it doesn't steal them), and goes for them only when the human can't (a rescue).
+    It reacts to what it saw a few frames ago, aims with a small error, and now and then
+    misjudges a ball badly, so it isn't perfect. With no ball falling it drifts back towards
+    its home position.
     """
 
     REACTION_DELAY_FRAMES = 8  # acts on the ball positions from this many frames ago
@@ -114,13 +119,30 @@ class GoodStrategy:
         x = x if x <= span else 2 * span - x
         return frames, lo + x
 
+    @classmethod
+    def human_can_reach(cls, ball: dict[str, Any], obs: Observation) -> bool:
+        """Whether this is the human's ball and their paddle could get under it in time."""
+        if ball["owner"] != "human":
+            return False
+        frames, land_x = cls.landing_x(ball, obs["paddle_y"], obs["screen_width"])
+        human = obs["human_paddle"]
+        gap = abs(land_x - (human["x"] + human["width"] / 2)) - human["width"] / 2
+        return gap <= frames * obs.get("human_paddle_speed", 7)
+
     def act(self, obs: Observation) -> str:
         self.history.append(obs["balls"])
         seen = self.history[0]  # oldest kept: REACTION_DELAY_FRAMES ago once full
         paddle = obs["robot_paddle"]
         centre = paddle["x"] + paddle["width"] / 2
 
-        falling = [b for b in seen if not b["waiting"] and b["vy"] > 0]
+        falling = [
+            b
+            for b in seen
+            if not b["waiting"]
+            and b["vy"] > 0
+            and not b.get("help_requested")
+            and not self.human_can_reach(b, obs)
+        ]
         if not falling:
             self.target_id = None
             home = obs["screen_width"] * self.HOME_X_FRACTION

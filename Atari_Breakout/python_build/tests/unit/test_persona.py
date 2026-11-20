@@ -85,8 +85,8 @@ def test_reacts_to_game_events_and_logs_what_it_says() -> None:
     said = []
     persona = RobotPersona(on_say=lambda trigger, text: said.append(trigger))
     game = Game(robot_strategy=Strategy.SWEEP, rules=[], listeners=[persona])
-    assert said == ["round_start"]  # always greets
-    assert persona.expression is Expression.EXCITED
+    assert said == ["introduction"]  # always introduces itself
+    assert persona.expression is Expression.HAPPY
     ball = next(b for b in game.balls if b.owner == ROBOT)
     ball.waiting, ball.x, ball.y, ball.vy = False, 50, config.PLAY_BOTTOM + 20, 3
     game.update()
@@ -137,3 +137,18 @@ def test_per_robot_images_are_preferred(tmp_path, monkeypatch) -> None:
     (tmp_path / "assets" / "robot" / "pip" / "happy.png").write_bytes(b"")
     assert sprites.image_path(Expression.HAPPY, "Pip").parent.name == "pip"
     assert sprites.image_path(Expression.HAPPY, "Nova").parent.name == "robot"
+
+
+def test_introduction_waits_on_the_start_screen_until_play_starts() -> None:
+    said = []
+    pip = cfg.identity_for_round(2)
+    persona = RobotPersona(on_say=lambda trigger, text: said.append(text), identity=pip)
+    game = Game(robot_strategy=Strategy.SWEEP, rules=[], listeners=[persona], wait_for_launch=True)
+    assert said == ["Hi, I'm Pip! I'm your teammate this round. My paddle is the purple one."]
+    for _ in range(round((cfg.IDLE_LINE_AFTER_S + 5) * config.FPS)):  # a long wait
+        game.update()
+        persona.update(game)
+    assert persona.speech.visible_line(persona.now) is not None  # still introducing
+    assert len(said) == 1  # no idle chatter before play
+    game.update(launch_pressed=True)
+    assert persona.speech.visible_line(persona.now) is None or said[-1] != said[0]

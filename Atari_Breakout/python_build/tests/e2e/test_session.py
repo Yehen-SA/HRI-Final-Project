@@ -35,11 +35,12 @@ def test_full_session_writes_a_complete_log(tmp_path) -> None:
         "assigned_by": "id number",
         "robot_names": ["Nova", "Pip"],
     }
-    assert set(data["answers"]) == {"pre", "post_round_1", "post_round_2", "final"}
-    assert "robot_vs_me" in data["answers"]["post_round_1"]  # shared-score question
+    assert set(data["answers"]) == {"pre", "post_round_1", "post_round_2"}  # no final stage
+    post = data["answers"]["post_round_1"]
+    assert "valuable_contribution" in post and "robot_share_estimate" in post  # shared only
+    assert "competing" not in post  # split only
     kinds = [(r["round_kind"], r["robot"], r.get("robot_name")) for r in data["rounds"]]
     assert kinds == [("practice", "none", None), ("main", "GOOD", "Nova"), ("main", "BAD", "Pip")]
-    assert data["answers"]["final"]["more_of_a_teammate"] == "Nova (first round)"
 
 
 def test_rerun_makes_a_second_log(tmp_path) -> None:

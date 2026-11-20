@@ -21,6 +21,7 @@ same robot apart from how well it plays, and it must be easy to swap between the
 
 ## Consequences
 
+- With the 10-row wall and 2-minute rounds: GOOD about 95%, BAD about 44%.
 - In robot-only simulation (`tools/simulate_robot.py`), GOOD catches about 96% of its balls and
   BAD about 31%.
 - Points per minute differ less (about 67 vs 54), because a ball breaks bricks while it's in the

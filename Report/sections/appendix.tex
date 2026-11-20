@@ -2,34 +2,238 @@
 \label{app:questionnaires}
 \fix{Consent form, pre-study questionnaire (demographics), post-condition questionnaire.}
 
+
+\subsection{Pre-experiment Questionnaire}
+
+Please answer the following questions before starting the experiment.
+
+\begin{enumerate}[leftmargin=*, itemsep=0.8em]
+
+    \item \textbf{What is your age?}
+
+    \rule{4cm}{0.4pt}
+
+    \item \textbf{What is your gender?}
+
+    \begin{itemize}[label=$\square$, nosep]
+        \item Male
+        \item Female
+        \item Other
+        \item Prefer not to say
+    \end{itemize}
+
+    \item \textbf{Have you ever interacted with a robot before?}
+
+    \begin{itemize}[label=$\square$, nosep]
+        \item Yes
+        \item No
+    \end{itemize}
+
+    \item \textbf{Have you ever played Atari Breakout (the brick-breaking game)?}
+
+    \begin{itemize}[label=$\square$, nosep]
+        \item Yes
+        \item No
+    \end{itemize}
+
+\end{enumerate}
+
+
+\subsection{Post-experiment Questionnaire}
+
+Please indicate how much you agree or disagree with each statement.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{ccccc}
+\toprule
+1 & 2 & 3 & 4 & 5 \\
+\midrule
+Strongly & Disagree & Neither agree & Agree & Strongly \\
+disagree & & nor disagree & & agree \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{0.5em}
+
+\subsubsection{Teammate Perception}
+
+\begin{enumerate}[leftmargin=*, itemsep=0.8em]
+
+    \item I felt that the robot was part of my team.
+
+    \item I felt that the robot and I were working towards a common goal.
+
+    \item I felt that the robot was just a tool.
+
+\end{enumerate}
+
+\subsubsection{Robot Evaluation}
+
+\begin{enumerate}[leftmargin=*, itemsep=0.8em, start=4]
+
+    \item I considered the robot capable of performing its role in the game.
+
+    \item I would trust this robot to contribute to a team task.
+
+\end{enumerate}
+
+\subsubsection{Teamwork Experience}
+
+\textit{Please answer only the questions corresponding to your experimental condition.}
+
+\paragraph{Shared-score condition}
+
+\begin{enumerate}[leftmargin=*, itemsep=0.8em, start=6]
+
+    \item I felt that the robot made a valuable contribution to our team's performance.
+
+    \item I felt that the workload was fairly shared between the robot and me.
+
+    \item I was motivated to improve our team's overall score.
+
+\end{enumerate}
+
+\paragraph{Separate-score condition}
+
+\begin{enumerate}[leftmargin=*, itemsep=0.8em, start=6]
+
+    \item I paid more attention to my own score than to the robot's score.
+
+    \item I felt that I was competing with the robot.
+
+    \item Having separate scores made me more motivated to improve my own performance.
+
+\end{enumerate}
+
+\subsubsection{Overall Teamwork Experience}
+
+\begin{enumerate}[leftmargin=*, itemsep=0.8em, start=9]
+
+    \item I was willing to help the robot when it was struggling during the game.
+
+\end{enumerate}
+
+\begin{reviewblock}
+\subsubsection{Likeability (Godspeed)}
+Please rate your impression of the robot on these scales (1 to 5):
+\begin{itemize}[leftmargin=*, nosep]
+    \item Dislike \hfill 1 \quad 2 \quad 3 \quad 4 \quad 5 \hfill Like
+    \item Unfriendly \hfill 1 \quad 2 \quad 3 \quad 4 \quad 5 \hfill Friendly
+    \item Unkind \hfill 1 \quad 2 \quad 3 \quad 4 \quad 5 \hfill Kind
+    \item Unpleasant \hfill 1 \quad 2 \quad 3 \quad 4 \quad 5 \hfill Pleasant
+    \item Awful \hfill 1 \quad 2 \quad 3 \quad 4 \quad 5 \hfill Nice
+\end{itemize}
+
+\subsubsection{Perceived contribution (shared-score condition only)}
+What share of the team's points do you think the robot scored? (0--100\%, in steps of 5)
+\end{reviewblock}
+
+\subsubsection{Additional Feedback (Optional)}
+
+\begin{enumerate}[leftmargin=*, itemsep=0.8em, start=10]
+
+    \item Is there anything else you would like to share about your experience playing with the robot?
+
+    \vspace{0.5em}
+    \rule{\linewidth}{0.4pt}\\[1.5em]
+    \rule{\linewidth}{0.4pt}\\[1.5em]
+    \rule{\linewidth}{0.4pt}
+
+\end{enumerate}
+
 \clearpage
 \section{Data collection}
 \label{app:data}
+Two rows per participant, one per robot round. Conditions follow the participant ID (see the game's \texttt{assignment.py}). Tick \textit{Started} when an ID is handed out, so it isn't used twice. Values come from each participant's log file (\texttt{uv run tools/summarise\_logs.py} prints them). Every other measure, including steals and rescues, is kept in \texttt{Data/results.csv} in the project repository.
+\begin{itemize}[nosep]
+    \item \textit{Possession}: seconds the human's and the robot's balls were in flight.
+    \item \textit{Score}: points scored by the human, the robot and the team.
+\end{itemize}
+
 \begin{table}[H]
 \centering
-\begin{tabular}{cccc}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{lllclcc}
 \toprule
-\textbf{Participant} & \textbf{Condition} & \textbf{\fix{Measure}} & \textbf{\fix{Measure}} \\
+\textbf{ID} & \textbf{\shortstack[l]{Score\\structure}} & \textbf{\shortstack[l]{Robot\\order}} & \textbf{Started} & \textbf{Interviewer} & \textbf{\shortstack{Possession\\(H\,:\,R)}} & \textbf{\shortstack{Score\\(H\,:\,R\,:\,Total)}} \\
 \midrule
-P01 & & & \\
-P02 & & & \\
-\ldots & & & \\
+P01 & Shared & 1st: Bad & $\square$ & & & \\
+ & & 2nd: Good & & & & \\
+\midrule
+P02 & Split & 1st: Bad & $\square$ & & & \\
+ & & 2nd: Good & & & & \\
+\midrule
+P03 & Shared & 1st: Good & $\square$ & & & \\
+ & & 2nd: Bad & & & & \\
+\midrule
+P04 & Split & 1st: Good & $\square$ & & & \\
+ & & 2nd: Bad & & & & \\
+\midrule
+P05 & Shared & 1st: Bad & $\square$ & & & \\
+ & & 2nd: Good & & & & \\
+\midrule
+P06 & Split & 1st: Bad & $\square$ & & & \\
+ & & 2nd: Good & & & & \\
+\midrule
+P07 & Shared & 1st: Good & $\square$ & & & \\
+ & & 2nd: Bad & & & & \\
+\midrule
+P08 & Split & 1st: Good & $\square$ & & & \\
+ & & 2nd: Bad & & & & \\
+\midrule
+P09 & Shared & 1st: Bad & $\square$ & & & \\
+ & & 2nd: Good & & & & \\
+\midrule
+P10 & Split & 1st: Bad & $\square$ & & & \\
+ & & 2nd: Good & & & & \\
 \bottomrule
 \end{tabular}
-\caption{Raw data per participant.}
+\caption{Data per participant and robot round: P01--P10.}
+\label{tab:rawdata1}
 \end{table}
 
-\clearpage
-\section{Development log}
-\label{app:devlog}
 \begin{table}[H]
 \centering
-\begin{tabularx}{\linewidth}{l l X}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{lllclcc}
 \toprule
-\textbf{Date} & \textbf{Who} & \textbf{Change} \\
+\textbf{ID} & \textbf{\shortstack[l]{Score\\structure}} & \textbf{\shortstack[l]{Robot\\order}} & \textbf{Started} & \textbf{Interviewer} & \textbf{\shortstack{Possession\\(H\,:\,R)}} & \textbf{\shortstack{Score\\(H\,:\,R\,:\,Total)}} \\
 \midrule
- & & \\
+P11 & Shared & 1st: Good & $\square$ & & & \\
+ & & 2nd: Bad & & & & \\
+\midrule
+P12 & Split & 1st: Good & $\square$ & & & \\
+ & & 2nd: Bad & & & & \\
+\midrule
+P13 & Shared & 1st: Bad & $\square$ & & & \\
+ & & 2nd: Good & & & & \\
+\midrule
+P14 & Split & 1st: Bad & $\square$ & & & \\
+ & & 2nd: Good & & & & \\
+\midrule
+P15 & Shared & 1st: Good & $\square$ & & & \\
+ & & 2nd: Bad & & & & \\
+\midrule
+P16 & Split & 1st: Good & $\square$ & & & \\
+ & & 2nd: Bad & & & & \\
+\midrule
+P17 & Shared & 1st: Bad & $\square$ & & & \\
+ & & 2nd: Good & & & & \\
+\midrule
+P18 & Split & 1st: Bad & $\square$ & & & \\
+ & & 2nd: Good & & & & \\
+\midrule
+P19 & Shared & 1st: Good & $\square$ & & & \\
+ & & 2nd: Bad & & & & \\
+\midrule
+P20 & Split & 1st: Good & $\square$ & & & \\
+ & & 2nd: Bad & & & & \\
 \bottomrule
-\end{tabularx}
-\caption{Changes made to the game and robot.}
+\end{tabular}
+\caption{Data per participant and robot round: P11--P20.}
+\label{tab:rawdata2}
 \end{table}

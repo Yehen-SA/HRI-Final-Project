@@ -1,21 +1,24 @@
 """Which conditions each participant gets, decided by their participant ID.
 
 Give each participant an ID such as P01, P02, P03... Only the number matters ("P07", "p7"
-and "pilot-7" all count as 7). The number picks a row of CONDITION_CYCLE below, repeating every
-four IDs:
+and "pilot-7" all count as 7). The number picks a row of CONDITION_CYCLE below. The cycle
+repeats every four IDs with no upper limit, so P21 onwards carries on the same way:
 
-    ID                          Score mode   Robot order
-    P01  P05  P09  P13  P17     shared       BAD, then GOOD
-    P02  P06  P10  P14  P18     split        BAD, then GOOD
-    P03  P07  P11  P15  P19     shared       GOOD, then BAD
-    P04  P08  P12  P16  P20     split        GOOD, then BAD
+    ID                                    Score mode   Robot order
+    P01  P05  P09  P13  P17  P21  P25 ... shared       BAD, then GOOD
+    P02  P06  P10  P14  P18  P22  P26 ... split        BAD, then GOOD
+    P03  P07  P11  P15  P19  P23  P27 ... shared       GOOD, then BAD
+    P04  P08  P12  P16  P20  P24  P28 ... split        GOOD, then BAD
 
-Handing out IDs in order keeps the groups balanced: P01-P20 gives 5 people per row, and 10 each
-for shared and split.
+(Row = ID number minus 1, divided by 4, remainder: 0, 1, 2 or 3.)
+
+Handing out IDs in order keeps the groups balanced: any multiple of 4 participants gives the
+same number in every row, and score mode alternates, so any even number splits shared and split
+equally. P01-P20 gives 5 per row and 10 each for shared and split; P01-P40 gives 10 per row.
 
 To see the conditions for any range of IDs:
 
-    uv run src/assignment.py 1 24
+    uv run src/assignment.py 1 40
 
 Two ways to override this, checked first:
   1. config.CONDITION_OVERRIDE: forces the same conditions for every ID (for piloting on our

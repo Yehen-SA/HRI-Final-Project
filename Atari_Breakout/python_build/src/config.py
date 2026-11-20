@@ -46,24 +46,34 @@ PADDLES_HIT_ANY_BALL = True
 LOST_BALL_GOES_TO = "random"
 
 # --- Bricks ---
-BRICK_ROWS = 6
+BRICK_ROWS = 10  # enough that the bricks rarely run out before the timer does
 BRICK_COLS = 10
 BRICK_GAP = 4
-BRICK_HEIGHT = 20
+BRICK_HEIGHT = 10  # thin rows: 10 rows fit in the space 6 rows of 20 px used to
 BRICK_TOP = HUD_HEIGHT + 40  # y of the top brick row
 BRICK_WIDTH = (SCREEN_WIDTH - (BRICK_COLS + 1) * BRICK_GAP) // BRICK_COLS
-BRICK_ROW_POINTS = [7, 7, 4, 4, 1, 1]  # points per brick, top row first (Atari style)
+BRICK_ROW_POINTS = [7, 7, 5, 5, 4, 4, 3, 3, 1, 1]  # points per brick, top row first
 
 # --- Rules ---
 # A brick's points go to the ball's owner (the player whose colour it's in). No lives:
 # dropping a ball only costs time.
-ROUND_SECONDS = 180  # the game ends when time runs out or every brick is gone
+ROUND_SECONDS = 120  # the game ends when time runs out or every brick is gone
 SCORE_MODE = "split"  # "shared": team score only; "split": each player's score plus total
 SEED = 1234  # seeds the launch angles and the robot, so a run can be repeated
 
 # --- Power-ups (only used by optional rules in rules.py) ---
 POWERUP_SIZE = 18
 POWERUP_FALL_SPEED = 3
+
+# --- Steals, rescues and help requests ---
+# A paddle that hits the other player's ball takes it over. If the owner's paddle was touching
+# the ball too (the paddles overlap), it's a steal; if not, a rescue.
+# Scripted misses: in each robot round the robot lets this many of its own balls go on purpose
+# and asks the human for help, so both robots ask the same number of times. They're spread
+# evenly over the round; each waits for a robot ball that's falling and still above this
+# fraction of the play area, so the human has time to react.
+HELP_REQUESTS_PER_ROUND = 2
+HELP_REQUEST_MAX_HEIGHT = 0.55  # the bricks end at y=220 of 600
 
 # --- Robot ---
 # Strategy for free play: "GOOD", "BAD" or "SWEEP" (see robot_strategies.py), or None for no
@@ -72,7 +82,7 @@ ROBOT_STRATEGY = "GOOD"
 # The robot's name, look and speech are in robot_persona/persona_config.py.
 
 # --- Study session (see session.py) ---
-PRACTICE_SECONDS = 60  # practice round, played without the robot
+PRACTICE_SECONDS = 30  # practice round, played without the robot
 # Conditions normally come from the participant ID (assignment.py). To force them on our own
 # devices, set e.g. {"score_mode": "shared", "robot_order": ["GOOD", "BAD"]}.
 CONDITION_OVERRIDE = None
@@ -87,14 +97,19 @@ LOG_TIMELINE = True  # include every event (hits, steals, bricks...) with its ti
 COLOR_BG = (20, 22, 30)
 COLOR_HUD = (30, 34, 46)
 COLOR_TEXT = (240, 240, 245)
-COLOR_HUMAN = (66, 135, 245)  # human's paddle and ball
+COLOR_HUMAN = (60, 210, 230)  # human's paddle and ball: cyan (robots are yellow and purple)
 COLOR_ROBOT = (245, 180, 66)  # default robot colour; each robot's own is in persona_config.py
 COLOR_POWERUP = (240, 240, 245)
-BRICK_ROW_COLORS = [  # top row first; reused from the top if there are more rows
+COLOR_BALL_OUTLINE = (10, 10, 14)  # ring around every ball, so it shows over any brick
+BRICK_ROW_COLORS = [  # top row first, two rows per colour (as in Atari Breakout)
+    (220, 70, 70),
     (220, 70, 70),
     (230, 130, 60),
+    (230, 130, 60),
+    (230, 200, 70),
     (230, 200, 70),
     (90, 190, 100),
+    (90, 190, 100),
     (70, 150, 220),
-    (150, 100, 210),
+    (70, 150, 220),
 ]

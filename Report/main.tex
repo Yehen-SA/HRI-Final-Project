@@ -9,6 +9,7 @@
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{tabularx}
+\usepackage{amssymb}
 \usepackage{float}
 \usepackage{xurl}        % lets long URLs break at any character
 \usepackage{hyperref}    % load last
@@ -74,23 +75,6 @@
 
 \subsection{Initial ideas}
 \begin{reviewblock}
-\textbf{Chosen direction:} shared vs split score, with the robot's performance varied:
-\begin{itemize}
-    \item Score structure: shared score vs split (per-player) score
-    \item Robot performance: worse than, matching, or better than the participant
-    \item Blame attribution was considered but left out to keep the study simple; it is possible future work
-\end{itemize}
-
-\textbf{Game:} co-operative Atari Breakout. The participant and robot each control a paddle and defend shared lives; each brick is credited to the last paddle to hit the ball.
-
-\textbf{Dependent variables considered:}
-\begin{itemize}
-    \item Whether the participant sees the robot as a teammate, competitor or tool
-    \item Reward allocation: how the participant splits bonus points between themselves and the robot
-    \item Peer review of the robot as a team member
-    \item The participant's estimate of how much the robot contributed, compared with its actual contribution
-    \item Likeability of the robot
-\end{itemize}
 
 \textbf{Related work:}
 \begin{itemize}
@@ -101,17 +85,13 @@
 
 \textbf{Other design options:}
 \begin{itemize}
-    \item Score structure varied between subjects and robot performance within subjects \fix{confirm with group}
     \item The robot presented as a different robot each round, with a new name and colour
-    \item The robot's performance controlled by adapting it to the participant's score
 \end{itemize}
 
 \textbf{Game Changes}
 \begin{itemize}
     \item Change colour depending on who would score points
-    \item port to HTML for portability
     \item Robot AI
-    \item Other Atari rules
     \item need robot agent to be believeable (e.g. robot sprite).
 \end{itemize}
 
@@ -126,10 +106,10 @@ Pre-Game:
 Post-Game:
 \begin{itemize}
     \item How helpful is robot (Peer review)
+    \item How do you think of your performance?
     \item {For shared score players:} How well do you think the robot did compared to you? (score distribution)
     \item {For split score players:} Did seeing the robot's score make you more competitive?
     \item How likeable is the robot.
-    \item 
 \end{itemize}
 
 Data to collect:
@@ -143,19 +123,13 @@ Data to collect:
 \end{reviewblock}
 
 \subsection{Research question}
-Are people more likely to treat a robot partner as part of their team when the score is shared rather than split, and does this depend on how well the robot performs relative to them?
+Are people more likely to treat a robot partner as part of their team when the score is shared rather than split, and does the robot's performance affect whether they treat it as a teammate?
 
 \subsection{Hypotheses}
-We hypothesise that participants who see a shared score will treat the robot more as a teammate than participants who see a split score, and that a worse-performing robot will feel less like a teammate than a better-performing robot under both the shared and split scores.
-\begin{reviewblock}
-\begin{itemize}
-    \item H1: Participants in the shared-score condition will perceive the robot as more of a teammate than those in the split-score condition.
-    \item H2: Better robot performance will lead to stronger teammate perceptions in the shared-score condition, whereas this positive effect will be weaker in the split-score condition due to increased social comparison and perceived competition.
-    \item H3: Participants' perceived contribution of the robot will be influenced by the score structure and the robot's relative performance.
-\end{itemize}
-\end{reviewblock}
 
+\paragraph{H1:} Participants will perceive the robots at a given performance level more like a teammate if the score is shared compared with if the score is split.
 
+\paragraph{H2:} Participants will perceive a robot at a higher performance level as a teammate compared to a robot at a lower performance level, regardless of whether the score is shared or split.
 
 \clearpage
 % =====================================================================

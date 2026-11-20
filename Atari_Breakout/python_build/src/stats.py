@@ -9,6 +9,15 @@ Use as a game listener:
 
 Every per-player number is kept for both "human" and "robot". To add a measure: count it in
 `__call__` (from an event, or every frame in `_every_frame`), then add a row to `ROWS`.
+
+Taking the other player's ball (engine.Game._hit_paddle):
+  - steal:  both paddles were under the ball (the owner could have returned it)
+  - rescue: only the taker's paddle was there (the owner couldn't)
+  - prompted rescue: a rescue of a ball the robot let go on purpose and asked for help with
+Rates divide by the chances the player had, so a robot that misses more (more chances to
+rescue) or catches more (more chances to steal) doesn't skew them:
+  - steal rate  = steals / (the other's balls that reached the other's paddle)
+  - rescue rate = rescues / (the other's balls the other couldn't reach)
 """
 
 from typing import Any
@@ -25,9 +34,19 @@ ROWS = [
     ("points_rules", "Points from rules (bonuses / penalties)"),
     ("bricks_broken", "Bricks broken"),
     ("paddle_hits", "Paddle hits (all)"),
-    ("own_ball_hits", "Hits on own-colour balls"),
-    ("steals_made", "Steals made (hit the other's ball)"),
-    ("balls_stolen", "Balls stolen by the other player"),
+    ("own_catches", "Own balls caught"),
+    ("steals_made", "Steals made (took the other's ball while they were under it)"),
+    ("steal_chances", "Steal chances (the other's balls that reached the other's paddle)"),
+    ("steal_rate", "Steal rate"),
+    ("balls_stolen", "Own balls stolen by the other player"),
+    ("rescues_made", "Rescues made (saved the other's ball they couldn't reach)"),
+    ("rescues_prompted", "  of which prompted (the robot asked for help)"),
+    ("rescues_unprompted", "  of which unprompted"),
+    ("rescue_chances", "Rescue chances (the other's balls the other couldn't reach)"),
+    ("rescue_rate", "Rescue rate (all)"),
+    ("prompted_rescue_rate", "Prompted rescue rate (rescued / help requests)"),
+    ("unprompted_rescue_rate", "Unprompted rescue rate"),
+    ("balls_rescued", "Own balls rescued by the other player"),
     ("balls_lost", "Balls lost"),
     ("balls_received", "Lost balls given to this player"),
     ("possession_s", "Time holding a ball in flight (s, summed over balls)"),
@@ -45,6 +64,8 @@ TIMELINE_EVENTS = {
     "ball_launched",
     "paddle_hit",
     "steal",
+    "rescue",
+    "help_request",
     "brick_broken",
     "points",
     "ball_lost",
@@ -67,6 +88,11 @@ def median(values: list[int]) -> float:
     return ordered[mid] if len(ordered) % 2 else (ordered[mid - 1] + ordered[mid]) / 2
 
 
+def _rate(count: int, chances: int) -> float | None:
+    """count / chances to 3 decimals, or None (no chances) so it isn't mistaken for 0."""
+    return round(count / chances, 3) if chances > 0 else None
+
+
 def _secs(frames: int) -> float:
     return round(frames / config.FPS, 2)
 
@@ -78,6 +104,11 @@ class RoundStats:
         self.paddle_hits = dict(zero)
         self.steals_made = dict(zero)
         self.balls_stolen = dict(zero)
+        self.rescues_made = dict(zero)
+        self.rescues_prompted = dict(zero)
+        self.balls_rescued = dict(zero)
+        self.help_requests = 0  # balls the robot let go on purpose and asked for help with
+        self.robot_lines: dict[str, int] = {}  # voice lines spoken, per trigger
         self.balls_received = dict(zero)
         self.powerups_caught = dict(zero)
         self.possession_frames = dict(zero)
@@ -110,6 +141,13 @@ class RoundStats:
         elif event == "steal":
             self.steals_made[data["paddle"].owner] += 1
             self.balls_stolen[data["from_player"]] += 1
+        elif event == "rescue":
+            self.rescues_made[data["paddle"].owner] += 1
+            self.balls_rescued[data["from_player"]] += 1
+            if data["prompted"]:
+                self.rescues_prompted[data["paddle"].owner] += 1
+        elif event == "help_request":
+            self.help_requests += 1
         elif event == "ball_given":
             self.balls_received[data["player"]] += 1
             self._waiting_since[data["ball"].id] = game.tick
@@ -123,6 +161,11 @@ class RoundStats:
 
         if event in TIMELINE_EVENTS and not (event == "points" and data["reason"] == "bricks"):
             self.timeline.append(self._timeline_row(game, event, data))
+
+    def robot_said(self, trigger: str, text: str) -> None:
+        """The persona spoke a line (pass as RobotPersona(on_say=...))."""
+        self.robot_lines[trigger] = self.robot_lines.get(trigger, 0) + 1
+        self.note("robot_said", "robot", f"{text} ({trigger})")
 
     def note(self, event: str, player: str = "", detail: str = "") -> None:
         """Add something else to the timeline (e.g. what the robot said)."""
@@ -158,6 +201,12 @@ class RoundStats:
         elif event == "steal":
             player = data["paddle"].owner
             detail = f"ball {data['ball'].id} from {data['from_player']}"
+        elif event == "rescue":
+            player = data["paddle"].owner
+            prompted = "prompted" if data["prompted"] else "unprompted"
+            detail = f"ball {data['ball'].id} from {data['from_player']} ({prompted})"
+        elif event == "help_request":
+            player, detail = "robot", f"let ball {data['ball'].id} go, asked for help"
         elif event == "brick_broken":
             brick = data["brick"]
             player = data["ball"].owner
@@ -181,7 +230,15 @@ class RoundStats:
         game = self.game
         assert game is not None, "RoundStats was never attached to a game"
         players: dict[str, dict[str, Any]] = {}
+        own_catches = {
+            p: self.paddle_hits[p] - self.steals_made[p] - self.rescues_made[p] for p in PLAYERS
+        }
         for p in PLAYERS:
+            other = ROBOT if p == HUMAN else HUMAN
+            steal_chances = own_catches[other] + self.steals_made[p]
+            rescue_chances = self.rescues_made[p] + game.drops[other]
+            prompted_chances = self.help_requests if p == HUMAN else 0
+            unprompted = self.rescues_made[p] - self.rescues_prompted[p]
             by_reason = game.points_by_reason[p]
             delays = self.launch_delays[p]
             players[p] = {
@@ -191,9 +248,19 @@ class RoundStats:
                 "points_by_reason": dict(by_reason),
                 "bricks_broken": self.bricks_broken[p],
                 "paddle_hits": self.paddle_hits[p],
-                "own_ball_hits": self.paddle_hits[p] - self.steals_made[p],
+                "own_catches": own_catches[p],
                 "steals_made": self.steals_made[p],
+                "steal_chances": steal_chances,
+                "steal_rate": _rate(self.steals_made[p], steal_chances),
                 "balls_stolen": self.balls_stolen[p],
+                "rescues_made": self.rescues_made[p],
+                "rescues_prompted": self.rescues_prompted[p],
+                "rescues_unprompted": unprompted,
+                "rescue_chances": rescue_chances,
+                "rescue_rate": _rate(self.rescues_made[p], rescue_chances),
+                "prompted_rescue_rate": _rate(self.rescues_prompted[p], prompted_chances),
+                "unprompted_rescue_rate": _rate(unprompted, rescue_chances - prompted_chances),
+                "balls_rescued": self.balls_rescued[p],
                 "balls_lost": game.drops[p],
                 "balls_received": self.balls_received[p],
                 "possession_s": _secs(self.possession_frames[p]),
@@ -214,6 +281,8 @@ class RoundStats:
             "bricks_broken": len(game.bricks) - game.bricks_left,
             "bricks_left": game.bricks_left,
             "paddles_overlapping_s": _secs(self.overlap_frames),
+            "help_requests": self.help_requests,
+            "robot_lines_by_trigger": dict(sorted(self.robot_lines.items())),
             "max_balls_in_play": self.max_balls,
             "players": players,
         }

@@ -45,6 +45,7 @@ class Ball:
     waiting: bool = True  # sitting on its owner's paddle, not yet launched
     launch_tick: int = 0  # robot's waiting balls: the frame they launch by themselves
     id: int = 0  # stable number so the robot can tell balls apart
+    help_requested: bool = False  # the robot let this ball go on purpose and asked for help
 
     @property
     def rect(self) -> pygame.Rect:

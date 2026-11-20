@@ -1,8 +1,7 @@
 """Text shown between the stages of a session. Edit freely.
 
-These are lists of questions.Info pages (one page each). `{robot_name}`, `{robot_colour}`,
-`{round_number}`,
-`{rounds}`, `{practice_seconds}` and `{round_minutes}` are filled in.
+Info pages are lists of questions.Info (one page each). `{robot_name}`, `{robot_colour}`,
+`{round_number}`, `{rounds}`, `{practice_seconds}` and `{round_minutes}` are filled in.
 """
 
 from questions import Info, TextAnswer
@@ -27,7 +26,7 @@ INSTRUCTIONS = [
         id="ball_colours",
         text=(
             "Ball colours\n\n"
-            "Your paddle is blue. A ball takes the colour of whoever hit it last, and that "
+            "Your paddle is cyan. A ball takes the colour of whoever hit it last, and that "
             "player scores the bricks it breaks. Any paddle can hit any ball.\n\n"
             "When a ball falls off the bottom, it comes back on a random player's paddle."
         ),
@@ -38,27 +37,31 @@ INSTRUCTIONS = [
             "First, a practice round on your own to get used to the controls. "
             "It lasts {practice_seconds} seconds and is not part of the results."
         ),
-        button="Start practice",
+        button="Continue",
     ),
 ]
 
-ROUND_INTRO = [
-    Info(
-        id="round_intro",
-        text=(
-            "Round {round_number} of {rounds}\n\n"
-            "You will now play together with a robot teammate called {robot_name}. "
-            "{robot_name}'s paddle is {robot_colour}.\n\n"
-            "The round lasts {round_minutes} minutes."
-        ),
-        button="Start round",
-    ),
-]
+# Shown on each round's start screen (the robot introduces itself there too). Play and the
+# timer start when the participant presses Space to launch their first ball.
+PRACTICE_START = "Practice round: {practice_seconds} seconds, on your own\n\nPress Space to start"
+ROUND_START = (
+    "Round {round_number} of {rounds}: {round_minutes} minutes with {robot_name}\n\n"
+    "Press Space to start"
+)
 
 ROUND_OVER = "Round over. Press Space to continue."
 PRACTICE_OVER = "Practice over. Press Space to continue."
 
-END = "That's the end of the study. Thank you for taking part!\n\nYou can close this window now."
+# Debrief: explains the real aim, since the welcome page gives a cover story.
+END = (
+    "That's the end of the study. Thank you for taking part!\n\n"
+    "About this study: we told you it was about learning a new version of an arcade game. "
+    "We are actually studying whether showing a shared team score, rather than separate "
+    "scores, makes people see a robot partner as a teammate, and whether how well the robot "
+    "plays changes this. The two robots were controlled by programs of different skill. "
+    "If you'd rather we didn't use your data now that you know this, tell the researchers.\n\n"
+    "You can close this window now."
+)
 END_SEND_LOG = "Please send this file back to the researchers:\n\n{log_path}"
 END_WEB_LOG = (
     "Your browser has downloaded your results file ({log_name}). Please send it back to the "

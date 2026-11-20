@@ -40,7 +40,7 @@ def test_each_player_starts_with_one_ball_in_their_colour() -> None:
 def test_brick_points_by_row() -> None:
     game = Game()
     points = {b.row: b.points for b in game.bricks}
-    assert [points[r] for r in range(config.BRICK_ROWS)] == [7, 7, 4, 4, 1, 1]
+    assert [points[r] for r in range(config.BRICK_ROWS)] == [7, 7, 5, 5, 4, 4, 3, 3, 1, 1]
 
 
 @pytest.mark.parametrize("owner", [HUMAN, ROBOT])
@@ -75,19 +75,38 @@ def test_space_launches_a_human_ball() -> None:
     assert ball.vy < 0
 
 
-def test_hitting_the_other_players_ball_steals_it() -> None:
+def at_robot_paddle(game: _Game, ball: Ball, owner: str) -> None:
+    """Put a ball just above the robot's paddle, falling, in `owner`'s colour."""
+    flying(ball, game.robot.centre_x, game.robot.y - ball.radius - 1, 0, 3, owner)
+
+
+def test_overlapping_paddles_mean_a_steal_by_the_other_player() -> None:
+    for owner, taker in ((HUMAN, ROBOT), (ROBOT, HUMAN)):
+        game = Game()
+        park_robot_ball(game)
+        game.human.x = game.robot.x  # paddles overlap: the owner was there too
+        ball = ball_of(game, 0)
+        at_robot_paddle(game, ball, owner)
+        game.update()
+        assert ball.owner == taker
+        assert game.steals[taker] == 1 and game.rescues == {HUMAN: 0, ROBOT: 0}
+        assert ball.vy < 0
+
+
+def test_taking_a_ball_its_owner_could_not_reach_is_a_rescue() -> None:
     game = Game()
     park_robot_ball(game)
     game.human.x = 0  # human far away
     ball = ball_of(game, 0)
-    flying(ball, game.robot.centre_x, game.robot.y - ball.radius - 1, 0, 3, HUMAN)
+    at_robot_paddle(game, ball, HUMAN)
     game.update()
     assert ball.owner == ROBOT
-    assert game.steals == {HUMAN: 0, ROBOT: 1}
-    assert ball.vy < 0
+    assert game.rescues == {HUMAN: 0, ROBOT: 1}
+    assert game.steals == {HUMAN: 0, ROBOT: 0}
+    assert game.prompted_rescues == {HUMAN: 0, ROBOT: 0}
 
 
-def test_hitting_your_own_ball_is_not_a_steal() -> None:
+def test_hitting_your_own_ball_is_neither() -> None:
     game = Game()
     park_robot_ball(game)
     game.robot.x = 600
@@ -95,18 +114,70 @@ def test_hitting_your_own_ball_is_not_a_steal() -> None:
     flying(ball, game.human.centre_x, game.human.y - ball.radius - 1, 0, 3, HUMAN)
     game.update()
     assert ball.owner == HUMAN
-    assert game.steals == {HUMAN: 0, ROBOT: 0}
+    assert game.steals == {HUMAN: 0, ROBOT: 0} and game.rescues == {HUMAN: 0, ROBOT: 0}
 
 
-def test_double_touch_goes_to_current_owner() -> None:
-    game = Game()
+def test_help_requests_are_spread_over_the_round() -> None:
+    game = Game(round_seconds=120, help_requests=2)
+    assert game.help_request_ticks == [40 * config.FPS, 80 * config.FPS]
+    assert Game(help_requests=0).help_request_ticks == []
+
+
+def test_help_request_marks_a_falling_robot_ball_and_the_robot_cannot_hit_it() -> None:
+    events = []
+    game = Game(
+        round_seconds=10, help_requests=1, rules=[], listeners=[lambda g, e, d: events.append(e)]
+    )
     park_robot_ball(game)
-    game.human.x = game.robot.x  # paddles overlap
-    ball = ball_of(game, 0)
-    flying(ball, game.robot.centre_x, game.robot.y - ball.radius - 1, 0, 3, ROBOT)
+    ball = ball_of(game, 1)
+    game.tick = game.help_request_ticks[0]
+    flying(ball, game.robot.centre_x, 300, 0, 3, ROBOT)
     game.update()
-    assert ball.owner == ROBOT
-    assert game.steals == {HUMAN: 0, ROBOT: 0}
+    assert ball.help_requested and "help_request" in events
+    assert game.help_requests_made == 1
+    game.human.x = 0
+    at_robot_paddle(game, ball, ROBOT)  # straight onto the robot's paddle: it doesn't bounce
+    game.update()
+    assert ball.vy > 0 and ball.owner == ROBOT
+
+
+def test_rescuing_a_help_requested_ball_is_a_prompted_rescue() -> None:
+    game = Game(help_requests=1)
+    park_robot_ball(game)
+    ball = ball_of(game, 1)
+    ball.help_requested = True
+    game.human.x = game.robot.x  # even right next to the robot, it's the human's to save
+    at_robot_paddle(game, ball, ROBOT)
+    game.update()
+    assert ball.owner == HUMAN and not ball.help_requested
+    assert game.rescues[HUMAN] == 1 and game.prompted_rescues[HUMAN] == 1
+    assert game.steals[HUMAN] == 0
+
+
+def test_robot_moves_away_from_a_ball_it_asked_for_help_with() -> None:
+    from robot_agent import Robot
+
+    obs = {
+        "screen_width": config.SCREEN_WIDTH,
+        "paddle_y": config.PADDLE_Y,
+        "robot_paddle": {"x": 350, "y": config.PADDLE_Y, "width": config.PADDLE_WIDTH},
+        "human_paddle": {"x": 0, "y": config.PADDLE_Y, "width": config.PADDLE_WIDTH},
+        "balls": [
+            {
+                "id": 1,
+                "x": 420,
+                "y": 300,
+                "vx": 0,
+                "vy": 4,
+                "radius": 7,
+                "owner": ROBOT,
+                "waiting": False,
+                "help_requested": True,
+            }
+        ],
+    }
+    for strategy in (Strategy.GOOD, Strategy.BAD):
+        assert Robot(strategy).get_action(obs) == "LEFT"  # lands right of centre: go left
 
 
 def test_bounce_angle_depends_on_hit_position() -> None:
@@ -255,3 +326,18 @@ def test_score_text() -> None:
     assert score_text(scores, "split", "Pip") == "You: 20 · Pip: 14 · Total: 34"
     with pytest.raises(ValueError):
         score_text(scores, "other")
+
+
+def test_start_screen_freezes_until_space_and_the_timer_starts_then() -> None:
+    events = []
+    game = Game(round_seconds=1, wait_for_launch=True, listeners=[lambda g, e, d: events.append(e)])
+    robot_x = game.robot.x
+    for _ in range(3 * config.FPS):
+        game.update(LEFT)
+    assert not game.started and game.tick == 0 and not game.over
+    assert game.robot.x == robot_x and game.human.x == config.HUMAN_START_X
+    assert game.seconds_left == 1
+    game.update(launch_pressed=True)
+    assert game.started and "play_started" in events
+    assert not ball_of(game, 0).waiting  # the first Space also launches the ball
+    assert ball_of(game, 1).waiting  # the robot's waits its usual delay

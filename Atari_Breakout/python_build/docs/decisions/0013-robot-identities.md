@@ -10,9 +10,11 @@ its own, and let questions compare them by name.
 
 ## Decision
 
-- Two identities in `persona_config.IDENTITIES`: **Nova** (orange) and **Pip** (pink). The
-  colour is used for that robot's paddle, balls, body and HUD label. Pink was chosen over
-  purple, which looks too close to the human's blue.
+- Two identities in `persona_config.IDENTITIES`: **Nova** (yellow) and **Pip** (purple), with
+  the human in cyan. The colour is used for that robot's paddle, balls, body and HUD label.
+  The three differ in brightness as well as hue, so they stay apart with red-green colour
+  blindness. (First orange/pink, then orange/red; changed because those were too similar.)
+- The robot introduces itself by name on each round's start screen.
 - Identities go by round, not strategy: round 1 is always Nova, round 2 always Pip. Robot order
   is counterbalanced, so each name is the BAD robot for half the participants and the GOOD
   robot for the other half. That keeps name and colour separate from skill (the confound the

@@ -18,7 +18,6 @@ ALL_LISTS = {
     "post_round": POST_ROUND_QUESTIONS,
     "final": FINAL_QUESTIONS,
     "instructions": session_text.INSTRUCTIONS,
-    "round_intro": session_text.ROUND_INTRO,
 }
 
 
@@ -44,8 +43,8 @@ def test_duplicate_ids_are_caught() -> None:
 def test_show_if_splits_questions_by_score_mode() -> None:
     shared = {q.id for q in visible_questions(POST_ROUND_QUESTIONS, {"score_mode": "shared"})}
     split = {q.id for q in visible_questions(POST_ROUND_QUESTIONS, {"score_mode": "split"})}
-    assert "robot_vs_me" in shared and "robot_vs_me" not in split
-    assert "score_competitive" in split and "score_competitive" not in shared
+    assert "valuable_contribution" in shared and "valuable_contribution" not in split
+    assert "competing" in split and "competing" not in shared
 
 
 def test_text_fills_in_context_and_leaves_unknown_keys() -> None:

@@ -82,7 +82,13 @@ def test_good_catches_far_more_than_bad() -> None:
     def drops(strategy: Strategy) -> int:
         total = 0
         for seed in range(3):
-            game = Game(seed=seed, round_seconds=60, robot_strategy=strategy, lost_ball_to=ROBOT)
+            game = Game(
+                seed=seed,
+                round_seconds=120,  # a full round
+                robot_strategy=strategy,
+                lost_ball_to=ROBOT,
+                help_requests=0,
+            )
             while not game.over:
                 game.update()
             total += game.drops[ROBOT]

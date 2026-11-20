@@ -1,6 +1,7 @@
 # 0007: Ball colour follows who scores; lost balls go to a random player
 
-Status: accepted
+Status: accepted; the double-touch rule is changed by
+[0014](0014-steals-rescues-and-help-requests.md)
 
 ## Context
 

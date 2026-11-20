@@ -17,9 +17,12 @@ class Identity:
 # counterbalanced (assignment.py), so each identity is the BAD robot for half the participants
 # and the GOOD robot for the other half: name and colour aren't tied to skill.
 # Only the name and colour differ; voice, expressions and lines are the same for both.
+# The player is cyan (config.COLOR_HUMAN). Yellow and purple differ from cyan in brightness as
+# well as hue, so they stay apart even with red-green colour blindness; that matters because a
+# ball's colour shows who scores it.
 IDENTITIES = [
-    Identity("Nova", "orange", body=(245, 180, 66), trim=(200, 140, 40)),
-    Identity("Pip", "pink", body=(232, 96, 186), trim=(180, 62, 142)),
+    Identity("Nova", "yellow", body=(240, 215, 50), trim=(185, 160, 20)),
+    Identity("Pip", "purple", body=(170, 110, 215), trim=(120, 72, 165)),
 ]
 FREE_PLAY_IDENTITY = IDENTITIES[0]
 
@@ -37,7 +40,7 @@ SPRITE_SOURCE = "auto"
 SPRITE_WIDTH = 84  # px; the head and body are drawn to fit this
 SPRITE_HEIGHT = 100
 FACE_COLOR = (30, 34, 46)  # the screen on its face
-EYE_COLOR = (120, 230, 255)
+EYE_COLOR = (240, 244, 252)  # white: kept apart from the player's cyan
 BLINK_EVERY_S = (2.5, 5.0)  # random gap between blinks
 EXPRESSION_SECONDS = 1.6  # how long a reaction (happy, sad...) shows before going back
 

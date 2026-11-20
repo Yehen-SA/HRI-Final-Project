@@ -7,7 +7,7 @@ Status: basic game playable. Study settings, logging and the web version are nex
 [docs/plan.md](docs/plan.md).
 
 A human and a robot each control a paddle on the same row (they can pass through each other)
-and each starts with a ball in their colour: blue for the human, orange for the robot. A ball
+and each starts with a ball in their colour: cyan for the human, and yellow (Nova) or purple (Pip) for the robot. A ball
 takes the colour of whoever last hit it, and that player scores its next brick. A lost ball
 goes to a random player. They play as a team. The robot has two strategies: `GOOD` (tries to play properly) and `BAD`
 (random movement).
@@ -33,7 +33,8 @@ uv run src/main.py --free-play # just play (each game is still logged)
 
 The session asks for a participant ID, which decides the conditions (score mode and robot
 order, see [src/assignment.py](src/assignment.py)). Then: stage 1 questions, a practice round
-without the robot, a round with each robot followed by questions, stage 3 questions.
+without the robot (30 s), a 2-minute round with each robot followed by questions, then a
+debrief.
 
 Controls: A/D or the arrow keys move, Space launches a waiting ball. Esc pauses; Esc again
 quits (the log is kept, marked aborted).
@@ -56,9 +57,10 @@ The robot sits under its paddle, holding it up, and reacts to the game with its 
 speech bubbles (with voice). Everything about it is in
 [src/robot_persona/](src/robot_persona/):
 
-- The two robots' names and colours (Nova, orange, in round 1; Pip, pink, in round 2), plus
+- The two robots' names and colours (Nova, yellow, in round 1; Pip, purple, in round 2), plus
   size, speech and voice settings: `persona_config.py`
-- What it says and when: `lines.py`. After editing lines, regenerate the voice files with
+- What it says and when: `lines.py`. Each situation is a `VoiceTrigger` with a chance,
+  priority, maximum uses per round and cooldown. After editing lines, regenerate the voice files with
   `uv run tools/generate_voice.py` (Piper, offline).
 - Its look: drawn in code (`sprites.py`). To use your own art, add one PNG per expression to
   `assets/robot/` (`neutral.png`, `happy.png`, `sad.png`, `surprised.png`, `focused.png`,
@@ -78,6 +80,12 @@ analysis.
 
 Code that must behave differently when packaged: `paths.py` (where `assets/` is),
 `session_log.default_log_dir()` (where logs go), and `web.py` (the browser downloads the log).
+
+## Collecting results
+
+Move each participant's log into `Data/participant_logs/` at the repo root, then run
+`uv run tools/summarise_logs.py`. It prints the values for the report's data table and writes
+`Data/results.csv` with every measure. See [../../Data/README.md](../../Data/README.md).
 
 ## Test
 
@@ -120,7 +128,7 @@ uv run ruff format .   # format
 | `src/robot_agent.py` | `Robot(strategy)` |
 | `src/robot_strategies.py` | Robot strategies (`GOOD`, `BAD`, `SWEEP`) |
 | `src/engine.py` | Game loop |
-| `tools/` | Helper scripts (robot simulation, voice generation) |
+| `tools/` | Helper scripts (robot simulation, voice generation, summarising logs) |
 | `tests/unit/` | Unit tests for single modules |
 | `tests/e2e/` | End-to-end tests that run the whole game |
 | `assets/` | Images and sounds |

@@ -1,6 +1,7 @@
 # 0005: Rules for the basic game
 
-Status: accepted; ball ownership and lost balls changed by
+Status: accepted; the wall is now 10 thin rows (10 px; points 7, 7, 5, 5, 4, 4, 3, 3, 1, 1) in
+the same space, so it is rarely cleared before the 2-minute timer; ball ownership and lost balls changed by
 [0007](0007-colour-follows-scorer.md)
 
 ## Context

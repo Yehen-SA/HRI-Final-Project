@@ -208,6 +208,12 @@ class SessionLog:
             ["Robot's share of the score", summary["robot_share_of_score"]],
             ["Bricks broken / left", f"{summary['bricks_broken']} / {summary['bricks_left']}"],
             ["Paddles overlapping (s)", summary["paddles_overlapping_s"]],
+            ["Robot help requests (scripted misses)", summary["help_requests"]],
+            [
+                "Robot voice lines (per trigger)",
+                ", ".join(f"{k}: {v}" for k, v in summary["robot_lines_by_trigger"].items())
+                or "none",
+            ],
             ["Most balls in play", summary["max_balls_in_play"]],
         ]
         text += _table(["Round", "Value"], round_rows) + "\n"

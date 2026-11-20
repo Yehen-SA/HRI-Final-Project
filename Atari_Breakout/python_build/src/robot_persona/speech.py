@@ -52,10 +52,16 @@ class Speech:
             return priority > self.current.priority
         return priority >= 3 or now - self.last_spoke_at >= cfg.SPEECH_COOLDOWN_S
 
-    def say(self, trigger: str, text: str, priority: int, now: float) -> None:
-        self.current = SpokenLine(trigger, text, priority, now + cfg.BUBBLE_SECONDS)
+    def say(self, trigger: str, text: str, priority: int, now: float, hold: bool = False) -> None:
+        """Show and play a line. `hold`: keep the bubble up until clear() is called."""
+        until = float("inf") if hold else now + cfg.BUBBLE_SECONDS
+        self.current = SpokenLine(trigger, text, priority, until)
         self.last_spoke_at = now
         self._play(trigger, text)
+
+    def clear(self) -> None:
+        """Take the bubble down (the voice line, if playing, finishes)."""
+        self.current = None
 
     def visible_line(self, now: float) -> SpokenLine | None:
         if self.current and now < self.current.until:

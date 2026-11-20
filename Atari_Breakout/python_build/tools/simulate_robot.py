@@ -21,7 +21,13 @@ from robot_strategies import Strategy  # noqa: E402
 def simulate(strategy: Strategy, seed: int, seconds: float) -> dict[str, float]:
     # The human never launches, and lost balls always go back to the robot, so only the
     # robot's ball is ever in play.
-    game = Game(seed=seed, round_seconds=seconds, robot_strategy=strategy, lost_ball_to=ROBOT)
+    game = Game(
+        seed=seed,
+        round_seconds=seconds,
+        robot_strategy=strategy,
+        lost_ball_to=ROBOT,
+        help_requests=0,  # no scripted misses: measure skill only
+    )
     ball = next(b for b in game.balls if b.owner == ROBOT)
     catches = 0
     while not game.over:

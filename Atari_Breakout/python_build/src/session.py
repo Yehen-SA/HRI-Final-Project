@@ -3,7 +3,8 @@
   Stage 1  pre-game questions (pre_questions.py), then how-to-play pages
   Stage 2  practice round (no robot), then for each robot in the participant's order:
            round intro, a round with that robot, post-round questions (post_questions.py)
-  Stage 3  final questions (post_questions.py), then the end screen
+  Stage 3  final questions (post_questions.FINAL_QUESTIONS; currently none), then the
+           debrief and end screen
 
 The order is written as a generator in `Session.flow()`: each `yield` shows a screen until
 it's done, so changing the order means editing that one method. Everything is logged as it
@@ -53,7 +54,8 @@ def autoplay_action(game: Game) -> str:
 
 
 class RoundScreen:
-    """Plays one round; when it ends, waits for Space before moving on."""
+    """Plays one round: a start screen (the robot introduces itself), play from the first
+    Space, and when it ends, waits for Space before moving on."""
 
     def __init__(
         self,
@@ -61,9 +63,11 @@ class RoundScreen:
         over_message: str,
         autoplay: bool = False,
         persona: RobotPersona | None = None,
+        start_message: str = "",
     ) -> None:
         self.game = game
         self.over_message = over_message
+        self.start_message = start_message
         self.autoplay = autoplay
         self.persona = persona
         self.done = False
@@ -92,6 +96,11 @@ class RoundScreen:
         self.game.draw(surface, self._font, end_overlay=False)
         if self.persona is not None and self.game.robot is not None:
             self.persona.draw(surface, self.game.robot.rect)
+        if not self.game.started and self.start_message:
+            margin = 80
+            y = round(config.PLAY_BOTTOM * 0.42)
+            width = config.SCREEN_WIDTH - 2 * margin
+            ui.draw_text_block(surface, self.start_message, 34, margin, y, width, center=True)
         if self.game.over:
             ui.draw_overlay(surface, [self.over_message, "", self.game.hud_score_text()])
 
@@ -196,6 +205,7 @@ class Session:
             self.practice_seconds,
             conditions.score_mode,
             text.PRACTICE_OVER,
+            start_message=text.PRACTICE_START.format_map(context),
         )
         for number, strategy in enumerate(conditions.robot_order, start=1):
             identity = identities[number - 1]
@@ -205,7 +215,6 @@ class Session:
                 "robot_name": identity.name,
                 "robot_colour": identity.colour_name,
             }
-            yield self.survey(f"Round {number}", text.ROUND_INTRO, round_context)
             yield from self.play_round(
                 {
                     "title": f"Round {number}: {identity.name} (robot {strategy.name})",
@@ -219,6 +228,7 @@ class Session:
                 conditions.score_mode,
                 text.ROUND_OVER,
                 identity,
+                start_message=text.ROUND_START.format_map(round_context),
             )
             post = self.survey(f"After round {number}", POST_ROUND_QUESTIONS, round_context)
             yield post
@@ -228,10 +238,11 @@ class Session:
                 key=f"post_round_{number}",
             )
 
-        # Stage 3: final questions
-        final = self.survey("Final questions", FINAL_QUESTIONS, context)
-        yield final
-        log.write_answers("Stage 3: final questions", final.answers(), key="final")
+        # Stage 3: final questions (skipped while FINAL_QUESTIONS is empty), then the debrief
+        if FINAL_QUESTIONS:
+            final = self.survey("Final questions", FINAL_QUESTIONS, context)
+            yield final
+            log.write_answers("Stage 3: final questions", final.answers(), key="final")
         self.status = "complete"
         log.finish("complete")
         yield self.end_screen(text.END)
@@ -254,6 +265,7 @@ class Session:
         score_mode: str,
         over_message: str,
         identity: persona_config.Identity | None = None,
+        start_message: str = "",
     ) -> Generator[Screen, None, None]:
         """Play a round (with the robot `identity`, if there's a robot), then log it."""
         assert self.log is not None
@@ -263,7 +275,7 @@ class Session:
         identity = identity or persona_config.FREE_PLAY_IDENTITY
         if strategy is not None:
             persona = RobotPersona(
-                on_say=lambda trigger, line: stats.note("robot_said", "robot", line),
+                on_say=stats.robot_said,
                 identity=identity,
             )
             listeners.append(persona)
@@ -275,10 +287,11 @@ class Session:
             listeners=listeners,
             robot_name=identity.name,
             robot_colour=identity.body,
+            wait_for_launch=True,
         )
         info = info | {"score_mode": score_mode, "seed": config.SEED}
         self._open_round = (game, stats, info)
-        yield RoundScreen(game, over_message, self.autoplay, persona)
+        yield RoundScreen(game, over_message, self.autoplay, persona, start_message)
         self._open_round = None
         self.log.write_round(info, stats)
 

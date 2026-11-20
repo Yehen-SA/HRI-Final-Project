@@ -57,7 +57,7 @@ See [decisions/0002-shared-paddle-row.md](decisions/0002-shared-paddle-row.md).
 
 ## Balls and ownership
 
-Each player starts with one ball, in their colour: blue for the human, orange for the robot
+Each player starts with one ball, in their colour: cyan for the human, the robot's own colour (yellow or purple) for the robot
 (`COLOR_HUMAN`, `COLOR_ROBOT`). A ball's colour shows its owner, who scores its next brick.
 Hitting a ball in the other player's colour takes it over (a steal). A lost ball counts as a
 drop for its owner and goes to a random player (`LOST_BALL_GOES_TO`), waiting on their paddle.
@@ -82,7 +82,7 @@ See [decisions/0008-rules-framework.md](decisions/0008-rules-framework.md).
 2. Stage 1: `PRE_QUESTIONS` (consent first; declining ends the session), then instructions.
 3. Stage 2: practice round with no robot (`PRACTICE_SECONDS`), then for each robot in order: an
    intro page, a round (`ROUND_SECONDS`), and `POST_ROUND_QUESTIONS`.
-4. Stage 3: `FINAL_QUESTIONS`, then the end screen (shows the log's location).
+4. Stage 3: `FINAL_QUESTIONS` (empty for now, so skipped), then the debrief and end screen (shows the log's location).
 
 Every round starts from the same seed. Esc pauses; Esc again quits and the log is marked
 aborted (a round in progress is saved with end reason "quit").
@@ -99,6 +99,16 @@ modes. Each round's robot has its own name and colour (`persona_config.IDENTITIE
 then Pip), tied to the round, not the strategy; see
 [decisions/0013-robot-identities.md](decisions/0013-robot-identities.md). Lines it says go into the log's timeline as `robot_said`.
 See [decisions/0011-robot-persona.md](decisions/0011-robot-persona.md).
+
+## Steals, rescues and help requests
+
+When a ball reaches the paddles, the other player takes it as a **steal** if both paddles
+touch it, or a **rescue** if only theirs does (`Game._hit_paddle`). In robot rounds the robot
+lets `HELP_REQUESTS_PER_ROUND` of its balls go on purpose and asks for help; saving one is a
+prompted rescue. `stats.py` logs counts and rates for both players. Voice lines are configured
+per situation with `VoiceTrigger` (chance, priority, `max_per_round`, `cooldown_s`) in
+`robot_persona/lines.py`.
+See [decisions/0014-steals-rescues-and-help-requests.md](decisions/0014-steals-rescues-and-help-requests.md).
 
 ## Logging
 

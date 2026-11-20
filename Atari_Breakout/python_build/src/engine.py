@@ -33,10 +33,13 @@ ROBOT = "robot"
 # Event name -> the data passed with it. Rules get these as keyword arguments.
 EVENTS = {
     "round_start": (),
+    "play_started": (),
     "tick": (),
     "ball_launched": ("ball",),
     "paddle_hit": ("paddle", "ball"),
     "steal": ("paddle", "ball", "from_player"),
+    "rescue": ("paddle", "ball", "from_player", "prompted"),
+    "help_request": ("ball",),
     "brick_broken": ("ball", "brick"),
     "points": ("player", "points", "reason"),
     "ball_lost": ("ball",),
@@ -75,6 +78,8 @@ class Game:
         listeners: list[Listener] | None = None,
         robot_name: str = "Robot",
         robot_colour: tuple[int, int, int] = config.COLOR_ROBOT,
+        help_requests: int = config.HELP_REQUESTS_PER_ROUND,
+        wait_for_launch: bool = False,
     ) -> None:
         """Set up a round.
 
@@ -82,6 +87,9 @@ class Game:
         - `rules`: the optional rules to use; by default the enabled ones in rules.RULES.
         - `listeners`: called as listener(game, event, data) for every event (see EVENTS).
         - `robot_name`, `robot_colour`: the robot's identity on screen (HUD, paddle, balls).
+        - `help_requests`: scripted misses this round (0 turns them off, e.g. for simulation).
+        - `wait_for_launch`: start frozen, on a start screen; play (and the timer) begins when
+          the human launches their first ball. The study session and free play use this.
         """
         if lost_ball_to not in ("random", HUMAN, ROBOT):
             raise ValueError("LOST_BALL_GOES_TO must be 'random', 'human' or 'robot'")
@@ -134,9 +142,16 @@ class Game:
         self.scores = {HUMAN: 0, ROBOT: 0}
         self.points_by_reason: dict[str, dict[str, int]] = {HUMAN: {}, ROBOT: {}}
         self.drops = {HUMAN: 0, ROBOT: 0}
-        self.steals = {HUMAN: 0, ROBOT: 0}  # times each player hit a ball in the other's colour
+        # Taking the other player's ball (see _hit_paddle): a steal when its owner was there to
+        # hit it too, a rescue when the owner wasn't. Prompted rescues answer a help request.
+        self.steals = {HUMAN: 0, ROBOT: 0}
+        self.rescues = {HUMAN: 0, ROBOT: 0}
+        self.prompted_rescues = {HUMAN: 0, ROBOT: 0}
+        self.help_requests_made = 0
+        self.help_request_ticks = self._help_request_schedule(help_requests)
         self.over = False
         self.end_reason = ""
+        self.started = not wait_for_launch
 
         for ball in self.balls:
             self._put_on_paddle(ball, ball.owner)
@@ -211,6 +226,7 @@ class Game:
         """
         ball.owner = player
         ball.waiting = True
+        ball.help_requested = False
         ball.vx = ball.vy = 0.0
         ball.launch_tick = self.tick + round(config.ROBOT_RELAUNCH_DELAY_S * config.FPS)
         self._follow_paddles()
@@ -252,6 +268,7 @@ class Game:
             "screen_width": config.SCREEN_WIDTH,
             "screen_height": config.SCREEN_HEIGHT,
             "paddle_y": config.PADDLE_Y,
+            "human_paddle_speed": self.human.speed,
             "robot_paddle": paddle_info(self.robot),
             "human_paddle": paddle_info(self.human),
             "balls": [
@@ -264,6 +281,7 @@ class Game:
                     "radius": b.radius,
                     "owner": b.owner,
                     "waiting": b.waiting,
+                    "help_requested": b.help_requested,
                 }
                 for b in self.balls
             ],
@@ -275,8 +293,38 @@ class Game:
         paddle.apply(action)
 
     def _can_bounce(self, paddle: Paddle, ball: Ball) -> bool:
-        """Whether this paddle bounces this ball (see config.PADDLES_HIT_ANY_BALL)."""
+        """Whether this paddle bounces this ball (see config.PADDLES_HIT_ANY_BALL).
+
+        The robot never bounces a ball it has asked the human to rescue.
+        """
+        if paddle.owner == ROBOT and ball.help_requested:
+            return False
         return config.PADDLES_HIT_ANY_BALL or paddle.owner == ball.owner
+
+    # --- Help requests (scripted misses) ---
+
+    def _help_request_schedule(self, n: int) -> list[int]:
+        """Ticks at which the robot next lets one of its balls go and asks for help.
+
+        HELP_REQUESTS_PER_ROUND requests, evenly spread over the round (e.g. 2 in a 120 s
+        round: from 40 s and from 80 s). Each one waits until the robot has a ball coming down.
+        """
+        return [round(self.round_frames * (i + 1) / (n + 1)) for i in range(n)]
+
+    def _maybe_request_help(self) -> None:
+        if self.robot is None or self.help_requests_made >= len(self.help_request_ticks):
+            return
+        if self.tick < self.help_request_ticks[self.help_requests_made]:
+            return
+        if any(b.help_requested for b in self.balls):
+            return
+        high_enough = config.PLAY_BOTTOM * config.HELP_REQUEST_MAX_HEIGHT
+        for ball in self.balls:
+            if ball.owner == ROBOT and not ball.waiting and ball.vy > 0 and ball.y < high_enough:
+                ball.help_requested = True
+                self.help_requests_made += 1
+                self._emit("help_request", ball=ball)
+                return
 
     # --- Ball and power-up physics ---
 
@@ -308,8 +356,11 @@ class Game:
     def _hit_paddle(self, ball: Ball) -> None:
         """Bounce off a paddle at an angle set by where it hit, and take ownership.
 
-        Hitting a ball in the other player's colour is a steal. If both paddles touch the ball
-        in the same frame, its current owner's paddle counts.
+        Who gets the ball when it reaches the paddles:
+          - only its owner's paddle touches it: the owner keeps it;
+          - both paddles touch it (they overlap): a **steal**, the other player takes it;
+          - only the other player's paddle touches it: a **rescue**, the owner wasn't there.
+        A rescue of a ball the robot asked for help with is a prompted rescue.
         """
         if ball.vy <= 0:
             return
@@ -321,18 +372,30 @@ class Game:
         if not touching:
             return
         own = self.paddles.get(ball.owner)
-        paddle = own if own in touching else touching[0]
+        others = [p for p in touching if p is not own]
+        paddle = others[0] if others else own
+        assert paddle is not None
         offset = (ball.x - paddle.centre_x) / (paddle.width / 2)
         offset = max(-1.0, min(1.0, offset))
         angle = math.radians(offset * config.MAX_BOUNCE_ANGLE_DEG)
         ball.vx = config.BALL_SPEED * math.sin(angle)
         ball.vy = -config.BALL_SPEED * math.cos(angle)
         ball.y = paddle.y - ball.radius
+        prompted = ball.help_requested
+        ball.help_requested = False
         if paddle.owner != ball.owner:
             from_player = ball.owner
-            self.steals[paddle.owner] += 1
             ball.owner = paddle.owner
-            self._emit("steal", paddle=paddle, ball=ball, from_player=from_player)
+            if own in touching:
+                self.steals[paddle.owner] += 1
+                self._emit("steal", paddle=paddle, ball=ball, from_player=from_player)
+            else:
+                self.rescues[paddle.owner] += 1
+                if prompted:
+                    self.prompted_rescues[paddle.owner] += 1
+                self._emit(
+                    "rescue", paddle=paddle, ball=ball, from_player=from_player, prompted=prompted
+                )
         self._emit("paddle_hit", paddle=paddle, ball=ball)
 
     def _lose_ball(self, ball: Ball) -> None:
@@ -378,6 +441,13 @@ class Game:
         """
         if self.over:
             return
+        if not self.started:
+            if not (launch_pressed and self.waiting_balls(HUMAN)):
+                return  # start screen: nothing moves and the timer doesn't run
+            self.started = True
+            for ball in self.waiting_balls(ROBOT):  # the robot's first ball waits its delay
+                ball.launch_tick = self.tick + round(config.ROBOT_RELAUNCH_DELAY_S * config.FPS)
+            self._emit("play_started")
         self._apply_action(self.human, human_action)
         if self.robot_agent is not None and self.robot is not None:
             self._apply_action(
@@ -390,6 +460,7 @@ class Game:
             self._update_ball(ball)
         for powerup in list(self.powerups):
             self._update_powerup(powerup)
+        self._maybe_request_help()
         self._emit("tick")
         self.tick += 1
         if self.tick >= self.round_frames:
@@ -452,11 +523,15 @@ class Game:
             label = font.render(powerup.kind[:1].upper(), True, config.COLOR_BG)
             screen.blit(label, label.get_rect(center=powerup.rect.center))
         for ball in self.balls:
-            pygame.draw.circle(
-                screen, colours[ball.owner], (round(ball.x), round(ball.y)), ball.radius
-            )
+            centre = (round(ball.x), round(ball.y))
+            # A dark outline keeps the ball visible over a brick of the same colour.
+            pygame.draw.circle(screen, config.COLOR_BALL_OUTLINE, centre, ball.radius + 2)
+            pygame.draw.circle(screen, colours[ball.owner], centre, ball.radius)
 
-        if self.waiting_balls(HUMAN) and not self.over:
+        if not self.started:
+            if end_overlay:  # free play; the study session draws its own start message
+                self._centre_text(screen, font, "Press Space to start", 0.62)
+        elif self.waiting_balls(HUMAN) and not self.over:
             self._centre_text(screen, font, "Press Space to launch your ball", 0.62)
         if self.over and end_overlay:
             shade = pygame.Surface((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), pygame.SRCALPHA)
@@ -504,11 +579,12 @@ async def run(max_frames: int | None = None, log_dir: Path | None = None) -> Non
 
     def new_game() -> tuple[Game, RoundStats, RobotPersona]:
         stats = RoundStats()
-        persona = RobotPersona(
-            on_say=lambda trigger, line: stats.note("robot_said", "robot", line), identity=identity
-        )
+        persona = RobotPersona(on_say=stats.robot_said, identity=identity)
         game = Game(
-            listeners=[stats, persona], robot_name=identity.name, robot_colour=identity.body
+            listeners=[stats, persona],
+            robot_name=identity.name,
+            robot_colour=identity.body,
+            wait_for_launch=True,
         )
         return game, stats, persona
 

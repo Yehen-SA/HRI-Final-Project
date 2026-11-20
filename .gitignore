@@ -34,3 +34,4 @@ Atari_Breakout/html_build/*
 Atari_Breakout/exe_build/*
 !Atari_Breakout/exe_build/README.md
 Atari_Breakout/.html_stage/
+Atari_Breakout/html_build_itch.zip

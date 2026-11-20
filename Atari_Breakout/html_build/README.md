@@ -15,7 +15,10 @@ web. Upload this folder's build files to any static host, for example:
 
 - **GitHub Pages**: publish this folder from the repo (the build files would then need
   committing).
-- **itch.io**: the build also makes `hri_breakout.tar.gz`; upload it as an HTML5 game.
+- **itch.io** (what we use): upload `../html_build_itch.zip`, which the build makes. Project
+  settings: kind of project **HTML**; tick **This file will be played in the browser**;
+  embed size **800 × 720**; tick **Fullscreen button**; visibility **Restricted** with a
+  password. After each rebuild, replace the uploaded zip.
 
 The page loads Python and pygame from pygame-web's CDN, so participants need internet access.
 The first load takes 10–30 seconds; then they click the page to start.

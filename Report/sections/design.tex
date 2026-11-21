@@ -12,43 +12,34 @@ The primary research aim of this study is to investigate whether sharing a team 
 We will use a custom co-operative Atari Breakout game. \fix{Language / library, hardware, how the robot's paddle is controlled.}
 The robot will be displayed clearly inside the game as a robot, and there will be no physical robot for this experiment. 
 \begin{reviewblock}
-The game is written in Python with the pygame-ce library. The same code is packaged in three ways: run directly with Python on our own computers, as a Windows program (built with PyInstaller), and as a web page that runs in the browser (built with pygbag), so participants can also take part on their own computer. Participants need only a computer with a keyboard; sound is recommended but not required.
+The game is written in Python with the pygame-ce library, and the same code is packaged in two ways. Participants we meet in person play it on our laptops. Remote participants play in their web browser through a link to a public itch.io page (built with pygbag), on any computer with a keyboard and an internet connection. A Windows program (built with PyInstaller) is kept as an offline backup. Sound is recommended but not required. The game saves each participant's results to a single log file, which remote participants email back to us at the end of the session.
 
-The robot is a character drawn in the game, sitting under its paddle and holding it up, so that it looks as if the robot is moving the paddle. It has six facial expressions (neutral, happy, sad, surprised, focused and excited) that react to events in the game. It also speaks short lines in speech bubbles with a recorded synthetic voice, made in advance with the Piper text-to-speech tool. How often it speaks is capped per round for each kind of event (for example, it reacts to the participant taking its ball at most three times), so both robots speak about equally. Each round's robot has its own name and colour (Nova in yellow, then Pip in purple; the participant is cyan), so participants see two different robots. The three colours differ in brightness as well as hue, so they stay distinguishable with red-green colour blindness. On each round's start screen the robot introduces itself by name. Apart from name and colour, both robots look, speak and react in the same way.
+The robot is a virtual character rather than a physical robot. It sits under its paddle and holds it up, so it looks as if the robot is moving the paddle. It has six facial expressions (neutral, happy, sad, surprised, focused and excited) that react to events in the game, and it speaks short lines in speech bubbles with a synthetic voice recorded in advance with the Piper text-to-speech tool. Each kind of line has a cap per round (for example, it comments on the participant taking its ball at most three times), so the two robots speak about equally often. Each round's robot has its own name and colour, Nova in yellow and then Pip in purple, so participants see two different robots; the participant's paddle is cyan. These three colours differ in brightness as well as hue, so they stay distinguishable with red-green colour blindness. Apart from name and colour, both robots look, speak and react in the same way.
 
-The robot's paddle is controlled by a program that sees the same information as the player (the positions and speeds of the balls and paddles) and moves at the same speed as the participant's paddle. There are two strategies:
+The robot's paddle is moved by a program that sees the same information as the participant (where the balls and paddles are and how they are moving), and moves at the same speed as the participant's paddle. Only its playing strategy differs between the two performance levels:
 \begin{itemize}
-    \item \textit{Good:} moves towards the ball that will reach the paddles soonest and aims for where it will land. It leaves the participant's balls alone when they can still reach them, and only goes for them when they can't. To look human rather than perfect, it reacts about 0.13~s late, aims up to 30 pixels off, and misjudges about 8\% of balls.
-    \item \textit{Bad:} moves left, right or stays still at random, keeping each choice for a short random time, so it only catches balls by chance.
+    \item \textit{Good:} heads for the ball that will reach the paddles soonest and aims where it will land. It leaves the participant's balls alone while they can still reach them. To look human rather than perfect, it reacts about 0.13~s late, aims up to 30 pixels off, and misjudges about 8\% of balls.
+    \item \textit{Bad:} moves left, right or stays still at random, keeping each choice for a fraction of a second, so it only catches balls by chance.
 \end{itemize}
-In simulation the good strategy catches about 95\% of its balls and the bad strategy about 44\%.
-
-With both strategies, the robot also lets two of its own balls go on purpose in each round, spread evenly over the round, and asks the participant for help (``Can you get that one?''). While it waits, its paddle moves out of the way and cannot hit that ball. This gives both robots the same number of help requests, so prompted rescues can be compared between them.
+In simulated rounds the good strategy returns about 95\% of its balls and the bad strategy about 44\%. With both strategies, the robot also lets two of its own balls go on purpose in each round, spread evenly over the round, and asks the participant for help (for example ``Can you get that one?''). Its paddle then moves out of the way and cannot hit that ball, so both robots ask for help the same number of times.
 \end{reviewblock}
 
 \subsection{Task}
 \fix{What participants do, how long each round lasts, what the robot does.}
 
 \begin{reviewblock}
-The participant and the robot each control a paddle along the bottom of the screen and play Breakout together against a wall of 100 bricks (10 rows of 10), enough that the wall is rarely cleared before the time runs out. As in the original game, each pair of rows has its own colour and value: from the top, 7, 5, 4, 3 and 1 points per brick. The two paddles share one row and can pass through each other, so neither player can block the other or reach the ball first just by position. The participant moves their paddle with the arrow keys (or A and D) and launches a ball with Space. Each round opens on a start screen where the robot introduces itself; the round, and its timer, start when the participant launches their first ball.
+The participant and the robot play Breakout together against a wall of 100 bricks (10 rows of 10). As in the original game, each pair of rows has its own colour and value: from the top, 7, 5, 4, 3 and 1 points per brick. The wall is large enough that it is rarely cleared before the time runs out. Both paddles share the bottom row and can pass through each other, so neither player can block the other. The participant moves with the arrow keys (or A and D) and launches a ball with Space.
 
-Each player starts with one ball in their own colour (cyan for the participant). A ball takes the colour of whoever hit it last, and that player scores the bricks it breaks. Either paddle can hit either ball. When a player hits the other's ball, it is counted as a \textit{steal} if the owner's paddle was also under the ball, and as a \textit{rescue} if it was not. A rescue of a ball the robot asked for help with is a \textit{prompted} rescue. Steals and rescues are counted for both the participant and the robot. When a ball falls off the bottom it is counted as lost for its owner and comes back on a random player's paddle. There are no lives: losing a ball only costs time.
+Each player starts with one ball in their own colour. A ball takes the colour of whoever hit it last, and that player scores the bricks it breaks. Either paddle can hit either ball: taking the other player's ball counts as a \textit{steal} if that player's paddle was also under it, and as a \textit{rescue} if it was not. A rescue of a ball the robot asked for help with is a \textit{prompted} rescue. A ball that falls off the bottom counts as lost for its owner and comes back on a random player's paddle; there are no lives. The score is shown at the top of the screen: one team score in the shared condition, or the participant's score, the robot's score and the total in the split condition.
 
-A session runs in three stages, all inside the game:
+Each round opens on a start screen where the robot introduces itself by name. The round and its timer start when the participant launches their first ball, and it ends when the time runs out (or, rarely, when all bricks are broken). Every round starts from the same brick layout and random seed. A session takes about 10 minutes, all inside the game:
 \begin{enumerate}
-    \item Participant ID, consent and pre-game questions, then instructions.
-    \item A 30~s practice round alone (no robot), then a 2~minute round with each robot, each followed by the post-experiment questionnaire about that robot. The order of the two robots is counterbalanced.
+    \item The participant enters the ID we gave them, which sets their conditions (score display and robot order). They see a welcome page with a neutral cover story, give consent, and answer the pre-study questionnaire (Appendix~\ref{app:questionnaires}).
+    \item Instructions, then a 30~s practice round alone, with no robot.
+    \item Two 2-minute rounds, one with each robot, in counterbalanced order. Each is followed by the post-round questionnaire about that robot.
     \item A debrief explaining the real aim of the study.
 \end{enumerate}
-A round ends when the time runs out or all bricks are broken. Every round starts from the same layout and the same random seed. The participant's ID sets their conditions (score display and robot order), and everything, including the answers, the scores, the steal and rescue counts and rates, and a timeline of events, is saved to one log file per participant.
-
-\noindent\textbf{Procedure:}
-\begin{enumerate}
-    \item Consent and pre-study questionnaire
-    \item Practice round
-    \item Condition rounds, with a questionnaire after each
-    \item Debrief
-\end{enumerate}
+The participant's answers, the scores, the steal and rescue counts, and a timeline of events from each round are saved to one log file per participant.
 \end{reviewblock}
 
 \subsection{Conditions}
@@ -112,3 +103,21 @@ We will recruit about 20 adult participants (10 per condition) by asking friends
 
 \subsection{Implementation}
 \fix{What we built or changed in the game / robot to create the conditions and log the data. Full record of changes in Appendix~\ref{app:devlog}.}
+
+\begin{reviewblock}
+We built the game from scratch rather than adapting an existing Breakout clone, so that every part relevant to the study could be controlled and logged. It is split into separate modules so that each condition and measure can be changed in one place:
+\begin{itemize}
+    \item \textit{Game engine:} the physics and rules, written so that it can run without a window. Every event in a round (a ball launched, a paddle hit, a brick broken, a steal, a rescue, a ball lost) passes through one function, which the logging and the robot's reactions listen to.
+    \item \textit{Robot strategies:} the good and bad strategies are separate classes, chosen with a single setting, so the robot's skill is the only thing that changes between performance levels. A shared layer above both handles the scripted help requests the same way for each.
+    \item \textit{Robot persona:} the robot's look, expressions, lines and voice, kept apart from its strategy so that both robots present identically. Each line has a cap per round and a cooldown, set in one configuration file.
+    \item \textit{Session and questionnaires:} the questions are stored as data (question type, text, answer options, and which score condition sees them), so the in-game questionnaires match Appendix~\ref{app:questionnaires} and can be edited without changing code.
+\end{itemize}
+
+\textit{Creating the conditions.} The participant ID typed at the start selects the condition. IDs cycle through the four combinations of score display and robot order (P01 shared with the bad robot first, P02 split with the bad robot first, P03 shared with the good robot first, P04 split with the good robot first, then repeating), so recruiting in ID order keeps the groups balanced. The score display is a single setting read by the game's heads-up display; the underlying scores are identical in both conditions. Robot names and colours are tied to the round rather than to skill, so the counterbalanced order also balances them across the two performance levels.
+
+\textit{Measuring behaviour.} Steals and rescues are detected at the moment a ball reaches the paddles, from which paddles are touching it. Because the good robot returns more balls (more chances to steal) and the bad robot misses more (more chances to rescue), both are logged as counts and as rates over the chances the player had: steals divided by the other player's balls that reached the other player's paddle, and rescues divided by the other player's balls they could not reach. The same is recorded for the robot.
+
+\textit{Logging and data collection.} Each session writes a new log file that is never overwritten, saved section by section so that an early exit still keeps the data. It records the conditions and settings, the questionnaire answers, per-round statistics for both players (scores, possession time, steals, rescues, lost balls, movement), the robot's spoken lines and a timeline of events, with a machine-readable copy at the end. Participants' log files are collected in the project repository, and a script combines them into one table for analysis (Appendix~\ref{app:data}).
+
+\textit{Testing.} The game has 107 automated tests covering the rules, steal and rescue detection, both strategies, the questionnaires and complete sessions played automatically. The two strategies were also compared in simulated rounds to confirm a clear difference in skill. We played the browser version end to end before sending it to participants.
+\end{reviewblock}

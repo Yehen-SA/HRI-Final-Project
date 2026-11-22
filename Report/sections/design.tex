@@ -4,7 +4,7 @@
 \subsection{Aim}
 In human-robot teams, how people perceive and interact with a robot partner may depend on both how the team's score is presented and how well the robot performs. Showing a shared score may encourage participants to see the human and robot as part of the same team, while displaying separate scores may make them focus more on their individual contributions. Similarly, a robot that performs well may be more likely to be seen as a valuable teammate than one that performs poorly.
 
-The primary research aim of this study is to investigate whether sharing a team score, rather than displaying separate individual scores, makes people more likely to perceive a robot partner as a teammate, and whether the robot’s performance also affects this perception.
+\review{The primary research aim of this study is to investigate whether sharing a team score, rather than displaying separate individual scores, makes people more likely to perceive a robot partner as a teammate, and whether this holds regardless of how well the robot performs.}
 
 
 
@@ -59,15 +59,15 @@ The participant's answers, the scores, the steal and rescue counts, and a timeli
 \noindent\textbf{Dependent variables (and how we measure them):}
 
 \begin{itemize}
-    \item \textit{Teammate perception:} Whether the participant sees the robot as a teammate, competitor or tool. Measured through: 
+    \item \textit{Teammate perception:} Whether the participant sees the robot as a teammate, competitor or tool\review{ (the competitor item is asked only in the split condition)}. Measured through: 
     \begin{itemize}
-        \item \textit{Peer review}: the participant's rating of the robot as a team member, using a questionnaire adapted from CATME/Likert
+        \item \textit{Peer review}: the participant's rating of the robot as a team member, using \review{5-point Likert items (Appendix~\ref{app:questionnaires})}
 
         \item \textit{In-game Behaviour}: actions the participant takes during the game that reflects how they perceive the robot, such as:
         \begin{itemize}
-            \item \textit{Ball stealing}: how often the participant hits the robot's balls that the robot was able to return. Measured as a rate to balance the good robot returning more balls. The robot will speak when the player steals the ball, up to N times to balance robot speech between the performance levels.
+            \item \textit{Ball stealing}: how often the participant hits the robot's balls that the robot was able to return. Measured as a rate to balance the good robot returning more balls. The robot will speak when the player steals the ball, up to \review{three times per round} to balance robot speech between the performance levels.
             
-            \item \textit{Rescues}: how often the participant hits the robot's balls that the robot was not able to return. Measured as a rate to balance the bad robot missing more balls. Split between Prompted and Unprompted rescues, where each robot prompts for the same count of rescues.
+            \item \textit{Rescues}: how often the participant hits the robot's balls that the robot was not able to return. Measured as a rate to balance the bad robot missing more balls. Split between Prompted and Unprompted rescues, where each robot prompts for the same count of rescues. \review{To make this possible, each robot deliberately lets two of its own balls go in every round and asks the participant for help, so both robots prompt the same number of times.}
             
         \end{itemize}
     \end{itemize}
@@ -82,24 +82,35 @@ The participant's answers, the scores, the steal and rescue counts, and a timeli
 \begin{itemize}
     \item Robot behaviour apart from performance (same voice, animation, and speech)
     \item Robot anthropomorphism and other visual factors such as its size. 
-    \item Same task sequence for every participant ie introduction, pre-study questionnaire, practice round, counterbalanced rounds,  questionnaire, debrief
-    \item Game mechanics, levels and round length
+    \item Same task sequence for every participant ie introduction, pre-study questionnaire, practice round, \review{counterbalanced rounds, each followed by a questionnaire, debrief}
+    \item \review{Game mechanics, a single level (the same brick layout and starting conditions every round) and round length}
 \end{itemize}
 
 \subsection{Participants}
-We will recruit about 20 adult participants (10 per condition) by asking friends or word of mouth. Participants must be fluent in English and have no visual or hearing impairments, and no susceptibility to motion sickness. We aim for a balance of gender and age to reduce demographic confounds.
+We will recruit about 20 adult participants (10 per condition) by asking friends or word of mouth. Participants must be fluent in English and have no \review{visual impairments other than colour blindness, which the game's colours allow for,} no hearing impairments, and no susceptibility to motion sickness. \review{Participants give informed consent on the game's consent page before any data is recorded (Appendix~\ref{app:questionnaires}).} We aim for a balance of gender and age to reduce demographic confounds.
 
 
 \subsection{Identification and minimisation of confounds}
 \begin{itemize}
-    \item \textit{Breakout skill / gaming experience}: ask in the pre-study questionnaire, require participants to do a practice round with tutorials 
+    \item \textit{Breakout skill / gaming experience}: ask in the pre-study questionnaire, \review{in-game instructions and a 30~s practice round} 
     \item \textit{Learning and order effects across rounds}: practice round and then counterbalance the order of robot performance
-    \item \textit{Robot Appearance}: Robot colour will be randomised for each level, colour blindness should be taken into account as well
-    \item \textit{Robot Behaviour}: Robots will have the same script for each level across all participants
+    \item \textit{Robot Appearance}: \review{each robot's name and colour are tied to the round (Nova first, Pip second); since the order of robot performance is counterbalanced, they are balanced across the good and bad robots. The colours stay distinguishable with red-green colour blindness}
+    \item \textit{Robot Behaviour}: \review{both robots use the same lines, voice, expressions and number of help requests for all participants; only their skill differs}
     \item \textit{Random ball physics}: same starting conditions, random seed, and brick layout in every round
-    \item \textit{Guessing the hypothesis / being nice for the experimenter}: neutral instructions, anonymous questionnaire, fake hypothesis to prevent participants from guessing
-    \item \textit{Fatigue or boredom}: short rounds (about 3 min each for practice round and 2 rounds) and concise questionnaires
+    \item \textit{Guessing the hypothesis / being nice for the experimenter}: neutral instructions, anonymous questionnaire, \review{a neutral cover story at the start, with a debrief explaining the real aim at the end}
+    \item \textit{Fatigue or boredom}: short rounds (\review{a 30~s practice round and two 2-minute rounds, about 10 minutes in total}) and concise questionnaires
 \end{itemize}
+
+\begin{reviewblock}
+\noindent\textbf{Further confounds:}
+\begin{itemize}
+    \item \textit{Robot identity and round position}: Nova always appears in the first round and Pip in the second, so a robot's identity cannot be separated from its position. The order of robot performance is counterbalanced, so this does not bias the comparison between the good and bad robots.
+    \item \textit{Setting and interviewer}: some sessions are run in person and some remotely, by different members of the group. Both are recorded (Appendix~\ref{app:data}), so their effect can be checked.
+    \item \textit{Recruiting friends}: participants who know us may rate the robot kindly to please us. The cover story and anonymous participant IDs reduce this.
+    \item \textit{Hardware}: remote participants use their own computer, screen and browser, which may change how the game looks and feels.
+    \item \textit{Manipulation check}: the item ``I considered the robot capable of performing its role in the game'' shows whether participants noticed the difference between the good and bad robots.
+\end{itemize}
+\end{reviewblock}
 
 \subsection{Implementation}
 \fix{What we built or changed in the game / robot to create the conditions and log the data. Full record of changes in Appendix~\ref{app:devlog}.}

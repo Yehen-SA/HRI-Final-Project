@@ -45,27 +45,20 @@
 % Tighten these when finalising to fit the 6-page limit.
 % ---------------------------------------------------------------------
 \usepackage{setspace}
-\onehalfspacing                              % final: \singlespacing
+\singlespacing
 \usepackage[skip=10pt plus 2pt]{parskip}     % gap between paragraphs, no indent
 \setlist{topsep=8pt, itemsep=6pt, parsep=0pt, beginpenalty=10000}
 \renewcommand{\arraystretch}{1.1}            % taller table rows (final: 1.1)
 
 % Sections: large title with a rule underneath, plenty of space around it
 \titleformat{\section}{\Large\bfseries}{\thesection}{1em}{}[\titlerule]
-\titlespacing*{\section}{0pt}{2ex}{3ex}
-\titlespacing*{\subsection}{0pt}{5ex}{1.5ex}
+\titlespacing*{\section}{0pt}{6ex}{2.5ex}    % large gap before each section (no page breaks)
+\titlespacing*{\subsection}{0pt}{2.5ex}{1ex}
 
 \begin{document}
 \setlength{\droptitle}{-2.5cm}
 
 \maketitle
-% Contents page for finding our way around while drafting. Remove when finalising.
-\vspace{-2em}
-\tableofcontents
-
-\clearpage
-
-% =====================================================================
 
 
 \section{Research Question and Hypotheses}
@@ -88,9 +81,7 @@ None of these studies varies how the score is displayed when playing with a robo
 
 
 \input{sections/design}
-\clearpage
 \input{sections/results}
-\clearpage
 \input{sections/conclusion}
 
 % =====================================================================

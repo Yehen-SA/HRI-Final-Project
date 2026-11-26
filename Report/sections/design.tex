@@ -1,9 +1,7 @@
 \section{Study Design}
 
 \subsection{Aim}
-In human-robot teams, how people perceive and interact with a robot partner may depend on both how the team's score is presented.
-
-The primary research aim of this study is to investigate whether sharing a team score, rather than displaying separate individual scores, makes people more likely to perceive a robot partner as a teammate, and whether this holds regardless of how well the robot performs.
+In human-robot teams, how people perceive and interact with a robot partner may depend on how the team's score is presented. The primary research aim of this study is to investigate whether sharing a team score, rather than displaying separate individual scores, makes people more likely to perceive a robot partner as a teammate, and whether this holds regardless of how well the robot performs.
 
 
 \subsection{Equipment and chosen robot}
@@ -31,18 +29,11 @@ Each round opens on a start screen where the robot introduces itself by name. Th
     \item A debrief explaining the real aim of the study and giving consent to continue participating in the study.
 \end{enumerate}
 
-\subsection{Conditions}
-\textbf{Design:} $2 \times 2$ mixed
+\subsection{Conditions and variables}
+\textbf{Design:} $2 \times 2$ mixed. The two independent variables are the conditions:
 \begin{itemize}
-    \item \textit{Score display (between subjects):} Shared (one team score) vs Split (each player's score shown separately, plus the total)
-    \item \textit{Robot performance (within subjects):} Good vs Bad, order counterbalanced
-\end{itemize}
-
-\subsection{Variables and measures}
-\textbf{Independent variables:}
-\begin{itemize}
-    \item \textit{Score display:} How the score of the robot and player is displayed on screen (Split | Shared)
-    \item \textit{Robot performance:}  How well the robot performs (Bad | Good)
+    \item \textit{Score display (between subjects):} how the score is shown on screen: Shared (one team score) vs Split (each player's score shown separately, plus the total)
+    \item \textit{Robot performance (within subjects):} how well the robot plays: Good vs Bad, order counterbalanced
 \end{itemize}
 
 \noindent\textbf{Dependent variables (and how we measure them):}
@@ -76,7 +67,8 @@ Each round opens on a start screen where the robot introduces itself by name. Th
 \end{itemize}
 
 \subsection{Participants}
-We will recruit about 20 adult participants (10 per condition) by asking friends or word of mouth. Participants must be fluent in English and have no visual impairments other than colour blindness, no hearing impairments, and no susceptibility to motion sickness. Participants give informed consent on the game's consent page before any data is recorded (Appendix~\ref{app:questionnaires}). We aim for a balance of gender and age to reduce demographic confounds.
+We recruited as many adult participants as we could, with a minimum of 20, by asking friends and through word of mouth. 22 took part: 10 in the shared condition and 12 in the split condition. Participants must be fluent in English and have no visual impairments other than colour blindness, no hearing impairments, and no susceptibility to motion sickness. Participants give informed consent on the game's consent page before any data is recorded (Appendix~\ref{app:questionnaires}). We aim for a balance of gender and age to reduce demographic confounds.
+
 
 
 \subsection{Identification and minimisation of confounds}
@@ -88,24 +80,14 @@ We will recruit about 20 adult participants (10 per condition) by asking friends
     \item \textit{Random ball physics}: same starting conditions, random seed, and brick layout in every round
     \item \textit{Guessing the hypothesis / being nice for the experimenter}: neutral instructions, anonymous questionnaire, a neutral cover story at the start, with a debrief explaining the real aim after the two rounds
     \item \textit{Fatigue or boredom}: short rounds (a 30~s practice round and two 2-minute rounds, about 10 minutes in total) and concise questionnaires
-\end{itemize}
-
-\begin{reviewblock}
-\noindent\textbf{Further confounds:}
-\begin{itemize}
-    \item \textit{Robot identity and round position}: Nova always appears in the first round and Pip in the second, so a robot's identity cannot be separated from its position. The order of robot performance is counterbalanced, so this does not bias the comparison between the good and bad robots.
-    \item \textit{Setting and interviewer}: some sessions are run in person and some remotely, by different members of the group. Both are recorded (Appendix~\ref{app:data}), so their effect can be checked.
-    \item \textit{Recruiting friends}: participants who know us may rate the robot kindly to please us. The cover story and anonymous participant IDs reduce this.
-    \item \textit{Hardware}: remote participants use their own computer, screen and browser, which may change how the game looks and feels.
     \item \textit{Manipulation check}: the item ``I considered the robot capable of performing its role in the game'' shows whether participants noticed the difference between the good and bad robots.
 \end{itemize}
-\end{reviewblock}
 
 \subsection{Implementation}
 We built the game from scratch rather than adapting an existing Breakout clone, using Python with the pygame-ce library. It is split into separate modules so that each condition and measure can be changed in one place:
 \begin{itemize}
     \item \textit{Game engine:} the physics and rules. Every event in a round passes through one function, which the logging and the robot's reactions listen to.
-    \item \textit{Robot strategies:} the good and bad strategies are separate classes, so the robot's skill is the only thing that changes between performance levels. A shared layer above both handles the scripted help requests the same way for each.
+    \item \textit{Robot strategies:} the good and bad strategies are separate classes, so the robot's skill is the only thing that changes between performance levels. In simulated rounds the good strategy returned about 95\% of its balls and the bad strategy about 44\%. A shared layer above both handles the scripted help requests the same way for each.
     \item \textit{Robot persona:} the robot's look, expressions, lines and voice, kept apart from its strategy so that both robots present identically. Each line has a cap per round and a cooldown, set in one configuration file.
     \item \textit{Session and questionnaires:} the questions are stored as data, so the in-game questionnaires match Appendix~\ref{app:questionnaires}.
 \end{itemize}

@@ -48,10 +48,10 @@
 \onehalfspacing                              % final: \singlespacing
 \usepackage[skip=10pt plus 2pt]{parskip}     % gap between paragraphs, no indent
 \setlist{topsep=8pt, itemsep=6pt, parsep=0pt, beginpenalty=10000}
-\renewcommand{\arraystretch}{1.5}            % taller table rows (final: 1.1)
+\renewcommand{\arraystretch}{1.1}            % taller table rows (final: 1.1)
 
 % Sections: large title with a rule underneath, plenty of space around it
-\titleformat{\section}{\Large\bfseries}{\thesection}{1em}{}[\vspace{2pt}\titlerule]
+\titleformat{\section}{\Large\bfseries}{\thesection}{1em}{}[\titlerule]
 \titlespacing*{\section}{0pt}{2ex}{3ex}
 \titlespacing*{\subsection}{0pt}{5ex}{1.5ex}
 
@@ -59,87 +59,34 @@
 \setlength{\droptitle}{-2.5cm}
 
 \maketitle
-
 % Contents page for finding our way around while drafting. Remove when finalising.
+\vspace{-2em}
 \tableofcontents
 
-\vspace{1em}
-\noindent\textbf{Key:} normal text is final; \review{blue text is drafted but needs rework}; \fix{red text is missing}.
 \clearpage
 
 % =====================================================================
 
 
 \section{Research Question and Hypotheses}
-\spec{Choice of Question and Hypothesis (15 pts)}
-
-\subsection{Initial ideas}
-\begin{reviewblock}
-
-\textbf{Related work:}
-\begin{itemize}
-    \item Human teams: cooperation vs competition (Deutsch 1949), equality vs equity in reward splitting (Deutsch 1975), social loafing (Karau \& Williams 1993)
-    \item Humans with computers and robots: ``Can computers be teammates?'' (Nass et al.\ 1996), in-group robots (Kuchenbrandt et al.\ 2013; Fraune et al.\ 2017)
-    \item Human Performance in Competitive and Collaborative Human–Machine Teams(2025)
-\end{itemize}
-
-\textbf{Other design options:}
-\begin{itemize}
-    \item The robot presented as a different robot each round, with a new name and colour
-\end{itemize}
-
-\textbf{Game Changes}
-\begin{itemize}
-    \item Change colour depending on who would score points
-    \item Robot AI
-    \item need robot agent to be believeable (e.g. robot sprite).
-\end{itemize}
-
-\textbf{Questionnaire Questions}
-Pre-Game:
-\begin{itemize}
-    \item Atari before
-    \item Robot experiments before
-    \item Maybe declare age/gender
-\end{itemize}
-
-Post-Game:
-\begin{itemize}
-    \item How helpful is robot (Peer review)
-    \item How do you think of your performance?
-    \item {For shared score players:} How well do you think the robot did compared to you? (score distribution)
-    \item {For split score players:} Did seeing the robot's score make you more competitive?
-    \item How likeable is the robot.
-\end{itemize}
-
-Data to collect:
-\begin{itemize}
-    \item Initial settings (ie shared score, robot skill)
-    \item Actual scores
-    \item Survey answers
-    \item Duration of rounds
-\end{itemize}
-
-\end{reviewblock}
-
 \subsection{Research question}
-\review{Are people more likely to treat a robot partner as part of their team when the score is shared rather than split, and does this hold regardless of how well the robot performs?}
+Are people more likely to treat a robot partner as part of their team when the score is shared rather than split, and does this hold regardless of how well the robot performs?
 
 \subsection{Related work}
-\begin{reviewblock}
-Research on human teams suggests that how outcomes are shared shapes how people see their partners. Deutsch's (1949) theory of cooperation and competition holds that people who share a goal, so that one person's success helps the other, treat each other as allies, while people whose goals conflict treat each other as rivals. How rewards are divided also matters (Deutsch, 1975): an equal split tends to support solidarity and team harmony, while dividing by individual contribution (equity) puts the focus on each person's own output. Whether individual contributions are visible also changes behaviour in groups: people put in less effort when their own contribution cannot be identified, a pattern known as social loafing (Karau \& Williams, 1993). Together, these suggest that showing one shared score, rather than each player's score, could change how a partner is perceived.
-
-Similar effects appear with computers and robots. Nass, Fogg and Moon (1996) found that people treated a computer as a teammate, rating it as more similar and more cooperative, when they shared a goal and an outcome with it. Robots presented as members of a participant's own group are anthropomorphised more and rated more positively (Kuchenbrandt et al., 2013), and can even be favoured over humans from another group (Fraune, \v{S}abanovi\'c \& Smith, 2017). Closest to our study, Bennett et al.\ (2025) compared collaborative and competitive teams in a computerised game modelled on an arcade classic, and found that the benefit of collaborating seen in human pairs was much smaller when the partner was a machine. None of these studies varies how the score is displayed to a person playing with a robot partner, or tests whether the effect of a shared score survives the robot performing badly, which is what our study addresses.
-\end{reviewblock}
+\begin{itemize}[nosep]
+    \item \textit{Deutsch (1949)}: people who share a goal cooperate, while people with competing goals become rivals. A shared score gives the participant and robot a shared goal.
+    \item \textit{Nass, Fogg \& Moon (1996)}: people treated a computer as a teammate when they shared its goal and outcome, so the same may apply to a robot.
+    \item \textit{Bennett et al.\ (2025)}: collaborating helped human pairs more than human--machine pairs in an arcade game, so team effects may be weaker with a machine partner.
+\end{itemize}
+None of these studies varies how the score is displayed when playing with a robot, which is what our study tests.
 
 \subsection{Hypotheses}
 
-\paragraph{H1:} \review{Participants will rate the robot as more of a teammate when the score is shared than when it is split.}
+\paragraph{H1:} Participants will rate the robot as more of a teammate when the score is shared than when it is split.
 
-\paragraph{H2:} \review{This effect of a shared score will hold whatever the robot's performance: at both the good and the bad performance level, participants who see a shared score will rate the robot as more of a teammate than those who see split scores.}
+\paragraph{H2:} This effect of a shared score will hold whatever the robot's performance: at both the good and the bad performance level, participants who see a shared score will rate the robot as more of a teammate than those who see split scores.
 
-\clearpage
-% =====================================================================
+
 \input{sections/design}
 \clearpage
 \input{sections/results}

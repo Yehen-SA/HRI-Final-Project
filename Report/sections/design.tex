@@ -26,7 +26,7 @@ Each round opens on a start screen where the robot introduces itself by name. Th
     \item The participant enters the ID we gave them, which sets their conditions (score display and robot order). They see a welcome page with a neutral cover story, give consent, and answer the pre-study questionnaire (Appendix~\ref{app:questionnaires}).
     \item Instructions, then a 30~s practice round alone, with no robot.
     \item Two 2-minute rounds, one with each robot, in counterbalanced order and name. Each is followed by the post-round questionnaire about that robot.
-    \item A debrief explaining the real aim of the study and giving consent to continue participating in the study.
+    \item A debrief explaining the real aim of the study, and asking for consent to use their data now that they know the aim.
 \end{enumerate}
 
 \subsection{Conditions and variables}
@@ -35,6 +35,7 @@ Each round opens on a start screen where the robot introduces itself by name. Th
     \item \textit{Score display (between subjects):} how the score is shown on screen: Shared (one team score) vs Split (each player's score shown separately, plus the total)
     \item \textit{Robot performance (within subjects):} how well the robot plays: Good vs Bad, order counterbalanced
 \end{itemize}
+Score display is between subjects so that participants never see both displays and guess the aim; robot performance is within subjects so that each participant acts as their own baseline for skill.
 
 \noindent\textbf{Dependent variables (and how we measure them):}
 
@@ -45,9 +46,9 @@ Each round opens on a start screen where the robot introduces itself by name. Th
 
         \item \textit{In-game Behaviour}: actions the participant takes during the game that reflects how they perceive the robot, such as:
         \begin{itemize}
-            \item \textit{Ball stealing}: how often the participant hits the robot's balls that the robot was able to return.
+            \item \textit{Ball stealing}: how often the participant hits the robot's balls that the robot was able to return, as a share of the chances they had. More steals suggest the participant treats the robot as a competitor.
 
-            \item \textit{Rescues}: how often the participant hits the robot's balls that the robot was not able to return. Split between Prompted and Unprompted rescues, where each robot prompts for the same count of rescues.
+            \item \textit{Rescues}: how often the participant hits the robot's balls that the robot was not able to return, as a share of the chances they had. More rescues suggest the participant treats the robot as a teammate. Split between Prompted and Unprompted rescues, where each robot prompts for the same count of rescues.
 
         \end{itemize}
     \end{itemize}
@@ -56,31 +57,26 @@ Each round opens on a start screen where the robot introduces itself by name. Th
 
     \item \textit{Likeability}: How much the participant likes the robot, measured through the Godspeed likeability subscale
 
+    \item \textit{Manipulation check}: the item ``I considered the robot capable of performing its role in the game'' shows whether participants noticed the difference between the good and bad robots.
+
 \end{itemize}
 
-\noindent\textbf{Controlled variables:}
-\begin{itemize}
-    \item Robot behaviour apart from performance (same voice, animation, and speech)
-    \item Robot anthropomorphism and other visual factors such as its size.
-    \item Same task sequence for every participant ie introduction, pre-study questionnaire, practice round, counterbalanced rounds, each followed by a questionnaire, debrief.
-    \item Game mechanics, level design and round length
-\end{itemize}
 
 \subsection{Participants}
-We recruited as many adult participants as we could, with a minimum of 20, by asking friends and through word of mouth. 22 took part: 10 in the shared condition and 12 in the split condition. Participants must be fluent in English and have no visual impairments other than colour blindness, no hearing impairments, and no susceptibility to motion sickness. Participants give informed consent on the game's consent page before any data is recorded (Appendix~\ref{app:questionnaires}). We aim for a balance of gender and age to reduce demographic confounds.
+22 adult participants, recruited through word of mouth, took part: 10 in the shared condition and 12 in the split condition. They were aged 18--58 (median 21.5); 11 were female, 10 male and 1 preferred not to say. 14 had interacted with a robot before and 14 had played Breakout before. Participants had to be fluent in English and have no visual impairments other than colour blindness, no hearing impairments, and no susceptibility to motion sickness. Participants gave informed consent on the game's consent page before any data was recorded (Appendix~\ref{app:questionnaires}).
 
 
 
-\subsection{Identification and minimisation of confounds}
+\subsection{Controlled variables and confounds}
 \begin{itemize}
     \item \textit{Breakout skill / gaming experience}: ask in the pre-study questionnaire, in-game instructions and a 30~s practice round
     \item \textit{Learning and order effects across rounds}: practice round and then counterbalance the order of robot performance
-    \item \textit{Robot Appearance}: each robot's name and colour are tied to the round (Nova first, Pip second); since the order of robot performance is counterbalanced, they are balanced across the good and bad robots. The colours stay distinguishable with red-green colour blindness
+    \item \textit{Robot Appearance}: each robot's name and colour are tied to the round (Nova first, Pip second); since the order of robot performance is counterbalanced, they are balanced across the good and bad robots. The colours stay distinguishable with red-green colour blindness; otherwise both robots are identical in appearance and size
     \item \textit{Robot Behaviour}: both robots use the same lines, voice, expressions and number of help requests for all participants; only their skill differs
     \item \textit{Random ball physics}: same starting conditions, random seed, and brick layout in every round
+    \item \textit{Procedure and game}: every participant follows the same sequence of stages, with the same game mechanics, level and round length
     \item \textit{Guessing the hypothesis / being nice for the experimenter}: neutral instructions, anonymous questionnaire, a neutral cover story at the start, with a debrief explaining the real aim after the two rounds
     \item \textit{Fatigue or boredom}: short rounds (a 30~s practice round and two 2-minute rounds, about 10 minutes in total) and concise questionnaires
-    \item \textit{Manipulation check}: the item ``I considered the robot capable of performing its role in the game'' shows whether participants noticed the difference between the good and bad robots.
 \end{itemize}
 
 \subsection{Implementation}

@@ -5,9 +5,9 @@ In human-robot teams, how people perceive and interact with a robot partner may 
 
 
 \subsection{Equipment and chosen robot}
-We used a custom co-operative version of Atari Breakout. We compiled it to run on browser and hosted it publicly on itch.io. All participants played through the same link. At the end of the session the participant's results file was downloaded and participants sent it back to us.
+We used a custom co-operative version of Atari Breakout. We compiled it to run in a browser and hosted it publicly on itch.io. All participants played through the same link. At the end of the session the participant's results file was downloaded and participants sent it back to us.
 
-There was no physical robot. The robot is a virtual character shown inside the game: it sits under its paddle and holds it up, so it looks as if the robot is moving the paddle. It has six facial expressions (neutral, happy, sad, surprised, focused and excited) which reacts to events, and it speaks short lines in speech bubbles with a synthetic voice. Each round's robot has its own name and colour, Nova in yellow and Pip in purple, so participants met two different robots. Apart from name and colour, both robots look, speak and react exactly the same.
+There was no physical robot. The robot is a virtual character shown inside the game: it sits under its paddle and holds it up, so it looks as if the robot is moving the paddle. It has six facial expressions (neutral, happy, sad, surprised, focused and excited) which react to events, and it speaks short lines in speech bubbles with a synthetic voice. Each round's robot has its own name and colour, Nova in yellow and Pip in purple, so participants met two different robots. Apart from name and colour, both robots look, speak and react exactly the same.
 
 The two robots use different strategies:
 \begin{itemize}
@@ -85,12 +85,17 @@ We built the game from scratch rather than adapting an existing Breakout clone, 
     \item \textit{Game engine:} the physics and rules. Every event in a round passes through one function, which the logging and the robot's reactions listen to.
     \item \textit{Robot strategies:} the good and bad strategies are separate classes, so the robot's skill is the only thing that changes between performance levels. In simulated rounds the good strategy returned about 95\% of its balls and the bad strategy about 44\%. A shared layer above both handles the scripted help requests the same way for each.
     \item \textit{Robot persona:} the robot's look, expressions, lines and voice, kept apart from its strategy so that both robots present identically. Each line has a cap per round and a cooldown, set in one configuration file.
-    \item \textit{Session and questionnaires:} the questions are stored as data, so the in-game questionnaires match xAppendix~\ref{app:questionnaires}.
+    \item \textit{Session and questionnaires:} the questions are stored as data, so the in-game questionnaires match Appendix~\ref{app:questionnaires}.
 \end{itemize}
 
-\textit{Creating the conditions.} The participants assigned ID selects the condition. IDs cycle through the four combinations of score display and robot order. The score display is a single setting read by the game's heads-up display. Robot names and colours are tied to the round rather than robot's skill, so counterbalanced order balances them across the two performance levels.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.38\linewidth]{figures/game.png}
+    \caption{A split-score round: the robot (yellow) asks the participant (cyan) for help.}
+    \label{fig:game}
+\end{figure}
 
-\textit{Measuring behaviour.} Steals and rescues are detected at the moment a ball reaches the paddles, from which paddles are touching it.
+\textit{Creating the conditions.} The participant's assigned ID selects the condition. IDs cycle through the four combinations of score display and robot order. The score display is a single setting read by the game's heads-up display. Robot names and colours are tied to the round rather than robot's skill, so counterbalanced order balances them across the two performance levels.
 
 \textit{Logging and data collection.} Each session writes a new log file. It records the conditions and settings, the questionnaire answers, per-round statistics for both players, the robot's spoken lines and a timeline of events.
 

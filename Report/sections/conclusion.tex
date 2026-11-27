@@ -1,34 +1,38 @@
 \section{Discussion and Conclusion}
 
-
 \subsection{Data analysis}
-Our hypotheses concern teammate perception, which we scored as the mean of the items ``part of my team'' and ``common goal''. The third item, ``just a tool'', did not agree with these two (Cronbach's $\alpha$ fell to .30--.45 with it included), so it is reported separately in Appendix~\ref{app:results}. Likeability was the mean of the five Godspeed items. Each participant gave one score per robot. These two scores are not independent, so we did not pool all 44 scores; each test uses one value per participant.
-
-\textit{H1.} $H_0$: mean teammate perception is the same in the Shared and Split groups; $H_A$: it differs. We took each participant's mean over both rounds and compared the groups with Welch's $t$-test, which allows for the unequal group sizes.
-
-\textit{H2.} $H_0$: the Shared--Split difference is the same for the good and the bad robot; $H_A$: it differs. We took each participant's Good$-$Bad difference and compared the groups with Welch's $t$-test.
-
-Steal and rescue rates are each a share of the chances the participant had. They depend on the robot's skill and the course of each game, so we did not combine them with the questionnaire score; against the bad robot, steal rates rest on only 0--5 chances per participant. We report them as secondary measures, tested in the same way.
-
-The manipulation worked: the good robot was rated more capable than the bad one (3.82 vs 2.05, paired $t(21)=6.36$, $p<.001$).
+Teammate perception was scored as the mean of ``part of my team'' and ``common goal''. Likeability was the mean of the five Godspeed items, and steal and rescue rates are a share of the chances the participant had. A participant's two rounds are not independent, so every test uses one value per participant and compares the Shared and Split groups with Welch's $t$-test, which allows for unequal group sizes:
+\begin{itemize}[nosep]
+    \item \textit{H1}: each participant's mean over both rounds. $H_0$: the groups do not differ; $H_A$: they differ.
+    \item \textit{H2}: each participant's Good$-$Bad difference. $H_0$: the Shared--Split difference is the same for both robots; $H_A$: it differs.
+\end{itemize}
+The hypotheses are tested on teammate perception; the other measures are secondary and tested the same way. Unless stated, $p$-values below are those in Table~\ref{tab:results}.
 
 \subsection{Evaluation}
-\textbf{H1 was not supported.} Teammate perception did not differ between the Shared and Split groups (3.30 vs 3.21, $t(19.9)=0.26$, $p=.80$, $d=0.11$), so $H_0$ was not rejected. The three-item score gave the same conclusion ($p=.63$).
+The manipulation worked: the good robot was rated more capable than the bad one (mean rating 3.82 vs 2.05 out of 5; paired $t$-test on each participant's Good$-$Bad difference in rating, $p<.001$).
 
-\textbf{H2 could not be supported.} The Shared--Split difference did not change between the good and bad robots ($t(20.0)=0.78$, $p=.45$), so $H_0$ was not rejected. This is consistent with H2, but with no effect of score display in H1 there was no effect to hold.
+\textbf{H1 was not supported.} Teammate perception did not differ between the Shared and Split groups (3.30 vs 3.21, the group means of each participant's average over both rounds; Welch's $t$-test, H1 column, $p=.80$), so $H_0$ was not rejected.
 
-The secondary measures agreed: likeability ($p=.62$), steal rate ($p=.82$) and rescue rate ($p=.94$) did not differ between the groups. The one test below .05 was prompted rescues: Shared participants answered more of the bad robot's help requests than the good robot's, while Split participants did the reverse ($p=.049$). This is a 0--2 count, a rank-based test gives $p=.07$, and it is one of several uncorrected tests, so we treat it as a lead for future work rather than a finding. Steal rates against the bad robot are unreliable, because it returned too few balls to steal. With the good robot, participants who rated the robot as more of a teammate tended to steal from it less ($\rho=-.40$, $p=.07$) and to make more unprompted rescues ($\rho=.40$, $p=.08$). Neither is significant, but both suggest that behaviour reflects teammate perception when the robot is competent enough to give the participant a real choice.
+\textbf{H2 could not be supported.} The Shared--Split difference did not change between the good and bad robots (0.90 vs 0.33, the group means of each participant's Good$-$Bad difference; Welch's $t$-test, H2 column, $p=.45$), so $H_0$ was not rejected. This is consistent with H2, but with no effect in H1 there was no effect to hold.
 
-Overall, the robot's skill and behaviour, not the scoreboard, shaped how participants saw it. Comments judged the robots on skill (``Why is Pip so bad''), and one Split participant wrote that without the robot's voice it would have felt more like competing. The robot's speech and help requests may already have framed it as a teammate in both conditions, leaving little room for the score display to matter. This fits Bennett et al.\ (2025), who found weaker team effects with a machine partner.
+The secondary measures agreed: likeability, steal rate and rescue rates did not differ between the groups (H1 column, all $p\geq.31$). The one value below .05 is prompted rescues in the H2 column ($p=.049$): Shared participants answered more of the bad robot's help requests, and Split participants more of the good robot's. As a 0--2 count and one of twelve tests, we treat it as a lead for future work, not a finding.
+
+Shared-score participants' estimates of the robot's share of the points did not differ significantly from its real share (good robot: 46.0\% estimated vs 36.7\% actual, $p=.17$; bad robot: 28.5\% vs 26.7\%, $p=.79$; paired $t$-tests on each participant's estimate and actual share, $n=10$), so a single team score did not hide how well the robot played.
+
+Overall, the robot's skill and behaviour, not the scoreboard, shaped how participants saw it. Its speech and help requests may already have framed it as a teammate in both conditions, leaving little room for the score display to matter. This fits Bennett et al.\ (2025), who found weaker team effects with a machine partner.
 
 \subsection{Limitations and Future Work}
 \begin{itemize}[nosep]
-    \item \textit{Sample size}: with 10 and 12 participants per group, only very large effects (around $d \geq 1.3$ for 80\% power) could be reliably detected, and participants were mostly young adults recruited by word of mouth.
-    \item \textit{Measures}: our teammate score rests on two questionnaire items. The behavioural measures depended on the robot's performance: participants had almost no chances to steal from the bad robot.
+    \item \textit{Sample size}: with 10 and 12 participants per group, only very large effects could be detected, and participants were mostly young adults recruited by word of mouth.
+    \item \textit{Measures}: the teammate score rests on two questionnaire items, and participants had almost no chances (0--5) to steal from the bad robot, so those steal rates are unreliable.
     \item \textit{Short, unsupervised sessions}: two 2-minute rounds played online may be too short for a sense of team to form, and we could not check that participants watched the score.
-    \item \textit{Order}: robot names were tied to the round, and likeability was slightly higher in round 2 ($p=.052$).
+    \item \textit{Order}: robot names were tied to the round.
 \end{itemize}
-Future work should use a larger sample, a weaker robot that still returns enough balls to give chances to steal, more help requests per round so that prompted rescues can be measured on a finer scale, longer or repeated sessions, a validated teammate scale, and a robot without speech, to separate the effect of the score display from the robot's social behaviour. We could also experiment with using a game where the score is more crucial to the gameplay to encourage participants to see the robot as a teammate, for example a game with multiple levels that require a score threshold to progress. 
+Future work should vary factors we held fixed:
+\begin{itemize}[nosep]
+    \item \textit{Focus on the score}: a game where the score is more crucial to the gameplay, for example one with several levels that each need a score threshold to progress, so that participants pay attention to how the score is shown.
+    \item \textit{Robot speech and behaviour}: robots with different speech and behaviour, including one that does not speak or ask for help, to separate the effect of the score display from the robot's social behaviour.
+\end{itemize}
 
 \subsection{Conclusion}
 We tested whether showing a shared team score, rather than separate scores, makes people see a robot partner as a teammate, at two levels of robot performance. Participants clearly noticed the difference between the good and bad robots, but the score display did not change teammate perception or in-game behaviour at either level. In this short cooperative game, how the robot played and behaved mattered more than how the score was shown.

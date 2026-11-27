@@ -153,7 +153,7 @@ What share of the team's points do you think the robot scored? (0--100\%, in ste
 \clearpage
 \section{Data collection}
 \label{app:data}
-Two rows per participant, one per robot round. Conditions follow the participant ID (see the game's \texttt{assignment.py}). Tick \textit{Started} when an ID is handed out, so it isn't used twice. Values come from each participant's log file (\texttt{uv run tools/summarise\_logs.py} prints them). Every other measure, including steals and rescues, is kept in \texttt{Data/results.csv} in the project repository.
+Two rows per participant, one per robot round. Conditions follow the participant ID (see the game's \texttt{assignment.py}). Values come from each participant's log file (\texttt{uv run tools/summarise\_logs.py} prints them). Every other measure, including steals and rescues, is kept in \texttt{Data/results.csv} in the project repository.
 \begin{itemize}[nosep]
     \item \textit{Possession}: seconds the human's and the robot's balls were in flight.
     \item \textit{Score}: points scored by the human, the robot and the team.
@@ -165,40 +165,40 @@ Two rows per participant, one per robot round. Conditions follow the participant
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{lllccc}
 \toprule
-\textbf{ID} & \textbf{\shortstack[l]{Score\\structure}} & \textbf{\shortstack[l]{Robot\\order}} & \textbf{Started} & \textbf{\shortstack{Possession\\(H\,:\,R)}} & \textbf{\shortstack{Score\\(H\,:\,R\,:\,Total)}} \\
+\textbf{ID} & \textbf{\shortstack[l]{Score\\structure}} & \textbf{\shortstack[l]{Robot\\order}} & \textbf{\shortstack{Possession\\(H\,:\,R)}} & \textbf{\shortstack{Score\\(H\,:\,R\,:\,Total)}} \\
 \midrule
-P01 & Shared & 1st: Bad & $\checkmark$ & 164\,:\,65 & 243\,:\,81\,:\,324 \\
- & & 2nd: Good & & 159\,:\,78 & 190\,:\,89\,:\,279 \\
+P01 & Shared & 1st: Bad & 164\,:\,65 & 243\,:\,81\,:\,324 \\
+ & & 2nd: Good & 159\,:\,78 & 190\,:\,89\,:\,279 \\
 \midrule
-P02 & Split & 1st: Bad & $\checkmark$ & 181\,:\,43 & 264\,:\,35\,:\,299 \\
- & & 2nd: Good & & 142\,:\,93 & 176\,:\,121\,:\,297 \\
+P02 & Split & 1st: Bad & 181\,:\,43 & 264\,:\,35\,:\,299 \\
+ & & 2nd: Good & 142\,:\,93 & 176\,:\,121\,:\,297 \\
 \midrule
-P03 & Shared & 1st: Good & $\checkmark$ & 120\,:\,113 & 148\,:\,155\,:\,303 \\
- & & 2nd: Bad & & 154\,:\,72 & 184\,:\,156\,:\,340 \\
+P03 & Shared & 1st: Good & 120\,:\,113 & 148\,:\,155\,:\,303 \\
+ & & 2nd: Bad & 154\,:\,72 & 184\,:\,156\,:\,340 \\
 \midrule
-P04 & Split & 1st: Good & $\checkmark$ & 165\,:\,63 & 283\,:\,73\,:\,356 \\
- & & 2nd: Bad & & 161\,:\,60 & 189\,:\,52\,:\,241 \\
+P04 & Split & 1st: Good & 165\,:\,63 & 283\,:\,73\,:\,356 \\
+ & & 2nd: Bad & 161\,:\,60 & 189\,:\,52\,:\,241 \\
 \midrule
-P07 & Shared & 1st: Good & $\checkmark$ & 158\,:\,64 & 175\,:\,65\,:\,240 \\
- & & 2nd: Bad & & 141\,:\,66 & 130\,:\,52\,:\,182 \\
+P07 & Shared & 1st: Good & 158\,:\,64 & 175\,:\,65\,:\,240 \\
+ & & 2nd: Bad & 141\,:\,66 & 130\,:\,52\,:\,182 \\
 \midrule
-P08 & Split & 1st: Good & $\checkmark$ & 164\,:\,70 & 207\,:\,92\,:\,299 \\
- & & 2nd: Bad & & 181\,:\,49 & 255\,:\,44\,:\,299 \\
+P08 & Split & 1st: Good & 164\,:\,70 & 207\,:\,92\,:\,299 \\
+ & & 2nd: Bad & 181\,:\,49 & 255\,:\,44\,:\,299 \\
 \midrule
-P09\textsuperscript{a} & Split & 1st: Good & $\checkmark$ & 171\,:\,60 & 216\,:\,70\,:\,286 \\
- & & 2nd: Bad & & 191\,:\,35 & 288\,:\,51\,:\,339 \\
+P09\textsuperscript{a} & Split & 1st: Good & 171\,:\,60 & 216\,:\,70\,:\,286 \\
+ & & 2nd: Bad & 191\,:\,35 & 288\,:\,51\,:\,339 \\
 \midrule
-P10 & Split & 1st: Bad & $\checkmark$ & 185\,:\,43 & 229\,:\,37\,:\,266 \\
- & & 2nd: Good & & 148\,:\,89 & 195\,:\,111\,:\,306 \\
+P10 & Split & 1st: Bad & 185\,:\,43 & 229\,:\,37\,:\,266 \\
+ & & 2nd: Good & 148\,:\,89 & 195\,:\,111\,:\,306 \\
 \midrule
-P11 & Shared & 1st: Good & $\checkmark$ & 144\,:\,83 & 183\,:\,89\,:\,272 \\
- & & 2nd: Bad & & 172\,:\,48 & 192\,:\,64\,:\,256 \\
+P11 & Shared & 1st: Good & 144\,:\,83 & 183\,:\,89\,:\,272 \\
+ & & 2nd: Bad & 172\,:\,48 & 192\,:\,64\,:\,256 \\
 \midrule
-P12 & Split & 1st: Good & $\checkmark$ & 99\,:\,123 & 96\,:\,183\,:\,279 \\
- & & 2nd: Bad & & 147\,:\,64 & 137\,:\,58\,:\,195 \\
+P12 & Split & 1st: Good & 99\,:\,123 & 96\,:\,183\,:\,279 \\
+ & & 2nd: Bad & 147\,:\,64 & 137\,:\,58\,:\,195 \\
 \midrule
-P13 & Shared & 1st: Bad & $\checkmark$ & 180\,:\,44 & 199\,:\,46\,:\,245 \\
- & & 2nd: Good & & 108\,:\,129 & 125\,:\,190\,:\,315 \\
+P13 & Shared & 1st: Bad & 180\,:\,44 & 199\,:\,46\,:\,245 \\
+ & & 2nd: Good & 108\,:\,129 & 125\,:\,190\,:\,315 \\
 \bottomrule
 \end{tabular}\par\smallskip\footnotesize\raggedright \textsuperscript{a}Typed as ``100'' in the game, so the game assigned that ID's conditions; the row shows the conditions actually played.
 \caption{Data per participant and robot round: P01--P13.}
@@ -211,40 +211,40 @@ P13 & Shared & 1st: Bad & $\checkmark$ & 180\,:\,44 & 199\,:\,46\,:\,245 \\
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{lllccc}
 \toprule
-\textbf{ID} & \textbf{\shortstack[l]{Score\\structure}} & \textbf{\shortstack[l]{Robot\\order}} & \textbf{Started} & \textbf{\shortstack{Possession\\(H\,:\,R)}} & \textbf{\shortstack{Score\\(H\,:\,R\,:\,Total)}} \\
+\textbf{ID} & \textbf{\shortstack[l]{Score\\structure}} & \textbf{\shortstack[l]{Robot\\order}} & \textbf{\shortstack{Possession\\(H\,:\,R)}} & \textbf{\shortstack{Score\\(H\,:\,R\,:\,Total)}} \\
 \midrule
-P14 & Split & 1st: Bad & $\checkmark$ & 138\,:\,79 & 149\,:\,82\,:\,231 \\
- & & 2nd: Good & & 104\,:\,125 & 98\,:\,203\,:\,301 \\
+P14 & Split & 1st: Bad & 138\,:\,79 & 149\,:\,82\,:\,231 \\
+ & & 2nd: Good & 104\,:\,125 & 98\,:\,203\,:\,301 \\
 \midrule
-P15 & Shared & 1st: Good & $\checkmark$ & 146\,:\,88 & 176\,:\,122\,:\,298 \\
- & & 2nd: Bad & & 168\,:\,60 & 246\,:\,92\,:\,338 \\
+P15 & Shared & 1st: Good & 146\,:\,88 & 176\,:\,122\,:\,298 \\
+ & & 2nd: Bad & 168\,:\,60 & 246\,:\,92\,:\,338 \\
 \midrule
-P18 & Split & 1st: Bad & $\checkmark$ & 130\,:\,72 & 163\,:\,98\,:\,261 \\
- & & 2nd: Good & & 103\,:\,117 & 124\,:\,161\,:\,285 \\
+P18 & Split & 1st: Bad & 130\,:\,72 & 163\,:\,98\,:\,261 \\
+ & & 2nd: Good & 103\,:\,117 & 124\,:\,161\,:\,285 \\
 \midrule
-P20 & Split & 1st: Good & $\checkmark$ & 119\,:\,113 & 137\,:\,182\,:\,319 \\
- & & 2nd: Bad & & 204\,:\,27 & 307\,:\,43\,:\,350 \\
+P20 & Split & 1st: Good & 119\,:\,113 & 137\,:\,182\,:\,319 \\
+ & & 2nd: Bad & 204\,:\,27 & 307\,:\,43\,:\,350 \\
 \midrule
-P21 & Shared & 1st: Bad & $\checkmark$ & 169\,:\,49 & 218\,:\,47\,:\,265 \\
- & & 2nd: Good & & 160\,:\,67 & 173\,:\,80\,:\,253 \\
+P21 & Shared & 1st: Bad & 169\,:\,49 & 218\,:\,47\,:\,265 \\
+ & & 2nd: Good & 160\,:\,67 & 173\,:\,80\,:\,253 \\
 \midrule
-P31 & Shared & 1st: Good & $\checkmark$ & 144\,:\,71 & 173\,:\,78\,:\,251 \\
- & & 2nd: Bad & & 143\,:\,78 & 135\,:\,91\,:\,226 \\
+P31 & Shared & 1st: Good & 144\,:\,71 & 173\,:\,78\,:\,251 \\
+ & & 2nd: Bad & 143\,:\,78 & 135\,:\,91\,:\,226 \\
 \midrule
-P32 & Split & 1st: Good & $\checkmark$ & 169\,:\,55 & 199\,:\,57\,:\,256 \\
- & & 2nd: Bad & & 173\,:\,48 & 190\,:\,63\,:\,253 \\
+P32 & Split & 1st: Good & 169\,:\,55 & 199\,:\,57\,:\,256 \\
+ & & 2nd: Bad & 173\,:\,48 & 190\,:\,63\,:\,253 \\
 \midrule
-P33 & Shared & 1st: Bad & $\checkmark$ & 169\,:\,57 & 174\,:\,55\,:\,229 \\
- & & 2nd: Good & & 145\,:\,89 & 165\,:\,97\,:\,262 \\
+P33 & Shared & 1st: Bad & 169\,:\,57 & 174\,:\,55\,:\,229 \\
+ & & 2nd: Good & 145\,:\,89 & 165\,:\,97\,:\,262 \\
 \midrule
-P36 & Split & 1st: Good & $\checkmark$ & 105\,:\,34 & 109\,:\,18\,:\,127 \\
- & & 2nd: Bad & & 145\,:\,49 & 146\,:\,44\,:\,190 \\
+P36 & Split & 1st: Good & 105\,:\,34 & 109\,:\,18\,:\,127 \\
+ & & 2nd: Bad & 145\,:\,49 & 146\,:\,44\,:\,190 \\
 \midrule
-P37 & Shared & 1st: Bad & $\checkmark$ & 193\,:\,37 & 226\,:\,39\,:\,265 \\
- & & 2nd: Good & & 155\,:\,82 & 274\,:\,82\,:\,356 \\
+P37 & Shared & 1st: Bad & 193\,:\,37 & 226\,:\,39\,:\,265 \\
+ & & 2nd: Good & 155\,:\,82 & 274\,:\,82\,:\,356 \\
 \midrule
-P40 & Split & 1st: Good & $\checkmark$ & 142\,:\,77 & 219\,:\,84\,:\,303 \\
- & & 2nd: Bad & & 152\,:\,66 & 151\,:\,63\,:\,214 \\
+P40 & Split & 1st: Good & 142\,:\,77 & 219\,:\,84\,:\,303 \\
+ & & 2nd: Bad & 152\,:\,66 & 151\,:\,63\,:\,214 \\
 \bottomrule
 \end{tabular}
 \caption{Data per participant and robot round: P14--P40.}

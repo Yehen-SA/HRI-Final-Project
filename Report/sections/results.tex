@@ -1,27 +1,28 @@
 \section{Results}
-\spec{Measures, Metrics and Data Analysis (20 pts)}
 
-\fix{N} participants took part. Raw data is in Appendix~\ref{app:data}.
+22 participants took part: 10 saw a shared score and 12 a split score (the bad robot came first for 5 and 4 of them respectively). Raw data is in Appendix~\ref{app:data} and all other measures in Appendix~\ref{app:results}.
 
 \begin{table}[H]
 \centering
-\begin{tabular}{lccc}
+\small
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lcccccc}
 \toprule
-\textbf{Measure} & \textbf{Condition 1} & \textbf{Condition 2} & \textbf{$p$} \\
- & mean (SD) & mean (SD) & \\
+ & \multicolumn{2}{c}{\textbf{Shared} (n=10)} & \multicolumn{2}{c}{\textbf{Split} (n=12)} & \multicolumn{2}{c}{\textbf{$p$}} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+\textbf{Measure} & Good & Bad & Good & Bad & H1 & H2 \\
 \midrule
-\fix{Measure} & & & \\
-\fix{Measure} & & & \\
+Teammate perception (1--5) & 3.75 & 2.85 & 3.38 & 3.04 & .80 & .45 \\
+Likeability (Godspeed, 1--5) & 3.74 & 3.46 & 3.50 & 3.42 & .62 & .66 \\
+\midrule
+Steal rate & 0.28 & 0.43 & 0.24 & 0.42 & .82 & .90 \\
+Rescue rate (all) & 0.46 & 0.66 & 0.56 & 0.58 & .94 & .16 \\
+Unprompted rescue rate & 0.45 & 0.64 & 0.34 & 0.58 & .31 & .95 \\
+Prompted rescues (of 2) & 0.90 & 1.50 & 1.42 & 1.17 & .64 & .049 \\
 \bottomrule
 \end{tabular}
-\caption{Results by condition.}
+\par\smallskip\raggedright\footnotesize
+Means per robot. $p$: Welch's $t$-tests, Shared vs Split (H1: mean of both rounds; H2: Good$-$Bad difference).
+\caption{Teammate perception and in-game behaviour by condition.}
 \label{tab:results}
 \end{table}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\parbox[c][4cm][c]{0.6\linewidth}{\centering\color{gray} Graph comparing conditions}}
-    % \includegraphics[width=0.6\linewidth]{figure.png}
-    \caption{\fix{Caption}}
-    \label{fig:results}
-\end{figure}

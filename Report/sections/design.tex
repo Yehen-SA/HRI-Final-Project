@@ -5,9 +5,9 @@ In human-robot teams, how people perceive and interact with a robot partner may 
 
 
 \subsection{Equipment and chosen robot}
-We used a custom co-operative version of Atari Breakout. We compiled it to run in a web browser and hosted it as a public page on itch.io. All participants played through the same link. At the end of the session the browser downloaded the participant's results file, which they sent back to us.
+We used a custom co-operative version of Atari Breakout. We compiled it to run on browser and hosted it publicly on itch.io. All participants played through the same link. At the end of the session the participant's results file was downloaded and participants sent it back to us.
 
-There was no physical robot. The robot is a virtual character shown as a robot inside the game: it sits under its paddle and holds it up, so it looks as if the robot is moving the paddle. It has six facial expressions (neutral, happy, sad, surprised, focused and excited) that react to events in the game, and it speaks short lines in speech bubbles with a synthetic voice. Each round's robot has its own name and colour, Nova in yellow and then Pip in purple, so participants met two different robots. Apart from name and colour, both robots look, speak and react in the same way.
+There was no physical robot. The robot is a virtual character shown inside the game: it sits under its paddle and holds it up, so it looks as if the robot is moving the paddle. It has six facial expressions (neutral, happy, sad, surprised, focused and excited) which reacts to events, and it speaks short lines in speech bubbles with a synthetic voice. Each round's robot has its own name and colour, Nova in yellow and Pip in purple, so participants met two different robots. Apart from name and colour, both robots look, speak and react exactly the same.
 
 The two robots use different strategies:
 \begin{itemize}
@@ -57,7 +57,7 @@ Score display is between subjects so that participants never see both displays a
 
     \item \textit{Likeability}: How much the participant likes the robot, measured through the Godspeed likeability subscale
 
-    \item \textit{Manipulation check}: the item ``I considered the robot capable of performing its role in the game'' shows whether participants noticed the difference between the good and bad robots.
+    \item \textit{Manipulation check}: the item ``I considered the robot capable of performing its role in the game'' shows whether participants noticed the difference between good and bad robots.
 
 \end{itemize}
 
@@ -73,9 +73,9 @@ Score display is between subjects so that participants never see both displays a
     \item \textit{Learning and order effects across rounds}: practice round and then counterbalance the order of robot performance
     \item \textit{Robot Appearance}: each robot's name and colour are tied to the round (Nova first, Pip second); since the order of robot performance is counterbalanced, they are balanced across the good and bad robots. The colours stay distinguishable with red-green colour blindness; otherwise both robots are identical in appearance and size
     \item \textit{Robot Behaviour}: both robots use the same lines, voice, expressions and number of help requests for all participants; only their skill differs
-    \item \textit{Random ball physics}: same starting conditions, random seed, and brick layout in every round
+    \item \textit{Game Randomness}: same start conditions, random seed, and brick layout in each round
     \item \textit{Procedure and game}: every participant follows the same sequence of stages, with the same game mechanics, level and round length
-    \item \textit{Guessing the hypothesis / being nice for the experimenter}: neutral instructions, anonymous questionnaire, a neutral cover story at the start, with a debrief explaining the real aim after the two rounds
+    \item \textit{Guessing hypothesis/being nice to experimenter}: neutral instructions, anonymous questionnaire, neutral initial cover story, with a debrief explaining the real aim at the end
     \item \textit{Fatigue or boredom}: short rounds (a 30~s practice round and two 2-minute rounds, about 10 minutes in total) and concise questionnaires
 \end{itemize}
 
@@ -85,10 +85,10 @@ We built the game from scratch rather than adapting an existing Breakout clone, 
     \item \textit{Game engine:} the physics and rules. Every event in a round passes through one function, which the logging and the robot's reactions listen to.
     \item \textit{Robot strategies:} the good and bad strategies are separate classes, so the robot's skill is the only thing that changes between performance levels. In simulated rounds the good strategy returned about 95\% of its balls and the bad strategy about 44\%. A shared layer above both handles the scripted help requests the same way for each.
     \item \textit{Robot persona:} the robot's look, expressions, lines and voice, kept apart from its strategy so that both robots present identically. Each line has a cap per round and a cooldown, set in one configuration file.
-    \item \textit{Session and questionnaires:} the questions are stored as data, so the in-game questionnaires match Appendix~\ref{app:questionnaires}.
+    \item \textit{Session and questionnaires:} the questions are stored as data, so the in-game questionnaires match xAppendix~\ref{app:questionnaires}.
 \end{itemize}
 
-\textit{Creating the conditions.} The participant ID typed at the start selects the condition. IDs cycle through the four combinations of score display and robot order. The score display is a single setting read by the game's heads-up display. Robot names and colours are tied to the round rather than to skill, so the counterbalanced order also balances them across the two performance levels.
+\textit{Creating the conditions.} The participants assigned ID selects the condition. IDs cycle through the four combinations of score display and robot order. The score display is a single setting read by the game's heads-up display. Robot names and colours are tied to the round rather than robot's skill, so counterbalanced order balances them across the two performance levels.
 
 \textit{Measuring behaviour.} Steals and rescues are detected at the moment a ball reaches the paddles, from which paddles are touching it.
 
